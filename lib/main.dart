@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:winter/Home.dart';
 
-void main() => runApp(LoginPage());
+void main() => runApp(MaterialApp(home:LoginPage() ,));
 
 class LoginPage extends StatefulWidget {
   @override
@@ -9,27 +10,26 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+
   //全局key，用来获取form表单组件
   GlobalKey<FormState> loginKey = new GlobalKey<FormState>();
   String userName; //用户名
   String passWord; //密码
+
   void login() {
     var loginForm = loginKey.currentState; //读取当前Form
     if (loginForm.validate()) {
       loginForm.save();
-      print('userName:' + userName + "   password:" + passWord);
+     Navigator.push(context, MaterialPageRoute(builder: (context)=>new MyApp()));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: '登录页',
-      home: new Scaffold(
+    return  Scaffold(
         appBar: AppBar(
           title: Text('欢迎登录'),
         ),
-
 
         body: Column(
           children: <Widget>[
@@ -121,7 +121,6 @@ class _LoginPageState extends State<LoginPage> {
             )
           ],
         ),
-      ),
-    );
+      );
   }
 }
