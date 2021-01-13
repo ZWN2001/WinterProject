@@ -1,153 +1,158 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:winter/Home.dart';
 import 'package:winter/SharedPreference/SharedPreferenceUtil.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'SharedPreference/User.dart';
+import 'package:winter/SharedPreference/User.dart';
 
 void main() => runApp(MaterialApp(home:LoginPage()));
 
 class LoginPage extends StatefulWidget {
   @override
-  _LoginPageState createState() => new _LoginPageState();
+  _LoginPageState createState() =>  _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-
-  //全局key，用来获取form表单组件
+  //全局key
   GlobalKey<FormState> loginKey = new GlobalKey<FormState>();
 
-  TextEditingController _unameController = TextEditingController();
-
-  String userName; //用户名
-  String passWord; //密码
+  String _userName; //用户名
+  String _passWord; //密码
   bool pwdShow = false;//默认不展示密码
   bool _expand = false; //是否展示历史账号
   List<User> _users = new List(); //历史账号
 
+  @override
+  void initState() {
+    super.initState();
+    _gainUsers();
+  }
 
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
+
         appBar: AppBar(
           title: Text('欢迎登录'),
         ),
 
-        body: Column(
+        body: Stack(
           children: <Widget>[
-            new Container(
-              padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 25.0),
-              child: new Form(
-                  key: loginKey,
-                  child: Column(
-                    children: <Widget>[
-                      new Container(
-                          child: Image.asset('images/appIcon.png')
-                      ),
+            Center(
+              child:Container(
+                  padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 25.0),
+                  child:  Flex(direction: Axis.vertical, children: <Widget>[
+                    new Container(
+                        child: Image.asset('images/appIcon.png')
+                    ),
+                    _buildUsername(),
+                    _buildPassword(),
+                    _buildLoginButton(),
+                    _buildAddAccount()
+                    // Container(
+                    //     margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                    //     child: new TextFormField(
+                    //       controller: _unameController, //设置controller
+                    //
+                    //       // initialValue: getText(true),
+                    //
+                    //       decoration: new InputDecoration(
+                    //         labelText: '请输入账号',
+                    //         prefixIcon: Icon(Icons.person),
+                    //       ),
+                    //
+                    //       onChanged: (value) {
+                    //          userName=value  ;
+                    //       },
+                    //
+                    //     ),
+                    // ),
+                    // Container(
+                    //   margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    //   child: new TextFormField(
+                    //
+                    //     // initialValue:getText(false),
+                    //
+                    //     decoration: new InputDecoration(
+                    //         labelText: '请输入密码',
+                    //         prefixIcon: Icon(Icons.lock),
+                    //         suffixIcon: IconButton(
+                    //           icon: Icon(
+                    //               pwdShow ? Icons.visibility_off : Icons.visibility),
+                    //           onPressed: () {
+                    //             setState(() {
+                    //               pwdShow = !pwdShow;
+                    //             }
+                    //             );
+                    //           },
+                    //         )
+                    //     ),
+                    //     obscureText:  pwdShow,
+                    //
+                    //     onChanged: (value){
+                    //       passWord = value;
+                    //     },
+                    //
+                    //   ),
+                    // ),
+                  ],
+                  )
+              ) ,
+            ),
 
-                      _buildUsername(),
-
-                      // Container(
-                      //     margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                      //     child: new TextFormField(
-                      //       controller: _unameController, //设置controller
-                      //
-                      //       // initialValue: getText(true),
-                      //
-                      //       decoration: new InputDecoration(
-                      //         labelText: '请输入账号',
-                      //         prefixIcon: Icon(Icons.person),
-                      //       ),
-                      //
-                      //       onChanged: (value) {
-                      //          userName=value  ;
-                      //       },
-                      //
-                      //     ),
-                      // ),
-                      // Container(
-                      //   margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                      //   child: new TextFormField(
-                      //
-                      //     // initialValue:getText(false),
-                      //
-                      //     decoration: new InputDecoration(
-                      //         labelText: '请输入密码',
-                      //         prefixIcon: Icon(Icons.lock),
-                      //         suffixIcon: IconButton(
-                      //           icon: Icon(
-                      //               pwdShow ? Icons.visibility_off : Icons.visibility),
-                      //           onPressed: () {
-                      //             setState(() {
-                      //               pwdShow = !pwdShow;
-                      //             }
-                      //             );
-                      //           },
-                      //         )
-                      //     ),
-                      //     obscureText:  pwdShow,
-                      //
-                      //     onChanged: (value){
-                      //       passWord = value;
-                      //     },
-                      //
-                      //   ),
-                      // ),
-                    ],
-                  )),
+            Offstage(
+              child: _buildListView(),
+              offstage: !_expand,
             ),
 
             //按钮
-            new Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children:<Widget> [
-                new Container(
-                  margin: EdgeInsets.fromLTRB(0, 0, 15.0, 0),
-                  child: new FlatButton(
-                    onPressed: (){
-                      login();
-                      add();
-                    },
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                      ),
-                    padding: EdgeInsets.fromLTRB(25.0, 15.0, 25.0, 15.0),
-                    child: Text(
-                      '登录',
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.blue,
-                      ),
-                    ),
-                  ),
-                ),
-
-                new Container(
-                  margin: EdgeInsets.fromLTRB(15.0, 0, 0.0, 0),
-                  child: new FlatButton(
-                    onPressed: login,                            //need to change
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                    ),
-                    padding: EdgeInsets.fromLTRB(25.0, 15.0, 25.0, 15.0),
-                    child: Text(
-                      '注册',
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.blue,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            )
+            // new Row(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   children:<Widget> [
+            //     new Container(
+            //       margin: EdgeInsets.fromLTRB(0, 0, 15.0, 0),
+            //       child: new FlatButton(
+            //         onPressed: (){
+            //           SharedPreferenceUtil.saveUser(User(_userName,_passWord));
+            //           SharedPreferenceUtil.addNoRepeat(_users, User(_username, _password));
+            //         },
+            //         shape: RoundedRectangleBorder(
+            //           borderRadius: BorderRadius.all(Radius.circular(30.0)),
+            //           ),
+            //         padding: EdgeInsets.fromLTRB(25.0, 15.0, 25.0, 15.0),
+            //         child: Text(
+            //           '登录',
+            //           style: TextStyle(
+            //             fontSize: 20.0,
+            //             color: Colors.blue,
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //
+            //     new Container(
+            //       margin: EdgeInsets.fromLTRB(15.0, 0, 0.0, 0),
+            //       child: new FlatButton(
+            //         onPressed: login,                            //need to change
+            //         shape: RoundedRectangleBorder(
+            //           borderRadius: BorderRadius.all(Radius.circular(30.0)),
+            //         ),
+            //         padding: EdgeInsets.fromLTRB(25.0, 15.0, 25.0, 15.0),
+            //         child: Text(
+            //           '注册',
+            //           style: TextStyle(
+            //             fontSize: 20.0,
+            //             color: Colors.blue,
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //   ],
+            // )
           ],
         ),
       );
   }
 
 
-  ///构建账号输入框
+  //构建账号输入框
   Widget _buildUsername() {
     return  Container(
         margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
@@ -163,7 +168,7 @@ class _LoginPageState extends State<LoginPage> {
         prefixIcon: Icon(Icons.person),
         suffixIcon: GestureDetector(
           onTap: () {
-            if (_users.length > 1 || _users[0] != User(userName, passWord)) {
+            if (_users.length > 1 || _users[0] != User(_userName, _passWord)) {
               //如果个数大于1个或者唯一一个账号跟当前账号不一样才弹出历史账号
               setState(() {
                 _expand = !_expand;
@@ -183,23 +188,23 @@ class _LoginPageState extends State<LoginPage> {
       ),
       controller: TextEditingController.fromValue(
         TextEditingValue(
-          text: userName,
+          text: _userName,
           selection: TextSelection.fromPosition(
             TextPosition(
               affinity: TextAffinity.downstream,
-              offset: userName == null ? 0 : userName.length,
+              offset: _userName == null ? 0 : _userName.length,
             ),
           ),
         ),
       ),
       onChanged: (value) {
-        userName = value;
+        _userName = value;
       },
       ),
     );
   }
 
-  ///构建密码输入框
+  //构建密码输入框
   Widget _buildPassword() {
     return Container(
       margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -225,23 +230,66 @@ class _LoginPageState extends State<LoginPage> {
         obscureText:  pwdShow,
         controller: TextEditingController.fromValue(
           TextEditingValue(
-            text: passWord,
+            text: _passWord,
             selection: TextSelection.fromPosition(
               TextPosition(
                 affinity: TextAffinity.downstream,
-                offset: passWord == null ? 0 : passWord.length,
+                offset: _passWord == null ? 0 : _passWord.length,
               ),
             ),
           ),
         ),
         onChanged: (value) {
-          passWord = value;
+          _passWord = value;
         },
       ),
     );
   }
 
-
+  //登录按钮
+  Widget _buildLoginButton(){
+    return  Container(
+      margin: EdgeInsets.fromLTRB(0, 0, 15.0, 0),
+      child:  FlatButton(
+      // controller: TextEditingController.fromValue;
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(30.0)),
+        ),
+        padding: EdgeInsets.fromLTRB(25.0, 15.0, 25.0, 15.0),
+        onPressed: (){
+          SharedPreferenceUtil.saveUser(User(_userName,_passWord));
+          SharedPreferenceUtil.addNoRepeat(_users, User(_userName, _passWord));
+        },
+        child: Text(
+          '登录',
+          style: TextStyle(
+            fontSize: 20.0,
+            color: Colors.blue,
+          ),
+        ),
+      ),
+    );
+  }
+ //注册按钮
+  Widget _buildAddAccount(){
+    return  Container(
+      margin: EdgeInsets.fromLTRB(15.0, 0, 0.0, 0),
+      child: new FlatButton(
+        // onPressed:(),                          //need to change
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(30.0)),
+        ),
+        padding: EdgeInsets.fromLTRB(25.0, 15.0, 25.0, 15.0),
+        child: Text(
+          '注册',
+          style: TextStyle(
+            fontSize: 20.0,
+            color: Colors.blue,
+          ),
+        ),
+      ),
+    );
+  }
 
 
 
@@ -284,7 +332,7 @@ class _LoginPageState extends State<LoginPage> {
   List<Widget> _buildItems() {
     List<Widget> list = new List();
     for (int i = 0; i < _users.length; i++) {
-      if (_users[i] != User(userName, passWord)) {
+      if (_users[i] != User(_userName, _passWord)) {
         //增加账号记录
         list.add(_buildItem(_users[i]));
         //增加分割线
@@ -323,11 +371,11 @@ class _LoginPageState extends State<LoginPage> {
               ),
               onTap: () {
                 setState(() {
-                  SharedPreferenceUtil.delUser(user);
                   _users.remove(user);
+                  SharedPreferenceUtil.delUser(user);
                   //处理最后一个数据，假如最后一个被删掉，将Expand置为false
                   if (!(_users.length > 1 ||
-                      _users[0] != User(userName, passWord))) {
+                      _users[0] != User(_userName, _passWord))) {
                     //如果个数大于1个或者唯一一个账号跟当前账号不一样才弹出历史账号
                     _expand = false;
                   }
@@ -339,26 +387,26 @@ class _LoginPageState extends State<LoginPage> {
       ),
       onTap: () {
         setState(() {
-          userName = user.username;
-          passWord = user.password;
+          _userName = user.username;
+          _passWord = user.password;
           _expand = false;
         });
       },
     );
   }
-  //登录
-  void login() {
-    var loginForm = loginKey.currentState; //读取当前Form
-    if (loginForm.validate()) {
-      loginForm.save();
-
-      //提交信息
-      SharedPreferenceUtil.saveUser(User(userName, passWord));
-      SharedPreferenceUtil.addNoRepeat(_users, User(userName,passWord));
-
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>new MyApp()));
-    }
-  }
+  // //登录
+  // void login() {
+  //   var loginForm = loginKey.currentState; //读取当前Form
+  //   if (loginForm.validate()) {
+  //     loginForm.save();
+  //
+  //     //提交信息
+  //     SharedPreferenceUtil.saveUser(User(userName, passWord));
+  //     SharedPreferenceUtil.addNoRepeat(_users, User(userName,passWord));
+  //
+  //     Navigator.push(context, MaterialPageRoute(builder: (context)=>new MyApp()));
+  //   }
+  // }
 
   ///获取历史用户
   void _gainUsers() async {
@@ -366,16 +414,16 @@ class _LoginPageState extends State<LoginPage> {
     _users.addAll(await SharedPreferenceUtil.getUsers());
     //默认加载第一个账号
     if (_users.length > 0) {
-      userName = _users[0].username;
-      passWord = _users[0].password;
+      _userName = _users[0].username;
+      _passWord = _users[0].password;
     }
   }
-  void add() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('userName', userName);
-      prefs.setString('passWord', passWord);
-
-  }
+  // void add() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //     prefs.setString('userName', userName);
+  //     prefs.setString('passWord', passWord);
+  //
+  // }
   // String getText(bool isAccount) async {
   //
   //   if(isAccount){

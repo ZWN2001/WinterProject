@@ -15,7 +15,7 @@ class SharedPreferenceUtil {
     saveUsers(list, sp);
   }
 
-  ///保存账号，如果重复，就将最近登录账号放在第一个
+  //保存账号，如果重复，就将最近登录账号放在第一个
   static void saveUser(User user) async {
     SharedPreferences sp = await SharedPreferences.getInstance();
     List<User> list = await getUsers();
@@ -23,7 +23,7 @@ class SharedPreferenceUtil {
     saveUsers(list, sp);
   }
 
-  ///去重并维持次序
+  //去重并维持次序
   static void addNoRepeat(List<User> users, User user) {
     if (users.contains(user)) {
       users.remove(user);
