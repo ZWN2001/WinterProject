@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:winter/SharedPreference/SharedPreferenceUtil.dart';
-import 'package:winter/SharedPreference/User.dart';
+import 'package:winter/bean/User.dart';
+
+import 'Home.dart';
+import 'bean/User.dart';
 
 void main() => runApp(MaterialApp(home:LoginPage()));
 
@@ -13,8 +16,8 @@ class _LoginPageState extends State<LoginPage> {
   //全局key
   GlobalKey<FormState> loginKey = new GlobalKey<FormState>();
 
-  String _userName; //用户名
-  String _passWord; //密码
+  String _userName=""; //用户名
+  String _passWord=""; //密码
   bool pwdShow = false;//默认不展示密码
   bool _expand = false; //是否展示历史账号
   List<User> _users = new List(); //历史账号
@@ -37,15 +40,21 @@ class _LoginPageState extends State<LoginPage> {
           children: <Widget>[
             Center(
               child:Container(
-                  padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 25.0),
                   child:  Flex(direction: Axis.vertical, children: <Widget>[
                     new Container(
+                        padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 25.0),
                         child: Image.asset('images/appIcon.png')
                     ),
                     _buildUsername(),
                     _buildPassword(),
-                    _buildLoginButton(),
-                    _buildAddAccount()
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildLoginButton(),
+                        _buildAddAccount()
+                      ],
+                    ),
+
                     // Container(
                     //     margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
                     //     child: new TextFormField(
@@ -207,7 +216,7 @@ class _LoginPageState extends State<LoginPage> {
   //构建密码输入框
   Widget _buildPassword() {
     return Container(
-      margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+      margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
       child: TextField(
         decoration: InputDecoration(
           labelText: '请输入密码',
@@ -259,6 +268,7 @@ class _LoginPageState extends State<LoginPage> {
         onPressed: (){
           SharedPreferenceUtil.saveUser(User(_userName,_passWord));
           SharedPreferenceUtil.addNoRepeat(_users, User(_userName, _passWord));
+          Navigator.push(context, MaterialPageRoute(builder: (context)=> MyApp()));
         },
         child: Text(
           '登录',
@@ -293,7 +303,7 @@ class _LoginPageState extends State<LoginPage> {
 
 
 
-  ///构建历史账号ListView
+  //构建历史账号ListView
   Widget _buildListView() {
     if (_expand) {
       List<Widget> children = _buildItems();
@@ -328,7 +338,7 @@ class _LoginPageState extends State<LoginPage> {
     return null;
   }
 
-  ///构建历史记录items
+  //构建历史记录items
   List<Widget> _buildItems() {
     List<Widget> list = new List();
     for (int i = 0; i < _users.length; i++) {
@@ -348,7 +358,7 @@ class _LoginPageState extends State<LoginPage> {
     return list;
   }
 
-  ///构建单个历史记录item
+  //构建单个历史记录item
   Widget _buildItem(User user) {
     return GestureDetector(
       child: Container(
@@ -394,6 +404,20 @@ class _LoginPageState extends State<LoginPage> {
       },
     );
   }
+
+  //获取历史用户
+  void _gainUsers() async {
+    _users.clear();
+    _users.addAll(await SharedPreferenceUtil.getUsers());
+    //默认加载第一个账号
+    if (_users.length > 0) {
+      _userName = _users[0].username;
+      _passWord = _users[0].password;
+    }
+  }
+
+
+
   // //登录
   // void login() {
   //   var loginForm = loginKey.currentState; //读取当前Form
@@ -408,16 +432,6 @@ class _LoginPageState extends State<LoginPage> {
   //   }
   // }
 
-  ///获取历史用户
-  void _gainUsers() async {
-    _users.clear();
-    _users.addAll(await SharedPreferenceUtil.getUsers());
-    //默认加载第一个账号
-    if (_users.length > 0) {
-      _userName = _users[0].username;
-      _passWord = _users[0].password;
-    }
-  }
   // void add() async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
   //     prefs.setString('userName', userName);
