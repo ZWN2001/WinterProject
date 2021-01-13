@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:winter/SharedPreference/SharedPreferenceUtil.dart';
 import 'package:winter/bean/User.dart';
-
-import 'Home.dart';
+import 'BottomNavigation/BottomNavigationBar.dart';
 import 'bean/User.dart';
 
 void main() => runApp(MaterialApp(home:LoginPage()));
 
 class LoginPage extends StatefulWidget {
   @override
-  _LoginPageState createState() =>  _LoginPageState();
+  LoginPageState createState() => LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class LoginPageState extends State<LoginPage> {
   //全局key
   GlobalKey<FormState> loginKey = new GlobalKey<FormState>();
 
-  String _userName=""; //用户名
+  static String userName=""; //用户名
   String _passWord=""; //密码
   bool pwdShow = false;//默认不展示密码
   bool _expand = false; //是否展示历史账号
@@ -54,7 +53,6 @@ class _LoginPageState extends State<LoginPage> {
                         _buildAddAccount()
                       ],
                     ),
-
 
                     // Container(
                     //     margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
@@ -178,7 +176,7 @@ class _LoginPageState extends State<LoginPage> {
         prefixIcon: Icon(Icons.person),
         suffixIcon: GestureDetector(
           onTap: () {
-            if (_users.length > 1 || _users[0] != User(_userName, _passWord)) {
+            if (_users.length > 1 || _users[0] != User(userName, _passWord)) {
               //如果个数大于1个或者唯一一个账号跟当前账号不一样才弹出历史账号
               setState(() {
                 _expand = !_expand;
@@ -198,17 +196,17 @@ class _LoginPageState extends State<LoginPage> {
       ),
       controller: TextEditingController.fromValue(
         TextEditingValue(
-          text: _userName,
+          text: userName,
           selection: TextSelection.fromPosition(
             TextPosition(
               affinity: TextAffinity.downstream,
-              offset: _userName == null ? 0 : _userName.length,
+              offset: userName == null ? 0 : userName.length,
             ),
           ),
         ),
       ),
       onChanged: (value) {
-        _userName = value;
+        userName = value;
       },
       ),
     );
@@ -267,8 +265,8 @@ class _LoginPageState extends State<LoginPage> {
         ),
         padding: EdgeInsets.fromLTRB(25.0, 15.0, 25.0, 15.0),
         onPressed: (){
-          SharedPreferenceUtil.saveUser(User(_userName,_passWord));
-          SharedPreferenceUtil.addNoRepeat(_users, User(_userName, _passWord));
+          SharedPreferenceUtil.saveUser(User(userName,_passWord));
+          SharedPreferenceUtil.addNoRepeat(_users, User(userName, _passWord));
           Navigator.push(context, MaterialPageRoute(builder: (context)=> MyApp()));
         },
         child: Text(
@@ -343,7 +341,7 @@ class _LoginPageState extends State<LoginPage> {
   List<Widget> _buildItems() {
     List<Widget> list = new List();
     for (int i = 0; i < _users.length; i++) {
-      if (_users[i] != User(_userName, _passWord)) {
+      if (_users[i] != User(userName, _passWord)) {
         //增加账号记录
         list.add(_buildItem(_users[i]));
         //增加分割线
@@ -386,7 +384,7 @@ class _LoginPageState extends State<LoginPage> {
                   SharedPreferenceUtil.delUser(user);
                   //处理最后一个数据，假如最后一个被删掉，将Expand置为false
                   if (!(_users.length > 1 ||
-                      _users[0] != User(_userName, _passWord))) {
+                      _users[0] != User(userName, _passWord))) {
                     //如果个数大于1个或者唯一一个账号跟当前账号不一样才弹出历史账号
                     _expand = false;
                   }
@@ -398,7 +396,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
       onTap: () {
         setState(() {
-          _userName = user.username;
+          userName = user.username;
           _passWord = user.password;
           _expand = false;
         });
@@ -412,7 +410,7 @@ class _LoginPageState extends State<LoginPage> {
     _users.addAll(await SharedPreferenceUtil.getUsers());
     //默认加载第一个账号
     if (_users.length > 0) {
-      _userName = _users[0].username;
+      userName = _users[0].username;
       _passWord = _users[0].password;
     }
   }
