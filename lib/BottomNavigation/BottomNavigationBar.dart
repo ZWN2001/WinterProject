@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../Mine.dart';
+
+
 // void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -22,7 +25,10 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0; //默认选中的界面索引
-  final _widgetOptions = [Text('Index 0:主界面'), Text('Index 1:我的')];
+  final _widgetOptions = [
+    Text('Index 0:主界面'),
+     Mine(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +48,17 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+  
+  //架构“我的”页面
+    Widget buildMine(){
+    return Scaffold(
+    body:Column(
+    children: [
+
+    ],
+    ) ,
+    );
+    }
 
   void _onTapped(int index) {
     setState(() {
