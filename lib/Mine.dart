@@ -27,113 +27,42 @@ class Mine extends StatelessWidget{
                         ),
                       )
                   ),
-
                           Container(
                             margin: EdgeInsets.fromLTRB(0, 0, 0, 4),
                             child:   SizedBox(
                               width: 365,
                               height: 60,
-                              child:RaisedButton.icon(
-                                padding: EdgeInsets.fromLTRB(0, 4, 0, 4),
-                                label: Text(
-                                  '个人信息',
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 20
-                                  ),
-                                ),
+                              child: RaisedButton(
                                 color: Colors.white,
-                                icon: Icon(Icons.settings,color: Colors.lightBlueAccent),
-                                onPressed:(){ print('pressed');},
-                              ),
-                            ),
-                          ),
-
-                  Container(
-                      child: Column(
-                        children: [
-
-                          Container(
-                            margin: EdgeInsets.fromLTRB(0, 0, 0, 4),
-                            child:   SizedBox(
-                              width: 365,
-                              height: 60,
-                              child:RaisedButton.icon(
-                                padding: EdgeInsets.fromLTRB(0, 4, 0, 4),
-                                label: Text(
-                                  '我的发布',
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 20
-                                  ),
-                                ),
-                                color: Colors.white,
-                                icon: Icon(Icons.assignment_rounded
-                                    ,color: Colors.lightBlueAccent),
-                                onPressed:(){ print('pressed');},
-                              ),
-                            ),
-                          ),
-
-                          Container(
-                            margin: EdgeInsets.fromLTRB(0, 4, 0, 4),
-                            child:  SizedBox(
-                              width: 365,
-                              height: 60,
-                              child:RaisedButton.icon(
-                                padding: EdgeInsets.fromLTRB(0, 4, 0, 4),
-                                label: Text(
-                                  '账号安全',
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 20
-                                  ),
-                                ),
-                                color: Colors.white,
-                                icon: Icon(Icons.admin_panel_settings,color: Colors.lightBlueAccent),
-                                onPressed:(){Navigator.push(context, MaterialPageRoute(builder: (context)=>SetAccountInfo()));},
-                              ),
-                            ) ,
-                          ),
-
-                          Container(
-                            margin: EdgeInsets.fromLTRB(0, 4, 0, 4),
-                            child:SizedBox(
-                              width: 365,
-                              height: 60,
-                              child:RaisedButton.icon(
-                                padding: EdgeInsets.fromLTRB(0, 4, 0, 4),
-                                label: Text(
-                                  '我的卡包',
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 20
-                                  ),
-                                ),
-                                color: Colors.white,
-                                icon: Icon(Icons.account_balance_wallet,color: Colors.lightBlueAccent),
-                                onPressed:(){ print('pressed');},
-                              ),
-                            ),
-                          ),
-
-                          Container(
-                            margin: EdgeInsets.fromLTRB(0, 4, 0, 4),
-                            child:  SizedBox(
-                              width: 365,
-                              height: 60,
-                              child:RaisedButton.icon(
-                                  padding: EdgeInsets.fromLTRB(0, 4, 0, 4),
-                                  label: Text(
-                                    '主题切换',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 20
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child:Align(
+                                        alignment: AlignmentDirectional.centerStart,
+                                        child:Icon( Icons.settings,color: Colors.lightBlueAccent),
+                                      ) ,
                                     ),
-                                  ),
-                                  color: Colors.white,
-                                  icon: Icon(Icons.autorenew,color: Colors.lightBlueAccent),
-                                  onPressed:(){}
+                                    Expanded(
+                                      child:Align(
+                                        alignment: AlignmentDirectional.center,
+                                        child:Text(
+                                          '个人信息',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 20
+                                          ),
+                                        ) ,
+                                      ) ,
+                                    ),
+                                    Expanded(
+                                      child:Align(
+                                          alignment: AlignmentDirectional.centerEnd,
+                                          child:Icon(Icons.arrow_forward_ios_sharp)
+                                      ) ,
+                                    ),
+                                  ],
+                                ),
+                                onPressed: (){},
                               ),
                             ),
                           ),
@@ -143,28 +72,242 @@ class Mine extends StatelessWidget{
                             child:   SizedBox(
                               width: 365,
                               height: 60,
-                              child:RaisedButton.icon(
-                                padding: EdgeInsets.fromLTRB(0, 4, 0, 4),
-                                label: Text(
-                                  '版本更新',
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 20
-                                  ),
-                                ),
+                              child: RaisedButton(
                                 color: Colors.white,
-                                icon: Icon(Icons.update,color: Colors.lightBlueAccent),
-                                onPressed:(){ print('pressed');},
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child:Align(
+                                        alignment: AlignmentDirectional.centerStart,
+                                        child:Icon( Icons.assignment_rounded,color: Colors.lightBlueAccent),
+                                      ) ,
+                                    ),
+                                    Expanded(
+                                      child:Align(
+                                        alignment: AlignmentDirectional.center,
+                                        child:Text(
+                                          '我的发布',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 20
+                                          ),
+                                        ) ,
+                                      ) ,
+                                    ),
+                                    Expanded(
+                                      child:Align(
+                                          alignment: AlignmentDirectional.centerEnd,
+                                          child:Icon(Icons.arrow_forward_ios_sharp)
+                                      ) ,
+                                    ),
+                                  ],
+                                ),
+                                onPressed: (){},
                               ),
                             ),
                           ),
 
+                          Container(
+                            margin: EdgeInsets.fromLTRB(0, 0, 0, 4),
+                            child:   SizedBox(
+                              width: 365,
+                              height: 60,
+                              child: RaisedButton(
+                                color: Colors.white,
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child:Align(
+                                        alignment: AlignmentDirectional.centerStart,
+                                        child:Icon( Icons.admin_panel_settings,color: Colors.lightBlueAccent),
+                                      ) ,
+                                    ),
+                                    Expanded(
+                                      child:Align(
+                                        alignment: AlignmentDirectional.center,
+                                        child:Text(
+                                          '账号设置',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 20
+                                          ),
+                                        ) ,
+                                      ) ,
+                                    ),
+                                    Expanded(
+                                      child:Align(
+                                          alignment: AlignmentDirectional.centerEnd,
+                                          child:Icon(Icons.arrow_forward_ios_sharp)
+                                      ) ,
+                                    ),
+                                  ],
+                                ),
+                                onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>SetAccountInfo()));},
+                              ),
+                            ),
+                          ),
+
+                          Container(
+                            margin: EdgeInsets.fromLTRB(0, 0, 0, 4),
+                            child:   SizedBox(
+                              width: 365,
+                              height: 60,
+                              child: RaisedButton(
+                                color: Colors.white,
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child:Align(
+                                        alignment: AlignmentDirectional.centerStart,
+                                        child:Icon( Icons.account_balance_wallet,color: Colors.lightBlueAccent),
+                                      ) ,
+                                    ),
+                                    Expanded(
+                                      child:Align(
+                                        alignment: AlignmentDirectional.center,
+                                        child:Text(
+                                          '我的卡包',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 20
+                                          ),
+                                        ) ,
+                                      ) ,
+                                    ),
+                                    Expanded(
+                                      child:Align(
+                                          alignment: AlignmentDirectional.centerEnd,
+                                          child:Icon(Icons.arrow_forward_ios_sharp)
+                                      ) ,
+                                    ),
+                                  ],
+                                ),
+                                onPressed: (){},
+                              ),
+                            ),
+                          ),
+
+                          Container(
+                            margin: EdgeInsets.fromLTRB(0, 0, 0, 4),
+                            child:   SizedBox(
+                              width: 365,
+                              height: 60,
+                              child: RaisedButton(
+                                color: Colors.white,
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child:Align(
+                                        alignment: AlignmentDirectional.centerStart,
+                                        child:Icon( Icons.autorenew,color: Colors.lightBlueAccent),
+                                      ) ,
+                                    ),
+                                    Expanded(
+                                      child:Align(
+                                        alignment: AlignmentDirectional.center,
+                                        child:Text(
+                                          '主题切换',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 20
+                                          ),
+                                        ) ,
+                                      ) ,
+                                    ),
+                                    Expanded(
+                                      child:Align(
+                                          alignment: AlignmentDirectional.centerEnd,
+                                          child:Icon(Icons.arrow_forward_ios_sharp)
+                                      ) ,
+                                    ),
+                                  ],
+                                ),
+                                onPressed: (){},
+                              ),
+                            ),
+                          ),
+
+                          Container(
+                            margin: EdgeInsets.fromLTRB(0, 0, 0, 4),
+                            child:   SizedBox(
+                              width: 365,
+                              height: 60,
+                              child: RaisedButton(
+                                color: Colors.white,
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child:Align(
+                                        alignment: AlignmentDirectional.centerStart,
+                                        child:Icon( Icons.update,color: Colors.lightBlueAccent),
+                                      ) ,
+                                    ),
+                                    Expanded(
+                                      child:Align(
+                                        alignment: AlignmentDirectional.center,
+                                        child:Text(
+                                          '版本更新',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 20
+                                          ),
+                                        ) ,
+                                      ) ,
+                                    ),
+                                    Expanded(
+                                      child:Align(
+                                          alignment: AlignmentDirectional.centerEnd,
+                                          child:Icon(Icons.arrow_forward_ios_sharp)
+                                      ) ,
+                                    ),
+                                  ],
+                                ),
+                                onPressed: (){},
+                              ),
+                            ),
+                          ),
+
+                          Container(
+                            margin: EdgeInsets.fromLTRB(0, 0, 0, 4),
+                            child:   SizedBox(
+                              width: 365,
+                              height: 60,
+                              child: RaisedButton(
+                                color: Colors.white,
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child:Align(
+                                        alignment: AlignmentDirectional.centerStart,
+                                        child:Icon( Icons.all_inclusive,color: Colors.lightBlueAccent),
+                                      ) ,
+                                  ),
+                                    Expanded(
+                                      child:Align(
+                                          alignment: AlignmentDirectional.center,
+                                          child:Text('我要反馈',
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 20
+                                            ),
+                                          ) ,
+                                      ) ,
+                                    ),
+                                    Expanded(
+                                      child:Align(
+                                          alignment: AlignmentDirectional.centerEnd,
+                                          child:Icon(Icons.arrow_forward_ios_sharp)
+                                      ) ,
+                                    ),
+                                  ],
+                                ),
+                                onPressed: (){},
+                              ),
+                            ),
+                          ),
                         ],
                       )
                   ),
-                ],
-              ),
-            ),
-          );
+              );
   }
 }

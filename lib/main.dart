@@ -17,7 +17,7 @@ class LoginPageState extends State<LoginPage> {
 
   static String userName=""; //用户名
   String _passWord=""; //密码
-  bool pwdShow = false;//默认不展示密码
+  bool pwdShow = true;//默认不展示密码
   bool _expand = false; //是否展示历史账号
   List<User> _users = new List(); //历史账号
 
