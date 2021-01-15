@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'dart:io';
+import 'package:toast/toast.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -29,6 +32,7 @@ class _RegisterPageState extends State<RegisterPage> {
   String _userName = "";//用户名
   String _password1 = "";//密码
   String _password2 = "";//确认密码
+  int _backCode;
   bool pwdShow = true;// 默认不显示密码
 
   final _password1Controller = TextEditingController();
@@ -97,7 +101,6 @@ class _RegisterPageState extends State<RegisterPage> {
     return Container(
       margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: TextFormField(
-        key: nameKey,
         decoration: InputDecoration(
           labelText: "创建您的账号",
           border: OutlineInputBorder(borderSide: BorderSide()),
@@ -105,11 +108,15 @@ class _RegisterPageState extends State<RegisterPage> {
           filled: true,
           prefixIcon: Icon(Icons.person),
         ),
+        key: nameKey,
         validator: (value) {
           if (value.isEmpty) {
             return "用户名不可为空";
           }
           return null;
+        },
+        onChanged: (value) {
+          _userName = value;
         },
       ),
     );
@@ -119,16 +126,6 @@ class _RegisterPageState extends State<RegisterPage> {
     return Container(
       margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: TextFormField(
-        key: pass1Key,
-        validator: (value) {
-          if (value.isEmpty) {
-            return "密码不可为空";
-          }
-          return null;
-        },
-        onChanged: (value) {
-          _password1 = value;
-        },
         decoration: InputDecoration(
           labelText: "请输入密码",
           border: OutlineInputBorder(borderSide: BorderSide()),
@@ -150,6 +147,16 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
         obscureText: pwdShow,
         controller: _password1Controller,
+        key: pass1Key,
+        validator: (value) {
+          if (value.isEmpty) {
+            return "密码不可为空";
+          }
+          return null;
+        },
+        onChanged: (value) {
+          _password1 = value;
+        },
       ),
     );
   }
@@ -195,6 +202,27 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
+  _getFeedBack() async
+  {
+    var url = 'http://106.15.192.117:8080/shop/register?userName='+_userName+'&password='+_password2;
+    var httpClient = new HttpClient();
+
+    int result;
+    var request = await httpClient.getUrl(Uri.parse(url));
+    var response = await request.close();
+    if (response.statusCode == HttpStatus.OK) {
+      var json = await response.transform(utf8.decoder).join();
+      var data = jsonDecode(json);
+       result = data['code'];
+    }else {
+       print("Error") ;
+    }
+    if (!mounted) return;
+    setState(() {
+      _backCode = result;
+    });
+  }
+
   Widget _returnButton() {
     return Container(
       margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
@@ -211,9 +239,14 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
         onPressed: (){
           if (nameKey.currentState.validate() && pass1Key.currentState.validate() && pass2Key.currentState.validate()){
-            Navigator.pop(context);
+            _getFeedBack();
+            if (_backCode == 0) {
+              Toast.show("注册成功", context,duration: Toast.LENGTH_LONG,gravity: Toast.BOTTOM);
+              Navigator.pop(context);
+            }else if (_backCode == 1) {
+              Toast.show("用户名已存在，起名真难", context,duration: Toast.LENGTH_SHORT,gravity: Toast.BOTTOM);
+            }
           }
-
         },
       ),
     );
