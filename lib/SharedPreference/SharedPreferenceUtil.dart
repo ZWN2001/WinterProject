@@ -1,4 +1,4 @@
-import 'package:winter/bean/User.dart';
+import 'package:winter/AdapterAndHelper/User.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 ///数据库相关的工具
@@ -33,8 +33,8 @@ class SharedPreferenceUtil {
 
   ///获取已经登录的账号列表
   static Future<List<User>> getUsers() async {
-    List<User> list = new List();
     SharedPreferences sp = await SharedPreferences.getInstance();
+    List<User> list =List();
     int num = sp.getInt(ACCOUNT_NUMBER) ?? 0;
     for (int i = 0; i < num; i++) {
       String username = sp.getString("$USERNAME$i");
@@ -46,7 +46,7 @@ class SharedPreferenceUtil {
 
   ///保存账号列表
   static saveUsers(List<User> users, SharedPreferences sp){
-    sp.clear();
+    // sp.clear();
     int size = users.length;
     for (int i = 0; i < size; i++) {
       sp.setString("$USERNAME$i", users[i].username);
