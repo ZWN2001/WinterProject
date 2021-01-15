@@ -183,8 +183,7 @@ class LoginPageState extends State<LoginPage> {
               });
             }
           },
-          child: _expand
-              ? Icon(
+          child: _expand ? Icon(
             Icons.arrow_drop_up,
             color: Colors.red,
           )
@@ -415,34 +414,4 @@ class LoginPageState extends State<LoginPage> {
     }
   }
 
-
-
-  // //登录
-  // void login() {
-  //   var loginForm = loginKey.currentState; //读取当前Form
-  //   if (loginForm.validate()) {
-  //     loginForm.save();
-  //
-  //     //提交信息
-  //     SharedPreferenceUtil.saveUser(User(userName, passWord));
-  //     SharedPreferenceUtil.addNoRepeat(_users, User(userName,passWord));
-  //
-  //     Navigator.push(context, MaterialPageRoute(builder: (context)=>new MyApp()));
-  //   }
-  // }
-
-  // void add() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //     prefs.setString('userName', userName);
-  //     prefs.setString('passWord', passWord);
-  //
-  // }
-  // String getText(bool isAccount) async {
-  //
-  //   if(isAccount){
-  //     return prefs.getString('userName');
-  //   }else{
-  //     return prefs.getString('passWord');
-  //   }
-  // }
 }

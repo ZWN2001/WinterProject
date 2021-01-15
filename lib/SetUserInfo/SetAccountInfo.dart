@@ -1,8 +1,11 @@
+
 import 'package:flutter/material.dart';
+import 'package:winter/BottomNavigation/BottomNavigationBar.dart';
 import 'package:winter/SetUserInfo/ChangeUserName.dart';
 import 'package:winter/SetUserInfo/ChangeUserPassword.dart';
+import '../Main.dart';
 
-import '../Mine.dart';
+
 class SetAccountInfo extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
@@ -11,9 +14,9 @@ class SetAccountInfo extends StatelessWidget{
         appBar: AppBar(
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios_rounded,color: Colors.white),
-            onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>BottomNavigationBar()));},
+            onPressed: (){Navigator.pop(context, MaterialPageRoute(builder: (context)=>MyHomePage()));},
           ),
-          title: Text('账号信息设置'),
+          title: Text('账号设置'),
         ),
         body: Column(
           children: [
@@ -55,6 +58,25 @@ class SetAccountInfo extends StatelessWidget{
               ),
             ),
 
+            Container(
+              margin: EdgeInsets.fromLTRB(20, 12,20, 0),
+              child: SizedBox(
+                width: 420,
+                height: 80,
+                child: RaisedButton(
+                  color: Colors.white,
+                  child: Text(
+                    '退出登录',
+                    style:TextStyle(
+                        fontSize: 25,
+                        color: Colors.black
+                    ) ,
+                  ),
+                  onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginPage()));},
+                ),
+              ),
+            ),
+
             Expanded(
                 child: Container(
                   margin: EdgeInsets.fromLTRB(0, 0, 0, 90),
@@ -79,5 +101,4 @@ class SetAccountInfo extends StatelessWidget{
       ),
     );
   }
-
 }

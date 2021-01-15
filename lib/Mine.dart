@@ -142,7 +142,9 @@ class Mine extends StatelessWidget{
                                     ),
                                   ],
                                 ),
-                                onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>SetAccountInfo()));},
+                                onPressed: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>SetAccountInfo()));
+                                  },
                               ),
                             ),
                           ),
