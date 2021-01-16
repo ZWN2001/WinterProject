@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:winter/AdapterAndHelper/myHttpClient.dart';
 import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';
 import 'package:winter/AdapterAndHelper/user.dart';
+import 'package:winter/register.dart';
 import 'BottomNavigation/bottomNavigationBar.dart';
 import 'AdapterAndHelper/user.dart';
 
@@ -180,7 +181,7 @@ class LoginPageState extends State<LoginPage> {
           // if(myHttpClient.data==)
           //
           SharedPreferenceUtil.saveUser(User(userName,_passWord));
-          Navigator.push(context, MaterialPageRoute(builder: (context)=> MyApp(),maintainState: false));
+          Navigator.push(context, MaterialPageRoute(builder: (context)=> bottomNavigationBar(),maintainState: false));
           
           
           
@@ -200,7 +201,9 @@ class LoginPageState extends State<LoginPage> {
     return  Container(
       margin: EdgeInsets.fromLTRB(15.0, 0, 0.0, 0),
       child: new FlatButton(
-        // onPressed:(),                          //need to change
+        onPressed:(){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=> Register(),maintainState: false));
+        },                          //need to change
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(30.0)),
         ),
