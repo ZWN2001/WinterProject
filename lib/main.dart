@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:winter/SharedPreference/SharedPreferenceUtil.dart';
-import 'package:winter/AdapterAndHelper/User.dart';
-import 'BottomNavigation/BottomNavigationBar.dart';
-import 'AdapterAndHelper/User.dart';
+import 'package:winter/AdapterAndHelper/myHttpClient.dart';
+import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';
+import 'package:winter/AdapterAndHelper/user.dart';
+import 'BottomNavigation/bottomNavigationBar.dart';
+import 'AdapterAndHelper/user.dart';
 
 void main() => runApp(MaterialApp(home:LoginPage()));
 
@@ -12,6 +13,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class LoginPageState extends State<LoginPage> {
+  MyHttpClient myHttpClient=MyHttpClient();
   GlobalKey<FormState> loginKey = new GlobalKey<FormState>();//全局key
   static String userName=""; //用户名
   String _passWord=""; //密码
@@ -24,6 +26,7 @@ class LoginPageState extends State<LoginPage> {
     super.initState();
     _gainUsers();
   }
+
   //获取历史用户
   void _gainUsers() async {
     _users.clear();
@@ -173,8 +176,14 @@ class LoginPageState extends State<LoginPage> {
         ),
         padding: EdgeInsets.fromLTRB(25.0, 15.0, 25.0, 15.0),
         onPressed: (){
+          // myHttpClient.sendHttpRequest('http://106.15.192.117:8080/shop/login?userName='+userName+'?password='+_passWord);
+          // if(myHttpClient.data==)
+          //
           SharedPreferenceUtil.saveUser(User(userName,_passWord));
           Navigator.push(context, MaterialPageRoute(builder: (context)=> MyApp(),maintainState: false));
+          
+          
+          
         },
         child: Text(
           '登录',

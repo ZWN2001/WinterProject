@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 class MyHttpClient {
-  String _data=" ";
+  String data=" ";
    Future<void> sendHttpRequest(final String address) async {
     //创建一个HttpClient
     HttpClient httpClient = new HttpClient();
@@ -16,7 +16,7 @@ class MyHttpClient {
     //等待连接服务器（会将请求信息发送给服务器）
     HttpClientResponse response = await request.close();
     //读取响应内容
-    _data = await response.transform(utf8.decoder).join();
+    data = await response.transform(utf8.decoder).join();
     //输出响应头
     print(response.headers);
     //关闭client后，通过该client发起的所有请求都会中止。

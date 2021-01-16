@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:winter/SetUserInfo/ChangeUserName.dart';
-import 'package:winter/SetUserInfo/ChangeUserPassword.dart';
+import 'package:winter/SetUserInfo/changeUserName.dart';
+import 'package:winter/SetUserInfo/changeUserPassword.dart';
 import '../Main.dart';
 
 class SetAccountInfo extends StatelessWidget {
@@ -74,7 +74,7 @@ class SetAccountInfo extends StatelessWidget {
                     showDialog<Null>(
                       context: context,
                       barrierDismissible: false,
-                      builder: (BuildContext context) {
+                      builder: (BuildContext logoutContext) {
                         return AlertDialog(
                           content: SingleChildScrollView(
                             child: ListBody(
@@ -88,13 +88,13 @@ class SetAccountInfo extends StatelessWidget {
                             FlatButton(
                               child: Text('取消'),
                               onPressed: () {
-                                Navigator.of(context).pop();
+                                Navigator.of(logoutContext).pop();
                               },
                             ),
                             FlatButton(
                               child: Text('确定'),
                               onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(builder:(context)=>LoginPage()));
+                                Navigator.push(logoutContext, MaterialPageRoute(builder:(context)=>LoginPage()));
                               },
                             ),
                           ],

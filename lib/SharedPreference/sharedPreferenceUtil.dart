@@ -1,4 +1,4 @@
-import 'package:winter/AdapterAndHelper/User.dart';
+import 'package:winter/AdapterAndHelper/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 ///数据库相关的工具
