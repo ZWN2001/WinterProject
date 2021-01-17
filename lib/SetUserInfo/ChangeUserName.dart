@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:winter/SetUserInfo/setAccountInfo.dart';
+import 'package:winter/SetUserInfo/SetAccountInfo.dart';
 
 class ChangeUserName extends StatelessWidget {
 
