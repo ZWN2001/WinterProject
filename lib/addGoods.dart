@@ -23,7 +23,7 @@ class AddGoods extends StatelessWidget {
 class AddGoodsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return ListView(
       children: [
         Container(
             margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
@@ -42,6 +42,22 @@ class AddGoodsPage extends StatelessWidget {
         ),
 
         Container(
+            margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+            child: TextFormField(
+              style: TextStyle(
+                  fontSize: 20
+              ),
+              decoration: InputDecoration(
+                labelText: '商品价格',
+                border: OutlineInputBorder(borderSide: BorderSide()),
+                fillColor: Colors.white,
+                filled: true,
+                contentPadding: EdgeInsets.all(8),
+              ),
+            )
+        ),
+
+        Container(
           margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
           child: Align(
             alignment: AlignmentDirectional.topStart,
@@ -54,7 +70,7 @@ class AddGoodsPage extends StatelessWidget {
           ),
         ),
 
-
+         //商品简介(自动换行):
         Container(
           margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
             child: TextField(
@@ -67,7 +83,9 @@ class AddGoodsPage extends StatelessWidget {
                 contentPadding: EdgeInsets.all(8),
               ),
             ),
-        )
+        ),
+
+
       ],
     );
   }
