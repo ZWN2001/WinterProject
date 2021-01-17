@@ -1,5 +1,6 @@
-import 'package:winter/AdapterAndHelper/User.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
+import '../AdapterAndHelper/user.dart';
 
 ///数据库相关的工具
 class SharedPreferenceUtil {
