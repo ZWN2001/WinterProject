@@ -23,7 +23,7 @@ class LoginPageState extends State<LoginPage> {
   String _passWord=""; //密码
   bool pwdShow = true;//默认不展示密码
   bool _expand = false; //是否展示历史账号
-  List<User> _users = new List(); //历史账号
+  List<User> _users = List(); //历史账号
 
   @override
   void initState() {
@@ -34,6 +34,7 @@ class LoginPageState extends State<LoginPage> {
   //获取历史用户
   void _gainUsers() async {
     _users.clear();
+    _users.addAll(await SharedPreferenceUtil.getUsers());
     //默认加载第一个账号
     if (_users.length > 0) {
       userName = _users[0].username;
@@ -101,7 +102,7 @@ class LoginPageState extends State<LoginPage> {
               });
             }
           },
-            child:_expand==true?Icon(
+            child:_expand?Icon(
               Icons.arrow_drop_up,
               color: Colors.black,
             ):Icon(
@@ -193,10 +194,11 @@ class LoginPageState extends State<LoginPage> {
         ),
         padding: EdgeInsets.fromLTRB(25.0, 15.0, 25.0, 15.0),
         onPressed: (){
-          if(pwdKey.currentState.validate()&&userNameKey.currentState.validate()) {
+          if(userNameKey.currentState.validate()&&pwdKey.currentState.validate()) {
             // myHttpClient.sendHttpRequest('http://106.15.192.117:8080/shop/login?userName='+userName+'?password='+_passWord);
             // if(myHttpClient.data==)
             //
+            print(userName);
             SharedPreferenceUtil.saveUser(User(userName, _passWord));
             Navigator.push(context, MaterialPageRoute(builder: (context) => bottomNavigationBar(), maintainState: false));
           }
@@ -273,22 +275,22 @@ class LoginPageState extends State<LoginPage> {
 
   //构建历史记录items
   List<Widget> _buildItems() {
-    List<Widget> list = new List();
+    List<Widget> list2 =  List();
     for (int i = 0; i < _users.length; i++) {
       if (_users[i] != User(userName, _passWord)) {
         //增加账号记录
-        list.add(_buildItem(_users[i]));
+        list2.add(_buildItem(_users[i]));
         //增加分割线
-        list.add(Divider(
+        list2.add(Divider(
           color: Colors.grey,
-          height: 2,
+          height: 1,
         ));
       }
     }
-    if (list.length > 0) {
-      list.removeLast(); //删掉最后一个分割线
+    if (list2.length > 0) {
+      list2.removeLast(); //删掉最后一个分割线
     }
-    return list;
+    return list2;
   }
 
   //构建单个历史记录item

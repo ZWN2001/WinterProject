@@ -14,6 +14,7 @@ class SharedPreferenceUtil {
     List<User> list = await getUsers();
     list.remove(user);
     saveUsers(list, sp);
+    print('removed');
   }
 
   //保存账号，如果重复，就将最近登录账号放在第一个
@@ -22,6 +23,7 @@ class SharedPreferenceUtil {
     List<User> list = await getUsers();
     addNoRepeat(list, user);
     saveUsers(list, sp);
+    print('saved');
   }
 
   //去重并维持次序

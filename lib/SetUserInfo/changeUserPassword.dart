@@ -60,7 +60,7 @@ class ChangeUserPasswordPage extends StatelessWidget {
                     borderRadius: BorderRadius.all(Radius.circular(20.0)),
                   ),
                   child: Text(
-                    'submit',
+                    '提交',
                     style:
                         TextStyle(fontSize: 25, color: Colors.lightBlueAccent),
                   ),
