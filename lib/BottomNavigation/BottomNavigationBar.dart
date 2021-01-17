@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../Mine.dart';
+import '../tradeInfo.dart';
 
 // void main() => runApp(MyApp());
 
@@ -24,7 +25,7 @@ class MyHomePage extends StatefulWidget {
 class MyHomePageState extends State<MyHomePage> {
   int selectedIndex = 0; //默认选中的界面索引
   final widgetOptions = [
-    Text('Index 0:主界面'),
+    TradeInfo(),
     Mine(),
   ];
   @override
@@ -43,6 +44,12 @@ class MyHomePageState extends State<MyHomePage> {
         fixedColor: Colors.blue,
         onTap: onTapped,
       ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+       /* onPressed: (){
+        },*/
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
