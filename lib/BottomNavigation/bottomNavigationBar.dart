@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../Mine.dart';
+import '../mine.dart';
 import '../tradeInfo.dart';
 
 // void main() => runApp(MyApp());
@@ -45,6 +45,7 @@ class MyHomePageState extends State<MyHomePage> {
         onTap: onTapped,
       ),
       floatingActionButton: FloatingActionButton(
+        // ignore: missing_required_param
         child: Icon(Icons.add),
        /* onPressed: (){
         },*/
