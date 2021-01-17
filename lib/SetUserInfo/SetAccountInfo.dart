@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:winter/SetUserInfo/ChangeUserName.dart';
-import 'package:winter/SetUserInfo/ChangeUserPassword.dart';
+import 'package:winter/SetUserInfo/changeUserName.dart';
+import 'package:winter/SetUserInfo/changeUserPassword.dart';
 import '../Main.dart';
 
 class SetAccountInfo extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext buildContext) {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.of(buildContext).pop();
             },
           ),
           title: Text('账号设置'),
@@ -32,7 +32,7 @@ class SetAccountInfo extends StatelessWidget {
                   ),
                   onPressed: () {
                     Navigator.push(
-                        context,
+                        buildContext,
                         MaterialPageRoute(
                             builder: (context) => ChangeUserName()));
                   },
@@ -52,9 +52,9 @@ class SetAccountInfo extends StatelessWidget {
                   ),
                   onPressed: () {
                     Navigator.push(
-                        context,
+                        buildContext,
                         MaterialPageRoute(
-                            builder: (context) => ChangeUserPassword()));
+                            builder: (buildContext) => ChangeUserPassword()));
                   },
                 ),
               ),
@@ -72,9 +72,9 @@ class SetAccountInfo extends StatelessWidget {
                   ),
                   onPressed: () {
                     showDialog<Null>(
-                      context: context,
+                      context: buildContext,
                       barrierDismissible: false,
-                      builder: (BuildContext context) {
+                      builder: (BuildContext logoutContext) {
                         return AlertDialog(
                           content: SingleChildScrollView(
                             child: ListBody(
@@ -88,13 +88,13 @@ class SetAccountInfo extends StatelessWidget {
                             FlatButton(
                               child: Text('取消'),
                               onPressed: () {
-                                Navigator.of(context).pop();
+                                Navigator.of(logoutContext).pop();
                               },
                             ),
                             FlatButton(
                               child: Text('确定'),
                               onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(builder:(context)=>LoginPage()));
+                                Navigator.push(logoutContext, MaterialPageRoute(builder:(buildContext)=>LoginPage()));
                               },
                             ),
                           ],

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:winter/SharedPreference/SharedPreferenceUtil.dart';
-import 'package:winter/AdapterAndHelper/User.dart';
-import 'BottomNavigation/BottomNavigationBar.dart';
-import 'AdapterAndHelper/User.dart';
+import 'package:winter/AdapterAndHelper/myHttpClient.dart';
+import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';
+import 'package:winter/AdapterAndHelper/user.dart';
+import 'package:winter/register.dart';
+import 'BottomNavigation/bottomNavigationBar.dart';
+import 'AdapterAndHelper/user.dart';
 
 void main() => runApp(MaterialApp(home:LoginPage()));
 
@@ -12,7 +14,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class LoginPageState extends State<LoginPage> {
+  MyHttpClient myHttpClient=MyHttpClient();
   GlobalKey<FormState> loginKey = new GlobalKey<FormState>();//全局key
+  var userNameKey=GlobalKey<FormFieldState>();
+  var pwdKey=GlobalKey<FormFieldState>();
   static String userName=""; //用户名
   String _passWord=""; //密码
   bool pwdShow = true;//默认不展示密码
@@ -24,6 +29,7 @@ class LoginPageState extends State<LoginPage> {
     super.initState();
     _gainUsers();
   }
+
   //获取历史用户
   void _gainUsers() async {
     _users.clear();
@@ -77,11 +83,10 @@ class LoginPageState extends State<LoginPage> {
   Widget _buildUsername() {
     return  Container(
         margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-      child:
-      TextField(
-      key: loginKey,
+      child: TextFormField(
+      key: userNameKey,
       decoration: InputDecoration(
-        labelText: '请输入账号',
+        labelText: '请输入用户名',
         border: OutlineInputBorder(borderSide: BorderSide()),
         contentPadding: EdgeInsets.all(8),
         fillColor: Colors.white,
@@ -96,12 +101,20 @@ class LoginPageState extends State<LoginPage> {
               });
             }
           },
-          child:Icon(
-            Icons.arrow_drop_down,
-            color: Colors.grey,
-          ),
+          child:_expand==true?Icon(
+            Icons.arrow_drop_up,
+            color: Colors.black,
+          ):Icon(
+    Icons.arrow_drop_down,
+    color: Colors.grey,)
         ),
       ),
+        validator: (value) {
+          if (value.isEmpty) {
+            return "用户名不可为空";
+          }
+          return null;
+        },
       controller: TextEditingController.fromValue(
         TextEditingValue(
           text: userName,
@@ -124,7 +137,8 @@ class LoginPageState extends State<LoginPage> {
   Widget _buildPassword() {
     return Container(
       margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-      child: TextField(
+      child: TextFormField(
+        key: pwdKey,
         decoration: InputDecoration(
           labelText: '请输入密码',
             suffixIcon: IconButton(
@@ -143,6 +157,12 @@ class LoginPageState extends State<LoginPage> {
           prefixIcon: Icon(Icons.lock),
           contentPadding: EdgeInsets.all(8),
         ),
+        validator: (value) {
+          if (value.isEmpty) {
+            return "密码不可为空";
+          }
+          return null;
+        },
         obscureText:  pwdShow,
         controller: TextEditingController.fromValue(
           TextEditingValue(
@@ -173,8 +193,13 @@ class LoginPageState extends State<LoginPage> {
         ),
         padding: EdgeInsets.fromLTRB(25.0, 15.0, 25.0, 15.0),
         onPressed: (){
-          SharedPreferenceUtil.saveUser(User(userName,_passWord));
-          Navigator.push(context, MaterialPageRoute(builder: (context)=> MyApp(),maintainState: false));
+          if(pwdKey.currentState.validate()&&userNameKey.currentState.validate()) {
+            // myHttpClient.sendHttpRequest('http://106.15.192.117:8080/shop/login?userName='+userName+'?password='+_passWord);
+            // if(myHttpClient.data==)
+            //
+            SharedPreferenceUtil.saveUser(User(userName, _passWord));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => bottomNavigationBar(), maintainState: false));
+          }
         },
         child: Text(
           '登录',
@@ -191,7 +216,9 @@ class LoginPageState extends State<LoginPage> {
     return  Container(
       margin: EdgeInsets.fromLTRB(15.0, 0, 0.0, 0),
       child: new FlatButton(
-        // onPressed:(),                          //need to change
+        onPressed:(){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=> Register(),maintainState: false));
+        },                          //need to change
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(30.0)),
         ),
@@ -214,7 +241,7 @@ class LoginPageState extends State<LoginPage> {
     if (_expand) {
       List<Widget> children = _buildItems();
       if (children.length > 0) {
-        RenderBox renderObject = loginKey.currentContext.findRenderObject();
+        RenderBox renderObject = userNameKey.currentContext.findRenderObject();
         final position = renderObject.localToGlobal(Offset.zero);
         double screenW = MediaQuery.of(context).size.width;
         double currentW = renderObject.paintBounds.size.width;
