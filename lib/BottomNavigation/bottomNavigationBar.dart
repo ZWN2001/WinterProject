@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:winter/addGoods.dart';
 import '../mine.dart';
 
 class bottomNavigationBar extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext navigationBarContext) {
     return MaterialApp(
       home: Scaffold(
         body: MyHomePage(),
@@ -22,11 +23,11 @@ class MyHomePage extends StatefulWidget {
 class MyHomePageState extends State<MyHomePage> {
   int selectedIndex = 0; //默认选中的界面索引
   final widgetOptions = [
-    Text('Index 0:主界面'),
+    Home(),
     Mine(),
   ];
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext navigationBarContext) {
     return Scaffold(
       body: Center(
         child: widgetOptions.elementAt(selectedIndex),
@@ -48,5 +49,17 @@ class MyHomePageState extends State<MyHomePage> {
     setState(() {
       selectedIndex = index;
     });
+  }
+}
+class Home extends StatelessWidget{
+  @override
+  Widget build(BuildContext navigationBarContext) {
+   return Scaffold(
+     body:Center(
+       child:  FloatingActionButton(
+         onPressed:(){ Navigator.push(navigationBarContext, MaterialPageRoute(builder: (context)=>AddGoods()));},
+       ),
+     )
+   );
   }
 }
