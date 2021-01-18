@@ -8,10 +8,8 @@ import 'package:toast/toast.dart';
 class Register extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
+    return Scaffold(
         body: RegisterPage(),
-      ),
     );
   }
 }

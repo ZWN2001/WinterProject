@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:winter/SetUserInfo/changeUserName.dart';
 import 'package:winter/SetUserInfo/changeUserPassword.dart';
-import '../Main.dart';
+import '../logIn.dart';
 
 class SetAccountInfo extends StatelessWidget {
   @override
   Widget build(BuildContext buildContext) {
-    return MaterialApp(
-      home: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
@@ -94,7 +93,7 @@ class SetAccountInfo extends StatelessWidget {
                             FlatButton(
                               child: Text('确定'),
                               onPressed: () {
-                                Navigator.push(logoutContext, MaterialPageRoute(builder:(buildContext)=>LoginPage()));
+                                Navigator.push(logoutContext, MaterialPageRoute(builder:(context)=>LoginPage()));
                               },
                             ),
                           ],
@@ -123,7 +122,6 @@ class SetAccountInfo extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 }
