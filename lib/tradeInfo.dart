@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:winter/GoodsTypePage/allGoods.dart';
 
 class TradeInfo extends StatefulWidget {
   @override
@@ -43,7 +44,7 @@ class TradeInfoState extends State<TradeInfo> with TickerProviderStateMixin{
             controller: _tabController,
             children:<Widget> [
               Center(
-                child: Text("这是所有的产品"),
+                child: AllGoods(),
               ),
               Center(
                 child: Text("这是数码产品"),
