@@ -5,8 +5,7 @@ import 'setAccountInfo.dart';
 class ChangeUserPassword extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
+    return  Scaffold(
         appBar: AppBar(
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
@@ -17,7 +16,6 @@ class ChangeUserPassword extends StatelessWidget {
           title: Text('修改密码'),
         ),
         body: ChangeUserPasswordPage(),
-      ),
     );
   }
 }

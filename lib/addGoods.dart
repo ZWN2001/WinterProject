@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 class AddGoods extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
+    return  Scaffold(
         appBar: AppBar(
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
@@ -15,8 +14,7 @@ class AddGoods extends StatelessWidget {
           title: Text('发布新商品'),
         ),
         body: AddGoodsPage(),
-      ),
-    );
+      );
   }
 }
 
@@ -44,6 +42,7 @@ class AddGoodsPage extends StatelessWidget {
         Container(
             margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
             child: TextFormField(
+              keyboardType: TextInputType.number,
               style: TextStyle(
                   fontSize: 20
               ),
@@ -62,7 +61,7 @@ class AddGoodsPage extends StatelessWidget {
           child: Align(
             alignment: AlignmentDirectional.topStart,
             child: Text(
-              '商品简介(自动换行):',
+              '商品简介:',
               style: TextStyle(
                   fontSize: 22
               ),
@@ -83,6 +82,22 @@ class AddGoodsPage extends StatelessWidget {
                 contentPadding: EdgeInsets.all(8),
               ),
             ),
+        ),
+        Container(
+            margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+            child: TextFormField(
+              keyboardType: TextInputType.number,
+              style: TextStyle(
+                  fontSize: 20
+              ),
+              decoration: InputDecoration(
+                labelText: '留一下联系方式吧',
+                border: OutlineInputBorder(borderSide: BorderSide()),
+                fillColor: Colors.white,
+                filled: true,
+                contentPadding: EdgeInsets.all(8),
+              ),
+            )
         ),
 
 

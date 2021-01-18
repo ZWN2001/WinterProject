@@ -44,6 +44,8 @@ class SharedPreferenceUtil {
       String password = sp.getString("$PASSWORD$i");
       list.add(User(username, password));
     }
+    print('当前列表保存的用户数');
+    print(num);
     return list;
   }
 
