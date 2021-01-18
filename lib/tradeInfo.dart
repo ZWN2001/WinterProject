@@ -8,6 +8,7 @@ class TradeInfo extends StatefulWidget {
 
 class TradeInfoState extends State<TradeInfo> with TickerProviderStateMixin{
 
+  //顶部导航栏的内容
   final List<Tab> productionTypes = <Tab>[
     Tab(text:"所有"),
     Tab(text: "数码产品"),
@@ -24,7 +25,6 @@ class TradeInfoState extends State<TradeInfo> with TickerProviderStateMixin{
     super.initState();
     _tabController = new TabController(length: 7, vsync: this);
   }
-
 
   @override
   Widget build(BuildContext context) {

@@ -61,8 +61,8 @@ class AllGoodsState extends State<AllGoods> {
     return GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
+          crossAxisSpacing: 5,
+          mainAxisSpacing: 5,
         ),
         scrollDirection: Axis.vertical,
         itemCount: listData.length,
@@ -73,9 +73,10 @@ class AllGoodsState extends State<AllGoods> {
         });
   }
 
+  //每个商品的窗口
   Widget itemWidget(int temp) {
     return InkWell(
-      onTap: (){},
+      onTap: (){},//点击后进入详细页面
         child: Container(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -99,8 +100,8 @@ class AllGoodsState extends State<AllGoods> {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 18.0,
-                          color: Colors.black,
+                          fontSize: 16.0,
+                          color: Colors.white,
                         ),
                       ))
                 ],
@@ -114,8 +115,8 @@ class AllGoodsState extends State<AllGoods> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 18.0,
-                          color: Colors.black,
+                          fontSize: 12.0,
+                          color: Colors.white,
                         ),
                       ))
                 ],

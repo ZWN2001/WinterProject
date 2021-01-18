@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:winter/addGoods.dart';
+import 'package:winter/tradeInfo.dart';
 import 'mine.dart';
 
 void main() => runApp(bottomNavigationBar());
@@ -33,7 +34,7 @@ class MyHomePage extends StatefulWidget {
 class MyHomePageState extends State<MyHomePage> {
   int selectedIndex = 0; //默认选中的界面索引
   final widgetOptions = [
-    Home(),
+    TradeInfo(),
     Mine(),
   ];
   @override
@@ -52,6 +53,11 @@ class MyHomePageState extends State<MyHomePage> {
         fixedColor: Colors.blue,
         onTap: onTapped,
       ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed:(){ Navigator.push(navigationBarContext, MaterialPageRoute(builder: (context)=>AddGoods()));},
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
@@ -67,8 +73,10 @@ class Home extends StatelessWidget{
    return Scaffold(
      body:Center(
        child:  FloatingActionButton(
+         child: Icon(Icons.add),
          onPressed:(){ Navigator.push(navigationBarContext, MaterialPageRoute(builder: (context)=>AddGoods()));},
        ),
+
      )
    );
   }
