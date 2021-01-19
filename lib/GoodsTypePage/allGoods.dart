@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:winter/GoodsDetail/topNavigatorBar.dart';
 
 class AllGoods extends StatefulWidget {
   @override
@@ -59,6 +61,7 @@ class AllGoodsState extends State<AllGoods> {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
+      padding: EdgeInsets.symmetric(horizontal: 5),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           crossAxisSpacing: 5,
@@ -76,7 +79,11 @@ class AllGoodsState extends State<AllGoods> {
   //每个商品的窗口
   Widget itemWidget(int temp) {
     return InkWell(
-      onTap: (){},//点击后进入详细页面
+      onTap: (){
+        Navigator.push(context,new MaterialPageRoute(builder: (context){
+          return new TopNavigatorBar();
+        }));
+      },//点击后进入详细页面
         child: Container(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
