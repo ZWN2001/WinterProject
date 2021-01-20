@@ -1,25 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:winter/addGoods.dart';
+import 'package:winter/logIn.dart';
+import 'AdapterAndHelper/test.dart';
 import 'mine.dart';
 
 void main() => runApp(bottomNavigationBar());
 
 class bottomNavigationBar extends StatelessWidget {
   @override
-  Widget build(BuildContext navigationBarContext) {
+  Widget build(BuildContext context) {
+    return MultiProvider(
+    providers: [
+    ChangeNotifierProvider<DarkModeModel>(builder: (_) => DarkModeModel())
+    ],
+    child: Consumer<DarkModeModel>(
+    builder: (context, DarkModeModel, child) {
     return  MaterialApp(
       routes: {
         //命名路由
         'MyHomePage':(context)=>MyHomePage(),
-
-
+        'LoginPage':(context)=>LoginPage()
 
       },
-        theme: ThemeData.dark(),
+        theme: DarkModeModel.darkMode == true
+            ? ThemeData.dark()
+            : ThemeData(
+          primarySwatch: Colors.blue,
+        ),
         home:Scaffold(
           body: MyHomePage(),
         )
     );
+
+    },
+    ),
+    );
+
   }
 }
 
@@ -63,11 +81,11 @@ class MyHomePageState extends State<MyHomePage> {
 }
 class Home extends StatelessWidget{
   @override
-  Widget build(BuildContext navigationBarContext) {
+  Widget build(BuildContext context) {
    return Scaffold(
      body:Center(
        child:  FloatingActionButton(
-         onPressed:(){ Navigator.push(navigationBarContext, MaterialPageRoute(builder: (context)=>AddGoods()));},
+         // onPressed:(){ Navigator.push(context, MaterialPageRoute(builder: (context)=>()));},
        ),
      )
    );
