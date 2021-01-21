@@ -36,8 +36,6 @@ class AddGoodsPage extends StatelessWidget {
                 decoration: InputDecoration(
                   labelText: '商品标题',
                   border: OutlineInputBorder(borderSide: BorderSide()),
-                  fillColor: Colors.white,
-                  filled: true,
                   contentPadding: EdgeInsets.all(8),
                 ),
                )
@@ -53,8 +51,6 @@ class AddGoodsPage extends StatelessWidget {
               decoration: InputDecoration(
                 labelText: '商品价格',
                 border: OutlineInputBorder(borderSide: BorderSide()),
-                fillColor: Colors.white,
-                filled: true,
                 contentPadding: EdgeInsets.all(8),
               ),
             )
@@ -82,7 +78,6 @@ class AddGoodsPage extends StatelessWidget {
                 fontSize: 20
               ),
               decoration: InputDecoration(
-                fillColor: Colors.white,
                 contentPadding: EdgeInsets.all(8),
               ),
             ),
@@ -96,9 +91,6 @@ class AddGoodsPage extends StatelessWidget {
               ),
               decoration: InputDecoration(
                 labelText: '留一下联系方式吧',
-                border: OutlineInputBorder(borderSide: BorderSide()),
-                fillColor: Colors.white,
-                filled: true,
                 contentPadding: EdgeInsets.all(8),
               ),
             )

@@ -16,26 +16,30 @@ class DarkModeModel with ChangeNotifier {
   void _init() async {
     this._prefs = await SharedPreferences.getInstance();
     bool localMode = this._prefs.getBool(STORE_KEY);
-    print('init');
+    print('init.........................');
+    print('现在的状态为');
+    print(localMode);
     if(localMode==null){
-      this._prefs.setBool(STORE_KEY,true);
+      this._prefs.setBool(STORE_KEY,false);
+      _darkMode=false;
     } else{
       _darkMode=localMode;
     }
   }
 
   void changeMode() async {
-    print(darkMode);
     SharedPreferences prefs = this._prefs ?? SharedPreferences.getInstance();
-    if(darkMode==null){
-      this._prefs.setBool(STORE_KEY, false);
-      _darkMode=this._prefs.getBool(STORE_KEY);
-      _darkMode = !_darkMode;
-      notifyListeners();
-    }else {
+    // if(darkMode==null){
+    //   this._prefs.setBool(STORE_KEY, false);
+    //   _darkMode=this._prefs.getBool(STORE_KEY);
+    //   _darkMode = !_darkMode;
+    //   notifyListeners();
+    // }else {
       _darkMode = !_darkMode;
       await prefs.setBool(STORE_KEY, darkMode);
+      print('状态更改为');
+      print(darkMode);
       notifyListeners();
-    }
+    // }
   }
 }
