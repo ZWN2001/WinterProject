@@ -1,42 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:winter/addGoods.dart';
-import 'package:winter/logIn.dart';
+import 'package:winter/tradeInfo.dart';
 import 'mine.dart';
 
 void main() => runApp(bottomNavigationBar());
 
 class bottomNavigationBar extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-    providers: [
-    ChangeNotifierProvider<DarkModeModel>(builder: (_) => DarkModeModel())
-    ],
-    child: Consumer<DarkModeModel>(
-    builder: (context, DarkModeModel, child) {
+  Widget build(BuildContext navigationBarContext) {
     return  MaterialApp(
       routes: {
         //命名路由
         'MyHomePage':(context)=>MyHomePage(),
-        'LoginPage':(context)=>LoginPage()
+
+
 
       },
-        theme: DarkModeModel.darkMode == true
-            ? ThemeData.dark()
-            : ThemeData(
-          primarySwatch: Colors.blue,
-        ),
+        theme: ThemeData.dark(),
         home:Scaffold(
           body: MyHomePage(),
         )
     );
-
-    },
-    ),
-    );
-
   }
 }
 
@@ -50,7 +34,7 @@ class MyHomePage extends StatefulWidget {
 class MyHomePageState extends State<MyHomePage> {
   int selectedIndex = 0; //默认选中的界面索引
   final widgetOptions = [
-    Home(),
+    TradeInfo(),
     Mine(),
   ];
   @override
@@ -69,6 +53,11 @@ class MyHomePageState extends State<MyHomePage> {
         fixedColor: Colors.blue,
         onTap: onTapped,
       ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed:(){ Navigator.push(navigationBarContext, MaterialPageRoute(builder: (context)=>AddGoods()));},
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
@@ -80,12 +69,14 @@ class MyHomePageState extends State<MyHomePage> {
 }
 class Home extends StatelessWidget{
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext navigationBarContext) {
    return Scaffold(
      body:Center(
        child:  FloatingActionButton(
-         onPressed:(){ Navigator.push(context, MaterialPageRoute(builder: (context)=>AddGoods()));},
+         child: Icon(Icons.add),
+         onPressed:(){ Navigator.push(navigationBarContext, MaterialPageRoute(builder: (context)=>AddGoods()));},
        ),
+
      )
    );
   }
