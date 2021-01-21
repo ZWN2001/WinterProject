@@ -185,22 +185,43 @@ class AddGoodsPage extends StatelessWidget {
                              mainAxisSize: MainAxisSize.min,
                              children: <Widget>[
                                 ListTile(
-                                 leading:  Icon(Icons.photo_camera),
+                                 leading:  Icon(Icons.android),
                                  title:  Text("数码产品"),
                                  onTap: ()  {
                                    Navigator.pop(context);
                                  },
                                ),
                                 ListTile(
-                                 leading:  Icon(Icons.photo_library),
+                                 leading:  Icon(Icons.book),
                                  title:  Text("二手书"),
                                  onTap: ()  {
                                    Navigator.pop(context);
                                  },
                                ),
                                ListTile(
-                                 leading:  Icon(Icons.photo_library),
+                                 leading:  Icon(Icons.food_bank_outlined),
                                  title:  Text("食品"),
+                                 onTap: () {
+                                   Navigator.pop(context);
+                                 },
+                               ),
+                               ListTile(
+                                 leading:  Icon(Icons.accessibility_new),
+                                 title:  Text("生活用品"),
+                                 onTap: () {
+                                   Navigator.pop(context);
+                                 },
+                               ),
+                               ListTile(
+                                 leading:  Icon(Icons.auto_fix_high),
+                                 title:  Text("美妆"),
+                                 onTap: () {
+                                   Navigator.pop(context);
+                                 },
+                               ),
+                               ListTile(
+                                 leading:  Icon(Icons.assessment_outlined),
+                                 title:  Text("其他"),
                                  onTap: () {
                                    Navigator.pop(context);
                                  },
