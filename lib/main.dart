@@ -1,26 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:winter/addGoods.dart';
 import 'package:winter/tradeInfo.dart';
+import 'logIn.dart';
 import 'mine.dart';
+import 'package:provider/provider.dart';
+import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 
 void main() => runApp(bottomNavigationBar());
 
 class bottomNavigationBar extends StatelessWidget {
   @override
-  Widget build(BuildContext navigationBarContext) {
+  Widget build(BuildContext context) {
+    return MultiProvider(
+        providers: [
+        ChangeNotifierProvider<DarkModeModel>(builder: (_) => DarkModeModel())
+    ],
+    child: Consumer<DarkModeModel>(
+    builder: (context, DarkModeModel, child) {
     return  MaterialApp(
       routes: {
         //命名路由
         'MyHomePage':(context)=>MyHomePage(),
+    'LoginPage':(context)=>LoginPage()
 
 
 
       },
-        theme: ThemeData.dark(),
+        theme: DarkModeModel.darkMode == true
+            ? ThemeData.dark()
+            : ThemeData(
+          primarySwatch: Colors.blue,
+        ),
         home:Scaffold(
           body: MyHomePage(),
         )
     );
+
+    },
+    ),
+    );
+
   }
 }
 
