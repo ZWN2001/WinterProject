@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:winter/addGoods.dart';
 import 'package:winter/logIn.dart';
-import 'AdapterAndHelper/test.dart';
 import 'mine.dart';
 
 void main() => runApp(bottomNavigationBar());
@@ -85,7 +84,7 @@ class Home extends StatelessWidget{
    return Scaffold(
      body:Center(
        child:  FloatingActionButton(
-         // onPressed:(){ Navigator.push(context, MaterialPageRoute(builder: (context)=>()));},
+         onPressed:(){ Navigator.push(context, MaterialPageRoute(builder: (context)=>AddGoods()));},
        ),
      )
    );
