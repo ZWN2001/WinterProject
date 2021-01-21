@@ -12,7 +12,7 @@ class ChangeUserName extends StatelessWidget {
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios_rounded,color: Colors.white),
             onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>SetAccountInfo()));
+              Navigator.of(context).pop();
               },
           ),
           title: Text('更改用户名'),

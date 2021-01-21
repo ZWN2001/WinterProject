@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:winter/AdapterAndHelper/myHttpClient.dart';
 import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';
 import 'package:winter/register.dart';
-import 'main.dart';
 import 'AdapterAndHelper/user.dart';
 
 class LoginPage extends StatefulWidget {
@@ -86,10 +85,10 @@ class LoginPageState extends State<LoginPage> {
       child: TextFormField(
         key: userNameKey,
         decoration: InputDecoration(
-          labelText: '请输入用户名',
-          border: OutlineInputBorder(borderSide: BorderSide()),
+          hintText: '请输入用户名',
+          // border: OutlineInputBorder(borderSide: BorderSide()),
           contentPadding: EdgeInsets.all(8),
-          fillColor: Colors.white,
+          fillColor: Colors.white38,
           filled: true,
           prefixIcon: Icon(Icons.person),
           suffixIcon: GestureDetector(
@@ -143,7 +142,7 @@ class LoginPageState extends State<LoginPage> {
       child: TextFormField(
         key: pwdKey,
         decoration: InputDecoration(
-          labelText: '请输入密码',
+          hintText: '请输入密码',
           suffixIcon: IconButton(
             icon: Icon(pwdShow ? Icons.visibility_off : Icons.visibility),
             onPressed: () {
@@ -152,8 +151,8 @@ class LoginPageState extends State<LoginPage> {
               });
             },
           ),
-          border: OutlineInputBorder(borderSide: BorderSide()),
-          fillColor: Colors.white,
+          // border: OutlineInputBorder(borderSide: BorderSide()),
+          fillColor: Colors.white38,
           filled: true,
           prefixIcon: Icon(Icons.lock),
           contentPadding: EdgeInsets.all(8),
