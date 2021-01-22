@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
+import 'package:winter/MyRelease/myGoods.dart';
+import 'package:winter/MyRelease/myReleaseTabBar.dart';
 import 'package:winter/SetUserInfo/SetAccountInfo.dart';
 import 'package:winter/logIn.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Mine extends StatelessWidget {
   @override
@@ -45,6 +48,7 @@ class MinePageState extends State<MinePage> {
   //   _setWordState();
   // }
 
+  var imageFile;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -52,14 +56,13 @@ class MinePageState extends State<MinePage> {
         Container(
             margin: EdgeInsets.fromLTRB(20, 50, 20, 8),
             child: LoginPageState.logged ? _logged() : _unlogged(context)),
-
         Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
           return Container(
             margin: EdgeInsets.fromLTRB(20, 0, 20, 8),
             child: SizedBox(
               height: 60,
               child: RaisedButton(
-                color:DarkModeModel.darkMode ? Colors.grey : Colors.white,
+                color: DarkModeModel.darkMode ? Colors.grey : Colors.white,
                 child: Row(
                   children: [
                     Expanded(
@@ -74,7 +77,11 @@ class MinePageState extends State<MinePage> {
                         alignment: AlignmentDirectional.center,
                         child: Text(
                           '个人信息',
-                          style: TextStyle(color: DarkModeModel.darkMode ? Colors.white : Colors.black, fontSize: 20),
+                          style: TextStyle(
+                              color: DarkModeModel.darkMode
+                                  ? Colors.white
+                                  : Colors.black,
+                              fontSize: 20),
                         ),
                       ),
                     ),
@@ -111,7 +118,11 @@ class MinePageState extends State<MinePage> {
                         alignment: AlignmentDirectional.center,
                         child: Text(
                           '我的发布',
-                          style: TextStyle(color: DarkModeModel.darkMode ? Colors.white : Colors.black, fontSize: 20),
+                          style: TextStyle(
+                              color: DarkModeModel.darkMode
+                                  ? Colors.white
+                                  : Colors.black,
+                              fontSize: 20),
                         ),
                       ),
                     ),
@@ -122,7 +133,12 @@ class MinePageState extends State<MinePage> {
                     ),
                   ],
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MyReleaseTabBar()));
+                },
               ),
             ),
           );
@@ -148,7 +164,11 @@ class MinePageState extends State<MinePage> {
                         alignment: AlignmentDirectional.center,
                         child: Text(
                           '账号设置',
-                          style: TextStyle(color: DarkModeModel.darkMode ? Colors.white : Colors.black, fontSize: 20),
+                          style: TextStyle(
+                              color: DarkModeModel.darkMode
+                                  ? Colors.white
+                                  : Colors.black,
+                              fontSize: 20),
                         ),
                       ),
                     ),
@@ -190,7 +210,11 @@ class MinePageState extends State<MinePage> {
                         alignment: AlignmentDirectional.center,
                         child: Text(
                           '主题切换',
-                          style: TextStyle(color: DarkModeModel.darkMode ? Colors.white : Colors.black, fontSize: 20),
+                          style: TextStyle(
+                              color: DarkModeModel.darkMode
+                                  ? Colors.white
+                                  : Colors.black,
+                              fontSize: 20),
                         ),
                       ),
                     ),
@@ -231,7 +255,11 @@ class MinePageState extends State<MinePage> {
                         alignment: AlignmentDirectional.center,
                         child: Text(
                           '版本更新',
-                          style: TextStyle(color: DarkModeModel.darkMode ? Colors.white : Colors.black, fontSize: 20),
+                          style: TextStyle(
+                              color: DarkModeModel.darkMode
+                                  ? Colors.white
+                                  : Colors.black,
+                              fontSize: 20),
                         ),
                       ),
                     ),
@@ -271,7 +299,11 @@ class MinePageState extends State<MinePage> {
                         alignment: AlignmentDirectional.center,
                         child: Text(
                           '我要反馈',
-                          style: TextStyle(color: DarkModeModel.darkMode ? Colors.white : Colors.black, fontSize: 20),
+                          style: TextStyle(
+                              color: DarkModeModel.darkMode
+                                  ? Colors.white
+                                  : Colors.black,
+                              fontSize: 20),
                         ),
                       ),
                     ),
@@ -295,20 +327,72 @@ class MinePageState extends State<MinePage> {
     return Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
       return Card(
         color: DarkModeModel.darkMode ? Colors.grey : Colors.white,
-        child: ListTile(
-          title: Text(
-            'Hi , 亲爱的' + LoginPageState.userName,
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 25.0, color: DarkModeModel.darkMode ? Colors.white : Colors.black),
-          ),
-          subtitle: Text('享你所想',
-              style: TextStyle(color: DarkModeModel.darkMode ? Colors.white : Colors.black), textAlign: TextAlign.center),
-        ),
+        child: Container(
+            child: Row(
+          children: [
+            Container(
+              child: GestureDetector(
+                onTap: () {
+                  showModalBottomSheet(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ListTile(
+                              leading: Icon(Icons.add_a_photo_outlined),
+                              title: Text("拍照"),
+                              onTap: ()async {
+                                imageFile = await ImagePicker.pickImage(source: ImageSource.camera);
+                                Navigator.pop(context);
+                              },
+                            ),
+                            ListTile(
+                              leading: Icon(Icons.photo_library_outlined),
+                              title: Text("从相册选择"),
+                              onTap: () async{
+                                imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
+                        );
+                      });
+                },
+                child: Container(
+                  margin: EdgeInsets.all(8),
+                  child: ClipOval(
+                    child: Image.asset('images/appIcon.png'),
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              child: Column(
+                children: [
+                  Text(
+                    'Hi , 亲爱的' + LoginPageState.userName,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 25.0,
+                        color: DarkModeModel.darkMode
+                            ? Colors.white
+                            : Colors.black),
+                  ),
+                  Text('享你所想',
+                      style: TextStyle(
+                          color: DarkModeModel.darkMode
+                              ? Colors.white
+                              : Colors.black),
+                      textAlign: TextAlign.center),
+                ],
+              ),
+            ),
+          ],
+        )),
       );
-    }
-    );
+    });
   }
-
 
   Widget _unlogged(BuildContext context) {
     return Column(

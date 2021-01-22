@@ -3,17 +3,20 @@ import 'package:winter/GoodsTypePage/allGoods.dart';
 import 'package:winter/addGoodsAndNeeds/addGoods.dart';
 import 'package:winter/addGoodsAndNeeds/addNeeds.dart';
 
-class TabBarForAdd extends StatefulWidget {
+import 'myGoods.dart';
+import 'myNeeds.dart';
+
+class MyReleaseTabBar extends StatefulWidget {
   @override
-  _TabBarForAddState createState() => _TabBarForAddState();
+  _MyReleaseTabBarState createState() => _MyReleaseTabBarState();
 }
 
-class _TabBarForAddState extends State<TabBarForAdd> with TickerProviderStateMixin{
+class _MyReleaseTabBarState extends State<MyReleaseTabBar> with TickerProviderStateMixin{
 
   //顶部导航栏的内容
   final List<Tab> Types = <Tab>[
-    Tab(text:"我要发布商品"),
-    Tab(text: "我要发布需求"),
+    Tab(text:"我发布的商品"),
+    Tab(text: "我发布的需求"),
   ];
 
   TabController _tabController;
@@ -41,10 +44,10 @@ class _TabBarForAddState extends State<TabBarForAdd> with TickerProviderStateMix
             controller: _tabController,
             children:<Widget> [
               Center(
-                child: AddGoods(),
+                child: MyGoods(),
               ),
               Center(
-                child: AddNeeds(),
+                child: MyNeeds(),
               ),
             ],
           ),
