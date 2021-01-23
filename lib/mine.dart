@@ -415,7 +415,7 @@ class MinePageState extends State<MinePage> {
           ),
           child: Text(
             '前往登录/注册',
-            style: TextStyle(fontSize: 20, color: Colors.lightBlueAccent),
+            style: TextStyle( fontSize: 20, color: Colors.lightBlueAccent),
           ),
           onPressed: () {
             Navigator.pushReplacementNamed(context, 'LoginPage');
