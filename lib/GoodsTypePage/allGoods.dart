@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:winter/GoodsDetail/topNavigatorBar.dart';
+import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
+import 'package:provider/provider.dart';
 
 class AllGoods extends StatefulWidget {
   @override
@@ -84,57 +86,60 @@ class AllGoodsState extends State<AllGoods> {
           return new TopNavigatorBar();
         }));
       },//点击后进入详细页面
-        child: Container(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children:<Widget> [
-              Row(
-                children: [
-                  Expanded(
-                      child:
-                      Image.network(
-                        listData[temp]["image"],
-                        fit: BoxFit.cover,
-                      )),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                      child:Text(
-                        listData[temp]["title"],
-                        textAlign: TextAlign.start,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          color: Colors.white,
-                        ),
-                      ))
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                      child:Text(
-                        listData[temp]["price"],
-                        textAlign: TextAlign.start,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 12.0,
-                          color: Colors.white,
-                        ),
-                      ))
-                ],
-              ),
-            ],
-          ),
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.white,width: 1)
-          ),
-        )
-    );
+        child:  Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
+          return Container(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children:<Widget> [
+                Row(
+                  children: [
+                    Expanded(
+                        child:
+                        Image.network(
+                          listData[temp]["image"],
+                          fit: BoxFit.cover,
+                        )),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                        child:Text(
+                            listData[temp]["title"],
+                            textAlign: TextAlign.start,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
+                            ),
+                          )
+                        )
+                    ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                        child:Text(
+                            listData[temp]["price"],
+                            textAlign: TextAlign.start,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 12.0,
+                              color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
+                            ),
+                          )
+                        )],
+                ),
+              ],
+            ),
+            decoration: BoxDecoration(
+                border: Border.all(color:DarkModeModel.darkMode ? Colors.white : Colors.black87,width: 1)
+            ),
+          );
+        }
+    ));
   }
 
 }

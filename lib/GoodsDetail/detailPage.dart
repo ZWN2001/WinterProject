@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import './imageShowServer.dart';
+import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
+import 'package:provider/provider.dart';
 
 class DetailPage extends StatefulWidget {
   @override
@@ -11,6 +13,7 @@ class DetailPage extends StatefulWidget {
 class DetailPageState extends State<DetailPage> {
   @override
   Widget build(BuildContext context) {
+
     return Container(
       padding: EdgeInsets.all(5.0),
       child: ListView(
@@ -32,15 +35,17 @@ class DetailPageState extends State<DetailPage> {
               onTap: (index){},
             ),
           ),
-          Container(
-            padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
-            child: Text("商品简介(简单介绍有什么）,商品简介(简单介绍有什么）,商品简介(简单介绍有什么）【最多三行】",
-              maxLines: 3,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-              ),),
-          ),
+          Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
+             return Container(
+                padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
+                child: Text("商品简介(简单介绍有什么）,商品简介(简单介绍有什么）,商品简介(简单介绍有什么）【最多三行】",
+                         maxLines: 3,
+                         style: TextStyle(
+                           color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
+                           fontSize: 16,
+                          ),),
+                        );
+          }),
           Container(
             //height: 40,
             padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
@@ -77,35 +82,40 @@ class DetailPageState extends State<DetailPage> {
               ],
             ),
           ),
-          Container(
-            padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
-            child: Row(
-              children:<Widget> [
-                Expanded(
-                    child: Divider(
-                      height: 10,
-                      color: Colors.white,
-                      //indent: 120,
-                    )),
-                Expanded(child: Text("详细介绍",
-                  style: TextStyle(
-                  color: Colors.white,
-                ),
-                textAlign: TextAlign.center,)),
-                Expanded(
-                    child: Divider(
-                      height: 1,
-                      color: Colors.white,
-                      //indent: 120,
-                    ))
-              ],
+          Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
+            return Container(
+              padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
+              child: Row(
+                children:<Widget> [
+                  Expanded(
+                      child: Divider(
+                        height: 10,
+                        color:DarkModeModel.darkMode ? Colors.white : Colors.black87,
+            //indent: 120,
+            )),
+                  Expanded(child: Text("详细介绍",
+                    style: TextStyle(
+                      color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
             ),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
-            child: Text("详细介绍自己要卖什么，为什么卖，产品质量怎么样之类的"),
-          )
-        ],
+                    textAlign: TextAlign.center,)),
+                  Expanded(
+                      child: Divider(
+                        height: 1,
+                        color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
+            //indent: 120,
+            ))
+            ],
+            ),
+    );
+          }),
+         Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
+            return Container(
+              padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
+              child: Text("详细介绍自己要卖什么，为什么卖，产品质量怎么样之类的",style: TextStyle(
+                color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
+              ),),
+          );}
+         )],
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:winter/SetUserInfo/SetAccountInfo.dart';
 import 'package:winter/logIn.dart';
+import 'package:winter/DemandArea/demandPage.dart';
 
 class Mine extends StatelessWidget {
   @override
@@ -85,7 +86,11 @@ class MinePageState extends State<MinePage> {
                     ),
                   ],
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(context, new MaterialPageRoute(builder: (context){
+                    return new DemandPage();
+                  }));
+                },
               ),
             ),
           );
