@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
-import 'package:winter/MyRelease/myGoods.dart';
 import 'package:winter/MyRelease/myReleaseTabBar.dart';
 import 'package:winter/SetUserInfo/SetAccountInfo.dart';
 import 'package:winter/logIn.dart';
@@ -367,27 +366,36 @@ class MinePageState extends State<MinePage> {
                 ),
               ),
             ),
-            Container(
-              child: Column(
-                children: [
-                  Text(
-                    'Hi , 亲爱的' + LoginPageState.userName,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 25.0,
-                        color: DarkModeModel.darkMode
-                            ? Colors.white
-                            : Colors.black),
-                  ),
-                  Text('享你所想',
-                      style: TextStyle(
-                          color: DarkModeModel.darkMode
-                              ? Colors.white
-                              : Colors.black),
-                      textAlign: TextAlign.center),
-                ],
-              ),
+            Expanded(
+                child:  Container(
+                  margin: EdgeInsets.only(right: 15),
+                    // color: Colors.indigoAccent,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Hi , 亲爱的' + LoginPageState.userName,
+                            textAlign: TextAlign.center,
+                            overflow: TextOverflow.clip,
+                            style: TextStyle(
+                                fontSize: 25.0,
+                                color: DarkModeModel.darkMode
+                                    ? Colors.white
+                                    : Colors.black),
+                          ),
+                          Text('享你所想',
+                              style: TextStyle(
+                                  color: DarkModeModel.darkMode
+                                      ? Colors.white
+                                      : Colors.black),
+                              textAlign: TextAlign.center),
+                        ],
+                      ),
+                    )
+                ),
             ),
+
           ],
         )),
       );

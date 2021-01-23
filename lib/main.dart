@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:winter/NeedsDetail/dart/NeedsTabBar.dart';
 import 'package:winter/addGoodsAndNeeds/TabBarForAdd.dart';
-import 'file:///E:/apps/winter/lib/addGoodsAndNeeds/addGoods.dart';
+import 'NeedsDetail/NeedsDetail/NeedsTabBar.dart';
 import 'package:winter/tradeInfo.dart';
 import 'addGoodsAndNeeds/addNeeds.dart';
 import 'logIn.dart';
