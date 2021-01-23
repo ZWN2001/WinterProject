@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:winter/GoodsTypePage/allGoods.dart';
+import 'package:winter/DemandArea/demandPage.dart';
 
 class NeedsInfo extends StatefulWidget {
   @override
@@ -44,7 +44,7 @@ class NeedsTabBarState extends State<NeedsInfo> with TickerProviderStateMixin{
             controller: _tabController,
             children:<Widget> [
               Center(
-                child: AllGoods(),
+                child: DemandPage(),
               ),
               Center(
                 child: Text("这是数码产品"),

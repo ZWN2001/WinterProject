@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:winter/DemandArea/NeedsTabBar.dart';
 import 'package:winter/addGoodsAndNeeds/TabBarForAdd.dart';
-import 'NeedsDetail/dart/NeedsTabBar.dart';
+//import 'file:///E:/apps/winter/lib/addGoodsAndNeeds/addGoods.dart';
 import 'package:winter/tradeInfo.dart';
 import 'addGoodsAndNeeds/addNeeds.dart';
 import 'logIn.dart';
@@ -8,6 +9,7 @@ import 'mine.dart';
 import 'package:provider/provider.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:shake_animation_widget/shake_animation_widget.dart';
+import 'package:winter/DemandArea/demandPage.dart';
 
 void main() => runApp(bottomNavigationBar());
 
