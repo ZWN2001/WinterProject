@@ -3,7 +3,7 @@ import 'package:winter/SetUserInfo/SetAccountInfo.dart';
 
 class ChangeUserName extends StatelessWidget {
 
-  final myTextController =TextEditingController();
+  TextEditingController _newUserNameController=TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +12,9 @@ class ChangeUserName extends StatelessWidget {
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios_rounded,color: Colors.white),
             onPressed: (){
+
               Navigator.of(context).pop();
+
               },
           ),
           title: Text('更改用户名'),
@@ -36,10 +38,7 @@ class ChangeUserName extends StatelessWidget {
                     width: 300,
                     height: 50,
                     child:   TextField(
-                      controller: myTextController,
-
-
-
+                      controller: _newUserNameController,
                     ),
                   )
               ),

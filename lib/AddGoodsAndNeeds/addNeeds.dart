@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 class AddNeeds extends StatelessWidget{
+
+  TextEditingController _needsController=TextEditingController();
   @override
   Widget build(BuildContext context) {
    return Scaffold(
@@ -10,6 +12,7 @@ class AddNeeds extends StatelessWidget{
            Container(
              margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
                child:TextFormField(
+                 controller: _needsController,
                  style: TextStyle(
                      fontSize: 20,
                      textBaseline: TextBaseline.alphabetic

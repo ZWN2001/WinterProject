@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:winter/SetUserInfo/changeUserName.dart';
 import 'package:winter/SetUserInfo/changeUserPassword.dart';
-import '../logIn.dart';
 
 class SetAccountInfo extends StatelessWidget {
   @override
@@ -93,7 +92,8 @@ class SetAccountInfo extends StatelessWidget {
                             FlatButton(
                               child: Text('确定'),
                               onPressed: () {
-                                Navigator.push(logoutContext, MaterialPageRoute(builder:(context)=>LoginPage()));
+                                Navigator.of(logoutContext).pushNamedAndRemoveUntil('LoginPage', (Route<dynamic> route) => false);
+                                // Navigator.pushReplacementNamed(logoutContext,'LoginPage');//还不行
                               },
                             ),
                           ],

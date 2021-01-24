@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:winter/DemandArea/NeedsTabBar.dart';
 import 'package:winter/addGoodsAndNeeds/TabBarForAdd.dart';
 //import 'file:///E:/apps/winter/lib/addGoodsAndNeeds/addGoods.dart';
 import 'package:winter/tradeInfo.dart';
+import 'package:winter/DemandArea/NeedsTabBar.dart';
 import 'addGoodsAndNeeds/addNeeds.dart';
 import 'logIn.dart';
 import 'mine.dart';
