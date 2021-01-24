@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:winter/addGoodsAndNeeds/TabBarForAdd.dart';
-//import 'file:///E:/apps/winter/lib/addGoodsAndNeeds/addGoods.dart';
 import 'package:winter/tradeInfo.dart';
 import 'package:winter/DemandArea/NeedsTabBar.dart';
-import 'addGoodsAndNeeds/addNeeds.dart';
 import 'logIn.dart';
 import 'mine.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +30,7 @@ class bottomNavigationBar extends StatelessWidget {
 
 
       },
-        theme: DarkModeModel.darkMode == true
+        theme: DarkModeModel.darkMode
             ? ThemeData.dark()
             : ThemeData(
           primarySwatch: Colors.blue,
@@ -79,23 +77,14 @@ class MyHomePageState extends State<MyHomePage> {
 
       bottomNavigationBar: BottomNavigationBar(
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.chat), title: Text('交易信息')),
-          BottomNavigationBarItem(icon: Icon(Icons.add_to_photos_outlined), title: Text('需求信息')),
-          BottomNavigationBarItem(icon: Icon(Icons.account_circle), title: Text('我的')),
+          BottomNavigationBarItem(icon: Icon(Icons.chat), label:'交易信息'),
+          BottomNavigationBarItem(icon: Icon(Icons.add_to_photos_outlined), label:'需求信息'),
+          BottomNavigationBarItem(icon: Icon(Icons.account_circle), label:'我的'),
         ],
         currentIndex: selectedIndex,
         fixedColor: Colors.blue,
         onTap: onTapped,
       ),
-
-
-      // floatingActionButton: FloatingActionButton(
-      //   child: Icon(Icons.add),
-      //   onPressed:(){
-      //     Navigator.push(navigationBarContext, MaterialPageRoute(builder: (context)=>AddGoods()));
-      //     },
-      // ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
@@ -126,20 +115,6 @@ class MyHomePageState extends State<MyHomePage> {
         },
       ),
     );
-
   }
 }
-// class Home extends StatelessWidget{
-//   @override
-//   Widget build(BuildContext navigationBarContext) {
-//    return Scaffold(
-//      body:Center(
-//        child:  FloatingActionButton(
-//          child: Icon(Icons.add),
-//          onPressed:(){ Navigator.push(navigationBarContext, MaterialPageRoute(builder: (context)=>AddGoods()));},
-//        ),
-//
-//      )
-//    );
-//   }
-// }
+

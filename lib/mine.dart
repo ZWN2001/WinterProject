@@ -418,7 +418,7 @@ class MinePageState extends State<MinePage> {
             style: TextStyle( fontSize: 20, color: Colors.lightBlueAccent),
           ),
           onPressed: () {
-            Navigator.pushReplacementNamed(context, 'LoginPage');
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginPage()));
           },
         ),
       ],
