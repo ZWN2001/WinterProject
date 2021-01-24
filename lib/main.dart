@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:winter/addGoodsAndNeeds/TabBarForAdd.dart';
+import 'package:winter/search.dart';
 import 'package:winter/tradeInfo.dart';
 import 'package:winter/DemandArea/NeedsTabBar.dart';
 import 'logIn.dart';
@@ -59,6 +60,7 @@ class MyHomePageState extends State<MyHomePage> {
   final widgetOptions = [
     TradeInfo(),
     NeedsInfo(),
+    Search(),//改
     Mine(),
   ];
   @override
@@ -77,12 +79,14 @@ class MyHomePageState extends State<MyHomePage> {
 
       bottomNavigationBar: BottomNavigationBar(
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.chat), label:'交易信息'),
+          BottomNavigationBarItem(icon: Icon(Icons.assignment_rounded), label:'交易信息'),
           BottomNavigationBarItem(icon: Icon(Icons.add_to_photos_outlined), label:'需求信息'),
+          BottomNavigationBarItem(icon: Icon(Icons.chat), label:'消息'),
           BottomNavigationBarItem(icon: Icon(Icons.account_circle), label:'我的'),
         ],
         currentIndex: selectedIndex,
         fixedColor: Colors.blue,
+        unselectedItemColor:Colors.grey ,
         onTap: onTapped,
       ),
     );
