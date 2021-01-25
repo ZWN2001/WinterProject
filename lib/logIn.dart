@@ -200,8 +200,7 @@ class LoginPageState extends State<LoginPage> {
             SharedPreferenceUtil.saveUser(User(userName, _passWord));
             logged=true;
             // Navigator.of(context).pushReplacementNamed('bottomNavigationBar');
-            Navigator.
-            pushReplacementNamed(context, 'MyHomePage');
+            Navigator.of(context).pushNamedAndRemoveUntil('MyHomePage', (Route<dynamic> route) => false);
             // push(context, MaterialPageRoute(builder: (context) => bottomNavigationBar(), maintainState: false));
           }
         },

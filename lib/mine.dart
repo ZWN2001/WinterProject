@@ -61,7 +61,7 @@ class MinePageState extends State<MinePage> {
             child: SizedBox(
               height: 60,
               child: RaisedButton(
-                color: DarkModeModel.darkMode ? Colors.grey : Colors.white,
+                color: DarkModeModel.darkMode ? Colors.black : Colors.white,
                 child: Row(
                   children: [
                     Expanded(
@@ -102,7 +102,7 @@ class MinePageState extends State<MinePage> {
             child: SizedBox(
               height: 60,
               child: RaisedButton(
-                color: DarkModeModel.darkMode ? Colors.grey : Colors.white,
+                color: DarkModeModel.darkMode ? Colors.black : Colors.white,
                 child: Row(
                   children: [
                     Expanded(
@@ -148,7 +148,7 @@ class MinePageState extends State<MinePage> {
             child: SizedBox(
               height: 60,
               child: RaisedButton(
-                color: DarkModeModel.darkMode ? Colors.grey : Colors.white,
+                color: DarkModeModel.darkMode ? Colors.black : Colors.white,
                 child: Row(
                   children: [
                     Expanded(
@@ -194,7 +194,7 @@ class MinePageState extends State<MinePage> {
             child: SizedBox(
               height: 60,
               child: RaisedButton(
-                color: DarkModeModel.darkMode ? Colors.grey : Colors.white,
+                color: DarkModeModel.darkMode ? Colors.black : Colors.white,
                 child: Row(
                   children: [
                     Expanded(
@@ -239,7 +239,7 @@ class MinePageState extends State<MinePage> {
             child: SizedBox(
               height: 60,
               child: RaisedButton(
-                color: DarkModeModel.darkMode ? Colors.grey : Colors.white,
+                color: DarkModeModel.darkMode ? Colors.black : Colors.white,
                 child: Row(
                   children: [
                     Expanded(
@@ -283,7 +283,7 @@ class MinePageState extends State<MinePage> {
             child: SizedBox(
               height: 60,
               child: RaisedButton(
-                color: DarkModeModel.darkMode ? Colors.grey : Colors.white,
+                color: DarkModeModel.darkMode ? Colors.black : Colors.white,
                 child: Row(
                   children: [
                     Expanded(
@@ -325,7 +325,7 @@ class MinePageState extends State<MinePage> {
   Widget _logged() {
     return Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
       return Card(
-        color: DarkModeModel.darkMode ? Colors.grey : Colors.white,
+        color: DarkModeModel.darkMode ? Colors.black: Colors.white,
         child: Container(
             child: Row(
           children: [
@@ -418,7 +418,7 @@ class MinePageState extends State<MinePage> {
             style: TextStyle( fontSize: 20, color: Colors.lightBlueAccent),
           ),
           onPressed: () {
-            Navigator.pushReplacementNamed(context, 'LoginPage');
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginPage()));
           },
         ),
       ],

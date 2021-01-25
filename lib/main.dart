@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:winter/addGoodsAndNeeds/TabBarForAdd.dart';
-//import 'file:///E:/apps/winter/lib/addGoodsAndNeeds/addGoods.dart';
+import 'package:winter/search.dart';
 import 'package:winter/tradeInfo.dart';
 import 'package:winter/DemandArea/NeedsTabBar.dart';
-import 'addGoodsAndNeeds/addNeeds.dart';
 import 'logIn.dart';
 import 'mine.dart';
 import 'package:provider/provider.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:shake_animation_widget/shake_animation_widget.dart';
-import 'package:winter/DemandArea/demandPage.dart';
 
 void main() => runApp(bottomNavigationBar());
 
@@ -28,11 +26,11 @@ class bottomNavigationBar extends StatelessWidget {
         'MyHomePage':(context)=>MyHomePage(),
         'LoginPage':(context)=>LoginPage(),
         'add':(context)=>TabBarForAdd(),
-
+        'search':(context)=>SearchPageWidget(),
 
 
       },
-        theme: DarkModeModel.darkMode == true
+        theme: DarkModeModel.darkMode
             ? ThemeData.dark()
             : ThemeData(
           primarySwatch: Colors.blue,
@@ -61,6 +59,7 @@ class MyHomePageState extends State<MyHomePage> {
   final widgetOptions = [
     TradeInfo(),
     NeedsInfo(),
+    SearchPageWidget(),//改
     Mine(),
   ];
   @override
@@ -79,23 +78,16 @@ class MyHomePageState extends State<MyHomePage> {
 
       bottomNavigationBar: BottomNavigationBar(
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.chat), title: Text('交易信息')),
-          BottomNavigationBarItem(icon: Icon(Icons.add_to_photos_outlined), title: Text('需求信息')),
-          BottomNavigationBarItem(icon: Icon(Icons.account_circle), title: Text('我的')),
+          BottomNavigationBarItem(icon: Icon(Icons.assignment_rounded), label:'交易信息'),
+          BottomNavigationBarItem(icon: Icon(Icons.add_to_photos_outlined), label:'需求信息'),
+          BottomNavigationBarItem(icon: Icon(Icons.chat), label:'消息'),
+          BottomNavigationBarItem(icon: Icon(Icons.account_circle), label:'我的'),
         ],
         currentIndex: selectedIndex,
         fixedColor: Colors.blue,
+        unselectedItemColor:Colors.grey ,
         onTap: onTapped,
       ),
-
-
-      // floatingActionButton: FloatingActionButton(
-      //   child: Icon(Icons.add),
-      //   onPressed:(){
-      //     Navigator.push(navigationBarContext, MaterialPageRoute(builder: (context)=>AddGoods()));
-      //     },
-      // ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
@@ -121,25 +113,11 @@ class MyHomePageState extends State<MyHomePage> {
         if(index==0){
           Navigator.of(context).pushNamed('add');
         }else{
-            //
+          Navigator.of(context).pushNamed('search');
         }
         },
       ),
     );
-
   }
 }
-// class Home extends StatelessWidget{
-//   @override
-//   Widget build(BuildContext navigationBarContext) {
-//    return Scaffold(
-//      body:Center(
-//        child:  FloatingActionButton(
-//          child: Icon(Icons.add),
-//          onPressed:(){ Navigator.push(navigationBarContext, MaterialPageRoute(builder: (context)=>AddGoods()));},
-//        ),
-//
-//      )
-//    );
-//   }
-// }
+
