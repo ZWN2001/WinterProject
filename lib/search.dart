@@ -4,10 +4,10 @@ import 'dart:async';
 
 class SearchPageWidget extends StatefulWidget {
   @override
-  _SearchPageState createState() => new _SearchPageState();
+  SearchPageState createState() => new SearchPageState();
 }
 
-class _SearchPageState extends State<SearchPageWidget>{
+class SearchPageState extends State<SearchPageWidget>{
 
   static final TextEditingController controller = new TextEditingController();
 
@@ -16,6 +16,7 @@ class _SearchPageState extends State<SearchPageWidget>{
 
   SearchPageState() {
     ///监听搜索页form
+    print('监听中');
     controller.addListener(() {
       if (controller.text.isEmpty) {
         setState(() {
@@ -38,7 +39,7 @@ class _SearchPageState extends State<SearchPageWidget>{
   static List<String> recommend = ['java', 'c/c++', 'mysql', 'redis', 'html', 'golang', 'python', '卧槽', '666666'
   ];
   ///历史 暂时使用本地默认数据
-  static List<String> history = ['李四','了','啊啊'];
+  static List<String> history = ['李四','网吧','啊啊','22','33','44','55','66','77','88'];
 
 
   ///中间内容
@@ -47,33 +48,69 @@ class _SearchPageState extends State<SearchPageWidget>{
   ///默认显示(推荐 + 历史记录)
   static Widget defaultDisplay(){
     return Container(
-      padding: const EdgeInsets.only(
-        left: 25,
-        bottom: 10.0,
-      ),
+      padding: const EdgeInsets.only(left: 15,right: 15),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          SizedBox(height: 10.0),
-          Text(
-            "历史记录：",
-            style: TextStyle(fontSize: 20),
+          Container(
+            margin: EdgeInsets.only(top: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      child:  Stack(
+                        children: [
+                          Align(
+                            alignment: AlignmentDirectional.bottomStart,
+                            child:Text(
+                              "历史记录：",
+                              style: TextStyle(fontSize: 20),
+                            ),
+                          ),
+
+                          Align(
+                            alignment:AlignmentDirectional.topEnd,
+                            child:  IconButton(
+                              padding: EdgeInsets.all(0),
+                                icon: Image(
+                                  image: AssetImage("images/myClear.png"),
+                                ),
+                                onPressed: () {
+
+                                }
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      child: Wrap(
+                        spacing: 10,
+                        children: defaultData(history),
+                      ),
+                    ),
+                  ],
+                ),
           ),
-          SizedBox(height: 5.0),
-          Wrap(
-            spacing: 10,
-            children: defaultData(history),
+          Container(
+            margin: EdgeInsets.only(top: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "推荐：",
+                  style: TextStyle(fontSize: 20),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 15),
+                  child:   Wrap(
+                    spacing: 10,
+                    children: defaultData(recommend),
+                  ),
+                ),
+              ],
+            ),
           ),
-          SizedBox(height: 10.0),
-          Text(
-            "推荐：",
-            style: TextStyle(fontSize: 20),
-          ),
-          SizedBox(height: 5.0),
-          Wrap(
-            spacing: 10,
-            children: defaultData(recommend),
-          ),
+
         ],
       ),
     );
@@ -127,7 +164,6 @@ class _SearchPageState extends State<SearchPageWidget>{
                       child: Icon(
                         Icons.search,
                         color: Colors.black12,
-                        semanticLabel: "列表显示lable",
                         size: 25.0,
                         textDirection: TextDirection.rtl,
                       ),
@@ -165,12 +201,10 @@ class _SearchPageState extends State<SearchPageWidget>{
     //屏幕宽度
     double width = MediaQuery.of(context).size.width;
     //double height = MediaQuery.of(context).size.height;
+    // TODO: implement build
     return  Scaffold(
-      // appBar: AppBar(
-      //   title: Text('搜索'),
-      // ),
           body: Container(
-            margin: EdgeInsets.only(top: 30),
+            margin: EdgeInsets.only(top: 40),
             child: Column(
               children: <Widget>[
                 Row(
@@ -188,9 +222,9 @@ class _SearchPageState extends State<SearchPageWidget>{
                     Container(
                       margin: EdgeInsets.only(left: 0),
                       //设置 child 居中
-                      //alignment: Alignment(0, 0),
+                      alignment: Alignment(0, 0),
                       height: width * 1/9,
-                      width: 262,
+                      width: width*3/4,
                       //边框设置
                       decoration: new BoxDecoration(
                         //背景
@@ -203,12 +237,12 @@ class _SearchPageState extends State<SearchPageWidget>{
                       child:  TextFormField(
                         controller: controller,
                         decoration: InputDecoration(
-                          contentPadding: EdgeInsets.only(top: 3),
+                          contentPadding: EdgeInsets.only(top: 5),
                           border: InputBorder.none,
                           hintText: '输入搜索内容...',
                           hintStyle: TextStyle(
                             color: Colors.grey,
-                            fontSize: 13,
+                            fontSize: 20,
                           ),
                           prefixIcon: Icon(Icons.search),
                         ),
@@ -216,7 +250,7 @@ class _SearchPageState extends State<SearchPageWidget>{
                     ),
                     //清空按钮
                     IconButton(
-                        iconSize: 25,
+                        iconSize: width*1/12,
                         icon: Icon(Icons.clear),
                         onPressed: () {
                           setState(() {
@@ -230,6 +264,7 @@ class _SearchPageState extends State<SearchPageWidget>{
               ],
             ),
           ),
+
     );
 
   }

@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:winter/addGoodsAndNeeds/TabBarForAdd.dart';
-import 'package:winter/search.dart';
-import 'package:winter/tradeInfo.dart';
-import 'package:winter/DemandArea/NeedsTabBar.dart';
-import 'logIn.dart';
-import 'mine.dart';
 import 'package:provider/provider.dart';
-import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
-import 'package:shake_animation_widget/shake_animation_widget.dart';
+import 'package:winter/search.dart';
+import 'dart:async';
+import 'AdapterAndHelper/DarkModeModel.dart';
+import 'AddGoodsAndNeeds/TabBarForAdd.dart';
+import 'home.dart';
+import 'logIn.dart';
 
-void main() => runApp(bottomNavigationBar());
+void main() => runApp(Splash());
 
-class bottomNavigationBar extends StatelessWidget {
+class Splash extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -20,104 +18,89 @@ class bottomNavigationBar extends StatelessWidget {
     ],
     child: Consumer<DarkModeModel>(
     builder: (context, DarkModeModel, child) {
-    return  MaterialApp(
-      routes: {
-        //命名路由
-        'MyHomePage':(context)=>MyHomePage(),
-        'LoginPage':(context)=>LoginPage(),
-        'add':(context)=>TabBarForAdd(),
-        'search':(context)=>SearchPageWidget(),
-
-
-      },
-        theme: DarkModeModel.darkMode
-            ? ThemeData.dark()
-            : ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home:Scaffold(
-          body: MyHomePage(),
-        )
+    return MaterialApp(
+       routes: {
+         //命名路由
+         'MyHomePage':(context)=>MyHomePage(),
+         'LoginPage':(context)=>LoginPage(),
+         'add':(context)=>TabBarForAdd(),
+         'search':(context)=>SearchPageWidget(),
+         'home':(context)=>Home(),
+       },
+       theme: DarkModeModel.darkMode
+           ? ThemeData.dark()
+           : ThemeData(
+         primarySwatch: Colors.blue,
+       ),
+       home:Scaffold(
+         body: SplashPage(),
+       )
     );
-
     },
     ),
     );
-
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key}) : super(key: key);
-
+class SplashPage extends StatefulWidget {
   @override
-  MyHomePageState createState() => MyHomePageState();
+  _SplashState createState() => _SplashState();
 }
 
-class MyHomePageState extends State<MyHomePage> {
-  int selectedIndex = 0; //默认选中的界面索引
-  final widgetOptions = [
-    TradeInfo(),
-    NeedsInfo(),
-    SearchPageWidget(),//改
-    Mine(),
-  ];
+class _SplashState extends State<SplashPage>{
+
   @override
-  Widget build(BuildContext navigationBarContext) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Center(
-            child: widgetOptions.elementAt(selectedIndex),
-          ),
+  Widget build(BuildContext context) {
+    return
+       Scaffold(
+        body:  Column(
+          children: <Widget>[
+             Container(
+               margin: EdgeInsets.only(top: 60,left: 15,right: 15),
+              alignment: Alignment.center,
+              child:  Image.asset(
+                "images/splash.png",
+              ),
+            ),
+             Container(
+              alignment: Alignment.bottomCenter,
+              margin: EdgeInsets.only(bottom: 30,top: 20),
+              child: Column(
+                children: [
+                  Image.asset(
+                    "images/appIcon.png",
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 15),
+                    child:  Text(
+                      'Developed by : zwn & whc',
+                      style: TextStyle(
+                          fontSize: 20
+                      ),
+                    ),
+                  ),
 
-          _buildRoteFloatingBtn(),//右下角的浮动按钮
-
-        ],
-      ),
-
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.assignment_rounded), label:'交易信息'),
-          BottomNavigationBarItem(icon: Icon(Icons.add_to_photos_outlined), label:'需求信息'),
-          BottomNavigationBarItem(icon: Icon(Icons.chat), label:'消息'),
-          BottomNavigationBarItem(icon: Icon(Icons.account_circle), label:'我的'),
-        ],
-        currentIndex: selectedIndex,
-        fixedColor: Colors.blue,
-        unselectedItemColor:Colors.grey ,
-        onTap: onTapped,
-      ),
+                ],
+              ),
+            )
+          ],
+        ),
     );
   }
 
-  void onTapped(int index) {
-    setState(() {
-      selectedIndex = index;
-    });
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    countDown();
   }
 
-  Widget _buildRoteFloatingBtn(){
-    return  Positioned(
-      right: 33,
-      bottom: 33,
-      //悬浮按钮
-      child: RoteFloatingButton(
-        //菜单图标组
-        iconList: [
-          Icon(Icons.add),
-          Icon(Icons.search),
-        ],
-        //点击事件回调
-        clickCallback: (int index){
-        if(index==0){
-          Navigator.of(context).pushNamed('add');
-        }else{
-          Navigator.of(context).pushNamed('search');
-        }
-        },
-      ),
-    );
+  // 倒计时
+  void countDown() {
+    var _duration = new Duration(seconds: 2000);
+    new Future.delayed(_duration, newHomePage);
+  }
+  void newHomePage() {
+    Navigator.pushReplacementNamed(context, 'home');
   }
 }
-
