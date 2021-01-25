@@ -8,7 +8,6 @@ import 'mine.dart';
 import 'package:provider/provider.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:shake_animation_widget/shake_animation_widget.dart';
-import 'package:winter/DemandArea/demandPage.dart';
 
 void main() => runApp(bottomNavigationBar());
 
@@ -27,7 +26,7 @@ class bottomNavigationBar extends StatelessWidget {
         'MyHomePage':(context)=>MyHomePage(),
         'LoginPage':(context)=>LoginPage(),
         'add':(context)=>TabBarForAdd(),
-
+        'search':(context)=>SearchPageWidget(),
 
 
       },
@@ -60,7 +59,7 @@ class MyHomePageState extends State<MyHomePage> {
   final widgetOptions = [
     TradeInfo(),
     NeedsInfo(),
-    Search(),//改
+    SearchPageWidget(),//改
     Mine(),
   ];
   @override
@@ -114,7 +113,7 @@ class MyHomePageState extends State<MyHomePage> {
         if(index==0){
           Navigator.of(context).pushNamed('add');
         }else{
-            //
+          Navigator.of(context).pushNamed('search');
         }
         },
       ),

@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeModel with ChangeNotifier {
   //夜间模式
-  bool _darkMode;
+  bool _darkMode=false;
   static const String STORE_KEY = 'darkMode';
   SharedPreferences _prefs;
   bool get darkMode => _darkMode;
@@ -23,6 +23,7 @@ class DarkModeModel with ChangeNotifier {
     } else{
       _darkMode=localMode;
     }
+    notifyListeners();
   }
 
   void changeMode() async {
