@@ -7,6 +7,8 @@ import 'package:winter/SetUserInfo/SetAccountInfo.dart';
 import 'package:winter/logIn.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'AdapterAndHelper/cropImage.dart';
+
 class Mine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -341,18 +343,12 @@ class MinePageState extends State<MinePage> {
                             ListTile(
                               leading: Icon(Icons.add_a_photo_outlined),
                               title: Text("拍照"),
-                              onTap: ()async {
-                                imageFile = await ImagePicker.pickImage(source: ImageSource.camera);
-                                Navigator.pop(context);
-                              },
+                              onTap: getImage
                             ),
                             ListTile(
                               leading: Icon(Icons.photo_library_outlined),
                               title: Text("从相册选择"),
-                              onTap: () async{
-                                imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
-                                Navigator.pop(context);
-                              },
+                              onTap: chooseImage
                             ),
                           ],
                         );
@@ -423,5 +419,35 @@ class MinePageState extends State<MinePage> {
         ),
       ],
     );
+  }
+
+
+  //头像设置（等后端）
+
+  ///拍摄照片
+  Future getImage() async {
+    await ImagePicker.pickImage(source: ImageSource.camera)
+        .then((image) => cropImage(image))
+    ;
+  }
+  ///从相册选取
+  Future chooseImage() async {
+    await ImagePicker.pickImage(source: ImageSource.gallery)
+        .then((image) => cropImage(image))
+    ;
+  }
+
+  void cropImage(var originalImage) async {
+    String result = await Navigator.push(context, MaterialPageRoute(builder: (context) => CropImageRoute(originalImage)));
+    if (result.isEmpty) {
+      print('上传失败');
+    } else {
+      //result是图片上传后拿到的url
+      setState(() {
+        var iconUrl = result;
+        print('上传成功：$iconUrl');
+        // _upgradeRemoteInfo();//后续数据处理，这里是更新头像信息
+      });
+    }
   }
 }
