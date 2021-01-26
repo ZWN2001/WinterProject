@@ -56,7 +56,7 @@ class _SplashState extends State<SplashPage>{
         body:  Column(
           children: <Widget>[
              Container(
-               margin: EdgeInsets.only(top: 60,left: 15,right: 15),
+               margin: EdgeInsets.only(top: 20,left: 15,right: 15),
               alignment: Alignment.center,
               child:  Image.asset(
                 "images/splash.png",
@@ -64,7 +64,7 @@ class _SplashState extends State<SplashPage>{
             ),
              Container(
               alignment: Alignment.bottomCenter,
-              margin: EdgeInsets.only(bottom: 30,top: 20),
+              margin: EdgeInsets.only(bottom: 15,top: 10),
               child: Column(
                 children: [
                   Image.asset(
@@ -75,7 +75,7 @@ class _SplashState extends State<SplashPage>{
                     child:  Text(
                       'Developed by : zwn & whc',
                       style: TextStyle(
-                          fontSize: 20
+                          fontSize: 15
                       ),
                     ),
                   ),
@@ -97,7 +97,7 @@ class _SplashState extends State<SplashPage>{
 
   // 倒计时
   void countDown() {
-    var _duration = new Duration(seconds: 5);
+    var _duration = new Duration(seconds: 3);
     new Future.delayed(_duration, newHomePage);
   }
   void newHomePage() {
