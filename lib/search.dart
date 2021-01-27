@@ -19,18 +19,22 @@ class SearchPageState extends State<SearchPageWidget>{
     print('监听中');
     controller.addListener(() {
       if (controller.text.isEmpty) {
+        if(mounted) {
         setState(() {
           searchStr = "";
           //默认显示
           centerContent = defaultDisplay();
           //显示历史记录
         });
+      }
       } else {
-        setState(() {
-          //动态搜索
-          searchStr = controller.text;
-          centerContent = realTimeSearch(searchStr);
-        });
+        if(mounted) {
+          setState(() {
+            //动态搜索
+            searchStr = controller.text;
+            centerContent = realTimeSearch(searchStr);
+          });
+        }
       }
     });
   }
@@ -54,10 +58,8 @@ class SearchPageState extends State<SearchPageWidget>{
           Container(
             margin: EdgeInsets.only(top: 10),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      child:  Stack(
+                    Stack(
                         children: [
                           Align(
                             alignment: AlignmentDirectional.bottomStart,
@@ -81,7 +83,6 @@ class SearchPageState extends State<SearchPageWidget>{
                           ),
                         ],
                       ),
-                    ),
                     Container(
                       child: Wrap(
                         spacing: 10,
@@ -96,9 +97,12 @@ class SearchPageState extends State<SearchPageWidget>{
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                Align(
+                  alignment: AlignmentDirectional.bottomStart,
+                  child: Text(
                   "推荐：",
                   style: TextStyle(fontSize: 20),
+                ),
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 15),
@@ -211,7 +215,7 @@ class SearchPageState extends State<SearchPageWidget>{
                   children: <Widget>[
                     IconButton(
                       //iconSize: 30,
-                      iconSize: width * 1/12,
+                      iconSize: width * 1/15,
                       icon: Icon(Icons.arrow_back),
                       onPressed: (){
                         //回到原来页面
@@ -250,7 +254,7 @@ class SearchPageState extends State<SearchPageWidget>{
                     ),
                     //清空按钮
                     IconButton(
-                        iconSize: width*1/12,
+                        iconSize: width*1/15,
                         icon: Icon(Icons.clear),
                         onPressed: () {
                           setState(() {

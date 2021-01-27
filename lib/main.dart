@@ -19,6 +19,8 @@ class Splash extends StatelessWidget{
     child: Consumer<DarkModeModel>(
     builder: (context, DarkModeModel, child) {
     return MaterialApp(
+
+
        routes: {
          //命名路由
          'MyHomePage':(context)=>MyHomePage(),
@@ -32,6 +34,8 @@ class Splash extends StatelessWidget{
            : ThemeData(
          primarySwatch: Colors.blue,
        ),
+
+
        home:Scaffold(
          body: SplashPage(),
        )
@@ -51,40 +55,46 @@ class _SplashState extends State<SplashPage>{
 
   @override
   Widget build(BuildContext context) {
-    return
-       Scaffold(
-        body:  Column(
-          children: <Widget>[
-             Container(
-               margin: EdgeInsets.only(top: 60,left: 15,right: 15),
-              alignment: Alignment.center,
-              child:  Image.asset(
-                "images/splash.png",
-              ),
-            ),
-             Container(
-              alignment: Alignment.bottomCenter,
-              margin: EdgeInsets.only(bottom: 30,top: 20),
-              child: Column(
-                children: [
-                  Image.asset(
-                    "images/appIcon.png",
+    return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Align(
+                alignment: Alignment.center,
+                child:  Container(
+                  margin: EdgeInsets.only(left: 15,right: 15),
+                  child:  Image.asset(
+                    "images/splash.png",
                   ),
-                  Container(
-                    margin: EdgeInsets.only(top: 15),
-                    child:  Text(
-                      'Developed by : zwn & whc',
-                      style: TextStyle(
-                          fontSize: 20
+                ),
+              ),
+
+              Align(
+                  alignment: Alignment.bottomCenter,
+                  child:  Container(
+                    margin: EdgeInsets.only(bottom: 15,top: 10),
+                    child: Container(
+                      child:Column(
+                        children: [
+                          Image.asset(
+                            "images/appIcon.png",
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(top: 15),
+                            child:  Text(
+                              'Developed by : zwn & whc',
+                              style: TextStyle(
+                                  fontSize: 15
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-
-                ],
+                  )
               ),
-            )
-          ],
-        ),
+            ],
+          // ],
+        // ),
     );
   }
 
@@ -97,7 +107,7 @@ class _SplashState extends State<SplashPage>{
 
   // 倒计时
   void countDown() {
-    var _duration = new Duration(seconds: 5);
+    var _duration = new Duration(seconds: 3);
     new Future.delayed(_duration, newHomePage);
   }
   void newHomePage() {

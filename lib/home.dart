@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:winter/addGoodsAndNeeds/TabBarForAdd.dart';
+import 'package:winter/ChatArea/ChatPage.dart';
 import 'package:winter/search.dart';
 import 'package:winter/tradeInfo.dart';
 import 'package:winter/DemandArea/NeedsTabBar.dart';
-import 'logIn.dart';
 import 'mine.dart';
-import 'package:provider/provider.dart';
-import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:shake_animation_widget/shake_animation_widget.dart';
-
-
 
 class Home extends StatelessWidget {
   @override
@@ -61,7 +56,7 @@ class MyHomePageState extends State<MyHomePage> {
   final widgetOptions = [
     TradeInfo(),
     NeedsInfo(),
-    SearchPageWidget(),//改
+    ChatPage(),
     Mine(),
   ];
   @override
