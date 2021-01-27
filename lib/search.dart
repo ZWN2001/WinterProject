@@ -70,7 +70,7 @@ class SearchPageState extends State<SearchPageWidget>{
                           ),
 
                           Align(
-                            alignment:AlignmentDirectional.topEnd,
+                            alignment:AlignmentDirectional.bottomEnd,
                             child:  IconButton(
                               padding: EdgeInsets.all(0),
                                 icon: Image(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:winter/ChatArea/ChatPage.dart';
-import 'package:winter/search.dart';
+import 'package:winter/ChatArea/chatGroup.dart';
 import 'package:winter/tradeInfo.dart';
 import 'package:winter/DemandArea/NeedsTabBar.dart';
 import 'mine.dart';
@@ -56,7 +55,7 @@ class MyHomePageState extends State<MyHomePage> {
   final widgetOptions = [
     TradeInfo(),
     NeedsInfo(),
-    ChatPage(),
+    ChatGroup(),
     Mine(),
   ];
   @override
