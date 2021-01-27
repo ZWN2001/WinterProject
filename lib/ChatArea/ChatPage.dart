@@ -4,6 +4,13 @@ import 'package:provider/provider.dart';
 import 'package:winter/AdapterAndHelper/bubble.dart';
 
 class ChatPage extends StatefulWidget {
+  ChatPage(
+      {this.messages, this.userName, this.sheName, this.headImage, this.sheHeadImage});
+  final String messages;
+  final String userName;
+  final String sheName;//对方的用户名
+  final String headImage;
+  final String sheHeadImage;
   @override
   State<StatefulWidget> createState() => new ChatPageState();
 }
@@ -17,6 +24,7 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   //点击发送后的处理事项
   void _handleSubmitted(String text) {
     //每次发送后清除输入框
+    if (text.trim() == "") return;
     _textController.clear();
     setState(() {
       _isComposing = false;
@@ -25,7 +33,7 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     ChatMessage message = new ChatMessage(
       text: text,
       animationController: new AnimationController(
-          duration: new Duration(milliseconds: 300),//动画运行时间
+          duration: new Duration(milliseconds: 300),
           vsync: this //此选项将当前窗口控件树保留在显示内存中，直到Flutter的渲染引擎完成刷新周期
       ),
     );
@@ -81,7 +89,8 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("zwn"),
+        title: Text("zwn"),//暂时
+        //title: Text(widget.sheName),
       ),
       body: Column(
         children:<Widget> [
@@ -110,12 +119,82 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 //表示单个聊天消息的控件
 const String _name = "Ryan";
 class ChatMessage extends StatelessWidget {
-  ChatMessage({this.text, this.animationController});
+  ChatMessage({this.text, this.animationController, this.senderName, this.userName, this.myHeadImage, this.sheHeadImage});
   final String text;
   final AnimationController animationController;//动画控制器
+  final String senderName;
+  final String userName;
+  final String myHeadImage;
+  final String sheHeadImage;
 
   @override
   Widget build(BuildContext context) {
+
+    Widget _sheSessionStyle() {
+      return Row(
+        crossAxisAlignment:  CrossAxisAlignment.start,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(right: 16.0),
+            child: CircleAvatar(
+              backgroundImage: NetworkImage(sheHeadImage),
+            ),
+          ),
+          Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(senderName,style: Theme.of(context).textTheme.subhead),
+                  Container(
+                    margin: const EdgeInsets.only(top: 5.0),
+                    child: Bubble(
+                      direction: BubbleDirection.left,
+                      color: Colors.blue,
+                      child: Text(
+                        text,
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  )
+                ],
+              ))
+        ],
+      );
+    }
+
+    Widget _mySessionStyle() {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(senderName, style: Theme.of(context).textTheme.subhead),
+                  Container(
+                    margin: const EdgeInsets.only(top: 5.0),
+                    child: Bubble(
+                      direction: BubbleDirection.left,
+                      color: Colors.blue,
+                      child: Text(
+                        text,
+                        style: TextStyle(color: Colors.white)
+                      ),
+                    ),
+                  )
+                ],
+              )),
+          Container(
+            margin: const EdgeInsets.only(left: 16.0),
+            child: CircleAvatar(
+              backgroundImage: NetworkImage(myHeadImage),
+            ),
+          )
+        ],
+      );
+    }
+
     return new SizeTransition(
         sizeFactor: new CurvedAnimation(
           parent: animationController,
@@ -125,24 +204,25 @@ class ChatMessage extends StatelessWidget {
       child: Consumer<DarkModeModel>(builder: (context, DarkModeModel, child){
         return Container(
           margin: EdgeInsets.symmetric(vertical: 10.0),
-          child: Row(
+          child:
+              //正确代码
+         // userName == senderName
+           // ? _mySessionStyle() : _sheSessionStyle(),
+          //临时代码
+          Row(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,//+
             children: [
-              Container(
-                margin: const EdgeInsets.only(right: 16.0),
-                child: CircleAvatar(backgroundImage: NetworkImage("https://www.itying.com/images/flutter/4.png")),
-              ),
               Flexible(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,//start
                     children: [
                       Text(_name,
                       style: Theme.of(context).textTheme.subhead),
                       Container(
                         margin: const EdgeInsets.only(top: 5.0),
-                        //margin: const EdgeInsets.fromLTRB(10, 5, 0, 0),
                         child: Bubble(
-                          direction: BubbleDirection.left,
+                          direction: BubbleDirection.right,
                           color: Colors.blue,
                           child: Text(
                             text,
@@ -151,13 +231,13 @@ class ChatMessage extends StatelessWidget {
                             ),
                           ),
                         )
-                        /*Text(text,
-                          style: TextStyle(
-                            color: DarkModeModel.darkMode ? Colors.white : Colors.black87
-                          ),),*/
                       )
                     ],
-                  ))
+                  )),
+              Container(
+                margin: const EdgeInsets.only(left: 16.0),//right
+                child: CircleAvatar(backgroundImage: NetworkImage("https://www.itying.com/images/flutter/4.png")),
+              ),
             ],
           ),
         );

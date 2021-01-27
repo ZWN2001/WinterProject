@@ -72,6 +72,17 @@ class _BubbleCliper extends CustomClipper<Path> {
           Rect.fromLTWH(_ArrowWidth, 0, (size.width - _ArrowWidth), size.height), this.radius));
       //合并
       path.addPath(path2, Offset(0, 0));
+    }else {
+      //绘制右边的三角形
+      path.moveTo(size.width, centerPoint);
+      path.lineTo(size.width - _ArrowWidth, centerPoint - _ArrowHeight/2);
+      path.lineTo(size.width - _ArrowWidth, centerPoint + _ArrowHeight/2);
+      path.close();
+      //绘制矩形
+      path2.addRRect(RRect.fromRectAndRadius(
+          Rect.fromLTWH(0, 0, (size.width-_ArrowWidth), size.height), this.radius));
+      //合并
+      path.addPath(path2, Offset(0, 0));
     }
     return path;
   }
