@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:winter/GoodsTypePage/allGoods.dart';
+import 'package:winter/AdapterAndHelper/buildRoteFloatingBtn.dart';
 
 class TradeInfo extends StatefulWidget {
   @override
@@ -28,45 +29,53 @@ class TradeInfoState extends State<TradeInfo> with TickerProviderStateMixin{
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-        length: productionTypes.length,
-        child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.blue,
-            title: TabBar(
-              tabs: productionTypes,
-              isScrollable: true,
-              labelColor: Colors.white,
-              controller: _tabController,
-            ),
-          ),
-          body: TabBarView(
-            controller: _tabController,
-            children:<Widget> [
-              Center(
-                child: AllGoods(),
-              ),
-              Center(
-                child: Text("这是数码产品"),
-              ),
-              Center(
-                child: Text("这是二手书"),
-              ),
-              Center(
-                child: Text("这是食物"),
-              ),
-              Center(
-                child: Text("这是生活用品"),
-              ),
-              Center(
-                child: Text("这是美妆用品"),
-              ),
-              Center(
-                child: Text("这是其他物品"),
-              ),
-            ],
-          ),
-        ));
+    return Stack(
+      children: [
+        Material(
+            child:DefaultTabController(
+                length: productionTypes.length,
+                child: Scaffold(
+                  appBar: AppBar(
+                    backgroundColor: Colors.blue,
+                    title: TabBar(
+                      tabs: productionTypes,
+                      isScrollable: true,
+                      labelColor: Colors.white,
+                      controller: _tabController,
+                    ),
+                  ),
+                  body: TabBarView(
+                    controller: _tabController,
+                    children:<Widget> [
+                      Center(
+                        child: AllGoods(),
+                      ),
+                      Center(
+                        child: Text("这是数码产品"),
+                      ),
+                      Center(
+                        child: Text("这是二手书"),
+                      ),
+                      Center(
+                        child: Text("这是食物"),
+                      ),
+                      Center(
+                        child: Text("这是生活用品"),
+                      ),
+                      Center(
+                        child: Text("这是美妆用品"),
+                      ),
+                      Center(
+                        child: Text("这是其他物品"),
+                      ),
+                    ],
+                  ),
+                ))
+        ),
+        buildRoteFloatingBtn(),
+      ],
+    );
+
   }
 
 }

@@ -1,10 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:winter/AdapterAndHelper/buildRoteFloatingBtn.dart';
 import 'package:winter/GoodsDetail/topNavigatorBar.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:provider/provider.dart';
-import 'package:shake_animation_widget/shake_animation_widget.dart';
+
 
 class AllGoods extends StatefulWidget {
   @override
@@ -64,10 +63,7 @@ class AllGoodsState extends State<AllGoods> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Material(
-            child: GridView.builder(
+    return GridView.builder(
                 padding: EdgeInsets.symmetric(horizontal: 5),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
@@ -80,12 +76,7 @@ class AllGoodsState extends State<AllGoods> {
                   return Material(
                     child: itemWidget(index),
                   );
-                }),
-        ),
-        buildRoteFloatingBtn(),
-      ],
-    );
-
+                });
   }
 
 
@@ -152,28 +143,5 @@ class AllGoodsState extends State<AllGoods> {
         }
     ));
   }
-
-  // Widget buildRoteFloatingBtn(){
-  //   return  Positioned(
-  //     right: 33,
-  //     bottom: 33,
-  //     //悬浮按钮
-  //     child: RoteFloatingButton(
-  //       //菜单图标组
-  //       iconList: [
-  //         Icon(Icons.add),
-  //         Icon(Icons.search),
-  //       ],
-  //       //点击事件回调
-  //       clickCallback: (int index){
-  //         if(index==0){
-  //           Navigator.of(context).pushNamed('add');
-  //         }else{
-  //           Navigator.of(context).pushNamed('search');
-  //         }
-  //       },
-  //     ),
-  //   );
-  // }
 
 }
