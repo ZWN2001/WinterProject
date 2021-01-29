@@ -88,6 +88,7 @@ class AllGoodsState extends State<AllGoods> {
 
   }
 
+
   //每个商品的窗口
   Widget itemWidget(int temp) {
     return InkWell(
