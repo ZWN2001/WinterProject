@@ -8,38 +8,9 @@ import 'package:shake_animation_widget/shake_animation_widget.dart';
 class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // return MultiProvider(
-    //     providers: [
-    //     ChangeNotifierProvider<DarkModeModel>(builder: (_) => DarkModeModel())
-    // ],
-    //   child: Consumer<DarkModeModel>(
-    // builder: (context, DarkModeModel, child) {
-    return
-      // MaterialApp(
-      // routes: {
-      //   //命名路由
-      //   'MyHomePage':(context)=>MyHomePage(),
-      //   'LoginPage':(context)=>LoginPage(),
-      //   'add':(context)=>TabBarForAdd(),
-      //   'search':(context)=>SearchPageWidget(),
-      //   'home':(context)=>Home(),
-      //
-      //
-      // },
-      //   theme: DarkModeModel.darkMode
-      //       ? ThemeData.dark()
-      //       : ThemeData(
-      //     primarySwatch: Colors.blue,
-      //   ),
-      //   home:
-        Scaffold(
+    return Scaffold(
           body: MyHomePage(),
         );
-    // );
-    //
-    // },
-    // ),
-    // );
   }
 }
 

@@ -43,30 +43,6 @@ class _RegisterPageState extends State<RegisterPage> {
       appBar: AppBar(
         title: Text("欢迎注册"),
       ),
-     /*body: Padding(
-       padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
-       child: Form(
-         key: registerKey,
-         autovalidate: true,
-         child: Row(
-           children:<Widget> [
-             new Container(
-                 padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 25.0),
-                 child: Image.asset('images/appIcon.png')
-             ),
-             _registerUserName(),
-             _registerPassword1(),
-             _registerPassword2(),
-             Row(
-               mainAxisAlignment: MainAxisAlignment.center,
-               children:<Widget> [
-                 _returnButton(),
-               ],
-             )
-           ],
-         )
-       ),
-     ),*/
       body: Stack(
         children:<Widget> [
           Center(

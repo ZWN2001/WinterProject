@@ -48,28 +48,17 @@ class ChangeUserPasswordPage extends StatelessWidget {
             decoration: (InputDecoration(labelText: '请确认新密码')),
           ),
         ),
-        Container(
-          margin: EdgeInsets.fromLTRB(20, 50, 20, 0),
-            child: Center(
-                child: FlatButton(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                  ),
-                  child: Text(
-                    '提交',
-                    style:
-                        TextStyle(fontSize: 25, color: Colors.lightBlueAccent),
-                  ),
+              Center(
+              child: Container(
+                margin: EdgeInsets.only(top: 50),
+                child: FloatingActionButton(
+                  backgroundColor: Colors.lightBlue,
+                  child: Icon(Icons.assignment_turned_in_rounded, size: 28,),
                   onPressed: () {
-                    if(newPwdTextController1.text==newPwdTextController2.text){
 
-
-                    }else{
-
-                    }
                   },
                 ),
-              )
+            ),
         )
       ],
     );

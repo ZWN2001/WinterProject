@@ -24,31 +24,6 @@ class MinePage extends StatefulWidget {
 }
 
 class MinePageState extends State<MinePage> {
-  // Color wordColor, backColor;
-  //
-  // void _setWordState() {
-  //   setState(() {
-  //     return Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
-  //       wordColor = DarkModeModel.darkMode ? Colors.black : Colors.white;
-  //     });
-  //   });
-  // }
-  //
-  // void _setbackColorState() {
-  //   setState(() {
-  //     return Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
-  //       backColor = DarkModeModel.darkMode ? Colors.white : Colors.grey;
-  //     });
-  //   });
-  // }
-  //
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _setbackColorState();
-  //   _setWordState();
-  // }
-
   var imageFile;
   @override
   Widget build(BuildContext context) {
@@ -317,7 +292,10 @@ class MinePageState extends State<MinePage> {
                     ),
                   ],
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Toast.show("好哒", context,
+                      duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                },
               ),
             ),
           );
@@ -396,7 +374,6 @@ class MinePageState extends State<MinePage> {
                     )
                 ),
             ),
-
           ],
         )),
       );

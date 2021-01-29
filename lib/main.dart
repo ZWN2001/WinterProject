@@ -9,39 +9,35 @@ import 'Basic/home.dart';
 
 void main() => runApp(Splash());
 
-class Splash extends StatelessWidget{
+class Splash extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-        providers: [
-        ChangeNotifierProvider<DarkModeModel>(builder: (child) => DarkModeModel())
-    ],
-    child: Consumer<DarkModeModel>(
-    builder: (context, DarkModeModel, child) {
-    return MaterialApp(
-
-
-       routes: {
-         //命名路由
-         'MyHomePage':(context)=>MyHomePage(),
-         'LoginPage':(context)=>LoginPage(),
-         'add':(context)=>TabBarForAdd(),
-         'search':(context)=>SearchPageWidget(),
-         'home':(context)=>Home(),
-       },
-       theme: DarkModeModel.darkMode
-           ? ThemeData.dark()
-           : ThemeData(
-         primarySwatch: Colors.blue,
-       ),
-
-
-       home:Scaffold(
-         body: SplashPage(),
-       )
-    );
-    },
-    ),
+      providers: [
+        ChangeNotifierProvider<DarkModeModel>(
+            builder: (child) => DarkModeModel())
+      ],
+      child: Consumer<DarkModeModel>(
+        builder: (context, DarkModeModel, child) {
+          return MaterialApp(
+              routes: {
+                //命名路由
+                'MyHomePage': (context) => MyHomePage(),
+                'LoginPage': (context) => LoginPage(),
+                'add': (context) => TabBarForAdd(),
+                'search': (context) => SearchPageWidget(),
+                'home': (context) => Home(),
+              },
+              theme: DarkModeModel.darkMode
+                  ? ThemeData.dark()
+                  : ThemeData(
+                      primarySwatch: Colors.blue,
+                    ),
+              home: Scaffold(
+                body: SplashPage(),
+              ));
+        },
+      ),
     );
   }
 }
@@ -51,50 +47,45 @@ class SplashPage extends StatefulWidget {
   _SplashState createState() => _SplashState();
 }
 
-class _SplashState extends State<SplashPage>{
-
+class _SplashState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Align(
-                alignment: Alignment.center,
-                child:  Container(
-                  margin: EdgeInsets.only(left: 15,right: 15),
-                  child:  Image.asset(
-                    "images/splash.png",
-                  ),
-                ),
-              ),
-
-              Align(
-                  alignment: Alignment.bottomCenter,
-                  child:  Container(
-                    margin: EdgeInsets.only(bottom: 15,top: 10),
-                    child: Container(
-                      child:Column(
-                        children: [
-                          Image.asset(
-                            "images/appIcon.png",
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(top: 15),
-                            child:  Text(
-                              'Developed by : zwn & whc',
-                              style: TextStyle(
-                                  fontSize: 15
-                              ),
-                            ),
-                          ),
-                        ],
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Align(
+          alignment: Alignment.center,
+          child: Container(
+            margin: EdgeInsets.only(left: 15, right: 15),
+            child: Image.asset(
+              "images/splash.png",
+            ),
+          ),
+        ),
+        Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              margin: EdgeInsets.only(bottom: 15, top: 10),
+              child: Container(
+                child: Column(
+                  children: [
+                    Image.asset(
+                      "images/appIcon.png",
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 15),
+                      child: Text(
+                        'Developed by : zwn & whc',
+                        style: TextStyle(fontSize: 15),
                       ),
                     ),
-                  )
+                  ],
+                ),
               ),
-            ],
-          // ],
-        // ),
+            )),
+      ],
+      // ],
+      // ),
     );
   }
 
@@ -110,6 +101,7 @@ class _SplashState extends State<SplashPage>{
     var _duration = new Duration(seconds: 3);
     new Future.delayed(_duration, newHomePage);
   }
+
   void newHomePage() {
     Navigator.pushReplacementNamed(context, 'home');
   }
