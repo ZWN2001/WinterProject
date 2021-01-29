@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:winter/AdapterAndHelper/darkModeModel.dart';
+import 'changeUserName.dart';
 import 'changeUserPassword.dart';
-import 'file:///E:/apps/winter/lib/Mine/SetUserInfo/changeUserName.dart';
 
 class SetAccountInfo extends StatelessWidget {
   @override

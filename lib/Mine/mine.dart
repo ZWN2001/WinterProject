@@ -3,11 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:winter/PersonalInfo/showInfo.dart';
+import 'MyRelease/myReleaseTabBar.dart';
 import 'SetUserInfo/setAccountInfo.dart';
-import 'file:///E:/apps/winter/lib/Mine/MyRelease/myReleaseTabBar.dart';
 import 'package:winter/logIn.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../AdapterAndHelper/cropImage.dart';
 
 class Mine extends StatelessWidget {
