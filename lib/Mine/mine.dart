@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
-import 'package:winter/MyRelease/myReleaseTabBar.dart';
-import 'package:winter/SetUserInfo/SetAccountInfo.dart';
+import 'SetUserInfo/setAccountInfo.dart';
+import 'file:///E:/apps/winter/lib/Mine/MyRelease/myReleaseTabBar.dart';
 import 'package:winter/logIn.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'AdapterAndHelper/cropImage.dart';
+import '../AdapterAndHelper/cropImage.dart';
 
 class Mine extends StatelessWidget {
   @override
@@ -355,7 +355,7 @@ class MinePageState extends State<MinePage> {
                       });
                 },
                 child: Container(
-                  margin: EdgeInsets.all(8),
+                  margin: EdgeInsets.fromLTRB(12, 8, 8, 8),
                   child: ClipOval(
                     child: Image.asset('images/appIcon.png'),
                   ),
@@ -371,7 +371,7 @@ class MinePageState extends State<MinePage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Hi , 亲爱的' + LoginPageState.userName,
+                            'Hi , 亲爱的' + LoginPageState.account,
                             textAlign: TextAlign.center,
                             overflow: TextOverflow.clip,
                             style: TextStyle(
@@ -380,11 +380,14 @@ class MinePageState extends State<MinePage> {
                                     ? Colors.white
                                     : Colors.black),
                           ),
-                          Text('享你所想',
+                          Text(
+                              '账号：'+LoginPageState.account,
                               style: TextStyle(
+                                fontSize: 17,
                                   color: DarkModeModel.darkMode
                                       ? Colors.white
                                       : Colors.black),
+                              overflow: TextOverflow.clip,
                               textAlign: TextAlign.center),
                         ],
                       ),

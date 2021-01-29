@@ -25,7 +25,8 @@ class _RegisterPageState extends State<RegisterPage> {
   GlobalKey<FormState> registerKey = new GlobalKey<FormState>();
   var pass1Key = GlobalKey<FormFieldState>();
   var pass2Key = GlobalKey<FormFieldState>();
-  var nameKey = GlobalKey<FormFieldState>();
+  var accountKey = GlobalKey<FormFieldState>();
+  var userNameKey = GlobalKey<FormFieldState>();
 
   String _userName = "";//用户名
   String _password1 = "";//密码
@@ -74,12 +75,19 @@ class _RegisterPageState extends State<RegisterPage> {
                 direction: Axis.vertical,
                 children:<Widget> [
                   new Container(
-                    padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 25.0),
+                    padding: EdgeInsets.fromLTRB(20.0, 30.0, 20.0, 25.0),
                     child: Image.asset('images/appIcon.png')
                   ),
-                  _registerUserName(),
-                  _registerPassword1(),
-                  _registerPassword2(),
+                  Card(
+                    child: Column(
+                      children: [
+                        _registerAccount(),
+                        _registerUserName(),
+                        _registerPassword1(),
+                        _registerPassword2(),
+                      ],
+                    ),
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children:<Widget> [
@@ -95,18 +103,43 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  Widget _registerUserName() {
+  Widget _registerAccount() {
     return Container(
-      margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+      margin: EdgeInsets.fromLTRB(10, 10, 10, 15),
       child: TextFormField(
         decoration: InputDecoration(
-          labelText: "创建您的账号",
-          border: OutlineInputBorder(borderSide: BorderSide()),
-          fillColor: Colors.white,
-          filled: true,
+          hintText: "创建账号/使用学号",
+          // border: OutlineInputBorder(borderSide: BorderSide()),
+          // fillColor: Colors.white,
+          // filled: true,
           prefixIcon: Icon(Icons.person),
         ),
-        key: nameKey,
+        key: accountKey,
+        validator: (value) {
+          if (value.isEmpty) {
+            return "账号不可为空";
+          }
+          return null;
+        },
+        onChanged: (value) {
+          _userName = value;
+        },
+      ),
+    );
+  }
+
+  Widget _registerUserName() {
+    return Container(
+      margin: EdgeInsets.fromLTRB(10, 0, 10, 15),
+      child: TextFormField(
+        key: userNameKey,
+        decoration: InputDecoration(
+          hintText: "设置用户名/昵称",
+          // border: OutlineInputBorder(borderSide: BorderSide()),
+          // fillColor: Colors.white,
+          // filled: true,
+          prefixIcon: Icon(Icons.accessibility_new),
+        ),
         validator: (value) {
           if (value.isEmpty) {
             return "用户名不可为空";
@@ -122,13 +155,13 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Widget _registerPassword1() {
     return Container(
-      margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+      margin: EdgeInsets.fromLTRB(10, 0, 10, 15),
       child: TextFormField(
         decoration: InputDecoration(
-          labelText: "请输入密码",
-          border: OutlineInputBorder(borderSide: BorderSide()),
-          fillColor: Colors.white,
-          filled: true,
+          labelText: "设置密码",
+          // border: OutlineInputBorder(borderSide: BorderSide()),
+          // fillColor: Colors.white,
+          // filled: true,
           prefixIcon: Icon(Icons.lock),
           contentPadding: EdgeInsets.all(8),
           suffixIcon: IconButton(
@@ -161,13 +194,13 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Widget _registerPassword2() {
     return Container(
-      margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+      margin: EdgeInsets.fromLTRB(10, 10, 10, 15),
       child: TextFormField(
         decoration: InputDecoration(
-            labelText: "请再次输入密码",
-            border: OutlineInputBorder(borderSide: BorderSide()),
-            fillColor: Colors.white,
-            filled: true,
+            labelText: "请确认密码",
+            // border: OutlineInputBorder(borderSide: BorderSide()),
+            // fillColor: Colors.white,
+            // filled: true,
             prefixIcon: Icon(Icons.lock),
             contentPadding: EdgeInsets.all(8),
             suffixIcon: IconButton(
@@ -223,12 +256,12 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Widget _returnButton() {
     return Container(
-      margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
-      child: RaisedButton(
+      margin: EdgeInsets.fromLTRB(20, 15, 20, 0),
+      child: FlatButton(
         child: Text(
           "完成",
         style: TextStyle(
-          fontSize: 20.0,
+          fontSize: 25.0,
           color: Colors.blue,
         ),
         ),
@@ -236,7 +269,7 @@ class _RegisterPageState extends State<RegisterPage> {
           borderRadius: BorderRadius.all(Radius.circular(30.0)),
         ),
         onPressed: (){
-          if (nameKey.currentState.validate() && pass1Key.currentState.validate() && pass2Key.currentState.validate()){
+          if (userNameKey.currentState.validate() && accountKey.currentState.validate() && pass1Key.currentState.validate() && pass2Key.currentState.validate()){
             _getFeedBack();
             if (_backCode == 0) {
               Toast.show("注册成功", context,duration: Toast.LENGTH_LONG,gravity: Toast.BOTTOM);
