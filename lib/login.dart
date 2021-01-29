@@ -12,11 +12,11 @@ class LoginPage extends StatefulWidget {
 class LoginPageState extends State<LoginPage> {
   MyHttpClient myHttpClient = MyHttpClient();
   GlobalKey<FormState> loginKey = new GlobalKey<FormState>(); //全局key
-  var userNameKey = GlobalKey<FormFieldState>();
+  var accountKey = GlobalKey<FormFieldState>();
   var pwdKey = GlobalKey<FormFieldState>();
   // final userNameController=TextEditingController();
   // final pwdController =TextEditingController();
-  static String userName = ""; //用户名
+  static String account = ""; //账号
   String _passWord = ""; //密码
   bool pwdShow = true; //默认不展示密码
   bool _expand = false; //是否展示历史账号
@@ -36,7 +36,7 @@ class LoginPageState extends State<LoginPage> {
     _users.addAll(await SharedPreferenceUtil.getUsers());
     //默认加载第一个账号
     if (_users.length > 0) {
-      userName = _users[0].username;
+      account = _users[0].account;
       _passWord = _users[0].password;
     }
   }
@@ -81,11 +81,11 @@ class LoginPageState extends State<LoginPage> {
   //构建账号输入框
   Widget _buildUsername() {
     return Container(
-      margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+      margin: EdgeInsets.fromLTRB(10, 20, 10, 10),
       child: TextFormField(
-        key: userNameKey,
+        key: accountKey,
         decoration: InputDecoration(
-          hintText: '请输入用户名',
+          hintText: '请输入账号/学号',
           // border: OutlineInputBorder(borderSide: BorderSide()),
           contentPadding: EdgeInsets.all(8),
           fillColor: Colors.white38,
@@ -94,7 +94,7 @@ class LoginPageState extends State<LoginPage> {
           suffixIcon: GestureDetector(
               onTap: () {
                 if (_users.length > 1 ||
-                    _users[0] != User(userName, _passWord)) {
+                    _users[0] != User(account, _passWord)) {
                   //如果个数大于1个或者唯一一个账号跟当前账号不一样才弹出历史账号
                   setState(() {
                     _expand = !_expand;
@@ -119,17 +119,17 @@ class LoginPageState extends State<LoginPage> {
         },
         controller: TextEditingController.fromValue(
           TextEditingValue(
-            text: userName,
+            text: account,
             selection: TextSelection.fromPosition(
               TextPosition(
                 affinity: TextAffinity.downstream,
-                offset: userName == null ? 0 : userName.length,
+                offset: account == null ? 0 : account.length,
               ),
             ),
           ),
         ),
         onChanged: (value) {
-          userName = value;
+          account = value;
         },
       ),
     );
@@ -185,23 +185,20 @@ class LoginPageState extends State<LoginPage> {
 //  登录按钮
   Widget _buildLoginButton(){
     return  Container(
-      margin: EdgeInsets.fromLTRB(0, 0, 15.0, 0),
+      margin: EdgeInsets.fromLTRB(0, 30, 15.0, 0),
       child:  FlatButton(
-      // controller: TextEditingController.fromValue;
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(30.0)),
         ),
         padding: EdgeInsets.fromLTRB(25.0, 15.0, 25.0, 15.0),
         onPressed: (){
-          if(userNameKey.currentState.validate()&&pwdKey.currentState.validate()) {
+          if(accountKey.currentState.validate()&&pwdKey.currentState.validate()) {
             // myHttpClient.sendHttpRequest('http://106.15.192.117:8080/shop/login?userName='+userName+'?password='+_passWord);
             // if(myHttpClient.data==)
             //
-            SharedPreferenceUtil.saveUser(User(userName, _passWord));
+            SharedPreferenceUtil.saveUser(User(account, _passWord));
             logged=true;
-            // Navigator.of(context).pushReplacementNamed('bottomNavigationBar');
             Navigator.of(context).pushNamedAndRemoveUntil('MyHomePage', (Route<dynamic> route) => false);
-            // push(context, MaterialPageRoute(builder: (context) => bottomNavigationBar(), maintainState: false));
           }
         },
         child: Text(
@@ -217,7 +214,7 @@ class LoginPageState extends State<LoginPage> {
   //注册按钮
   Widget _buildAddAccount() {
     return Container(
-      margin: EdgeInsets.fromLTRB(15.0, 0, 0.0, 0),
+      margin: EdgeInsets.fromLTRB(15.0, 30, 0.0, 0),
       child: new FlatButton(
         onPressed: () {
           Navigator.push(
@@ -245,7 +242,7 @@ class LoginPageState extends State<LoginPage> {
     if (_expand) {
       List<Widget> children = _buildItems();
       if (children.length > 0) {
-        RenderBox renderObject = userNameKey.currentContext.findRenderObject();
+        RenderBox renderObject = accountKey.currentContext.findRenderObject();
         final position = renderObject.localToGlobal(Offset.zero);
         double screenW = MediaQuery.of(context).size.width;
         double currentW = renderObject.paintBounds.size.width;
@@ -279,7 +276,7 @@ class LoginPageState extends State<LoginPage> {
   List<Widget> _buildItems() {
     List<Widget> list2 = List();
     for (int i = 0; i < _users.length; i++) {
-      if (_users[i] != User(userName, _passWord)) {
+      if (_users[i] != User(account, _passWord)) {
         //增加账号记录
         list2.add(_buildItem(_users[i]));
         //增加分割线
@@ -305,7 +302,7 @@ class LoginPageState extends State<LoginPage> {
             Expanded(
               child: Padding(
                 padding: EdgeInsets.only(left: 5),
-                child: Text(user.username),
+                child: Text(user.account),
               ),
             ),
             GestureDetector(
@@ -322,7 +319,7 @@ class LoginPageState extends State<LoginPage> {
                   SharedPreferenceUtil.delUser(user);
                   //处理最后一个数据，假如最后一个被删掉，将Expand置为false
                   if (!(_users.length > 1 ||
-                      _users[0] != User(userName, _passWord))) {
+                      _users[0] != User(account, _passWord))) {
                     //如果个数大于1个或者唯一一个账号跟当前账号不一样才弹出历史账号
                     _expand = false;
                   }
@@ -334,7 +331,7 @@ class LoginPageState extends State<LoginPage> {
       ),
       onTap: () {
         setState(() {
-          userName = user.username;
+          account = user.account;
           _passWord = user.password;
           _expand = false;
         });

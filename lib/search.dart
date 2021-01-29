@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'AdapterAndHelper/httpUtil.dart';
 import 'dart:async';
@@ -52,12 +53,13 @@ class SearchPageState extends State<SearchPageWidget>{
   ///默认显示(推荐 + 历史记录)
   static Widget defaultDisplay(){
     return Container(
-      padding: const EdgeInsets.only(left: 15,right: 15),
+      padding: const EdgeInsets.only(left: 10,right: 15),
       child: Column(
         children: <Widget>[
           Container(
             margin: EdgeInsets.only(top: 10),
                 child: Column(
+                  // crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Stack(
                         children: [
@@ -70,7 +72,7 @@ class SearchPageState extends State<SearchPageWidget>{
                           ),
 
                           Align(
-                            alignment:AlignmentDirectional.topEnd,
+                            alignment:AlignmentDirectional.bottomEnd,
                             child:  IconButton(
                               padding: EdgeInsets.all(0),
                                 icon: Image(
@@ -84,6 +86,7 @@ class SearchPageState extends State<SearchPageWidget>{
                         ],
                       ),
                     Container(
+                      alignment: AlignmentDirectional.centerStart,
                       child: Wrap(
                         spacing: 10,
                         children: defaultData(history),
@@ -202,10 +205,6 @@ class SearchPageState extends State<SearchPageWidget>{
 
   @override
   Widget build(BuildContext context) {
-    //屏幕宽度
-    double width = MediaQuery.of(context).size.width;
-    //double height = MediaQuery.of(context).size.height;
-    // TODO: implement build
     return  Scaffold(
           body: Container(
             margin: EdgeInsets.only(top: 40),
@@ -215,7 +214,7 @@ class SearchPageState extends State<SearchPageWidget>{
                   children: <Widget>[
                     IconButton(
                       //iconSize: 30,
-                      iconSize: width * 1/15,
+                      iconSize: 25,
                       icon: Icon(Icons.arrow_back),
                       onPressed: (){
                         //回到原来页面
@@ -223,38 +222,41 @@ class SearchPageState extends State<SearchPageWidget>{
                         Navigator.pop(context);
                       },
                     ),
-                    Container(
-                      margin: EdgeInsets.only(left: 0),
-                      //设置 child 居中
-                      alignment: Alignment(0, 0),
-                      height: width * 1/9,
-                      width: width*3/4,
-                      //边框设置
-                      decoration: new BoxDecoration(
-                        //背景
-                        color: Colors.black12,
-                        //设置四周圆角 角度 这里的角度应该为 父Container height 的一半
-                        borderRadius: BorderRadius.all(Radius.circular(25.0)),
-                        //设置四周边框
-                        border: new Border.all(width: 1, color: Colors.white12),
-                      ),
-                      child:  TextFormField(
-                        controller: controller,
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.only(top: 5),
-                          border: InputBorder.none,
-                          hintText: '输入搜索内容...',
-                          hintStyle: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 20,
+                    Expanded(
+                        child:   Container(
+                          margin: EdgeInsets.only(left: 0),
+                          //设置 child 居中
+                          alignment: Alignment(0, 0),
+                          //边框设置
+                          decoration: new BoxDecoration(
+                            //背景
+                            color: Colors.black12,
+                            //设置四周圆角 角度 这里的角度应该为 父Container height 的一半
+                            borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                            //设置四周边框
+                            border: new Border.all(width: 1, color: Colors.white12),
                           ),
-                          prefixIcon: Icon(Icons.search),
+                          child:  Container(
+                            alignment: Alignment.center,
+                            child: TextFormField(
+                              controller: controller,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: '输入搜索内容...',
+                                hintStyle: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 20,
+                                ),
+                                prefixIcon: Icon(Icons.search),
+                              ),
+                            ),
+                          )
                         ),
-                      ),
                     ),
+
                     //清空按钮
                     IconButton(
-                        iconSize: width*1/15,
+                        iconSize:25,
                         icon: Icon(Icons.clear),
                         onPressed: () {
                           setState(() {

@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
-import 'package:winter/test.dart';
+import 'dart:io';
+//ByteData这里需要引入dart:typed_data文件，引入service.dart的话app里可以检索到文件个数，但是传递到后台一直是null，时间紧迫我也没抓包看是咋回事儿先这么用吧
+import 'dart:typed_data';
+import 'package:dio/dio.dart';
+//MediaType用
+import 'package:http_parser/http_parser.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 
 class AddGoods extends StatelessWidget {
   @override
@@ -11,13 +17,14 @@ class AddGoods extends StatelessWidget {
   }
 }
 class AddGoodsPage extends StatefulWidget{
-  @override
-  _AddGoodsPageState createState() => _AddGoodsPageState();
+
+  final arguments;
+  AddGoodsPage({Key key, this.arguments}) : super(key : key);
+  _AddGoodsPageState createState() => _AddGoodsPageState(this.arguments);
 }
 
 class _AddGoodsPageState extends State<AddGoodsPage> {
 
-  var imageFile;
   bool _imageCondition = false; //是否传入照片
   bool _categoryCondition = false; //是否传入分类
   String category;
@@ -31,270 +38,330 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
   var priceKey = GlobalKey<FormFieldState>();
   var contactKey = GlobalKey<FormFieldState>();
 
+  final arguments;
+  _AddGoodsPageState(this.arguments);
+  //上传图片用
+  ScrollController _imgController = new ScrollController();
+  List<Asset> _img = new List<Asset>();
+
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
     return ListView(
       children: [
-        Container(
-            margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            child: TextFormField(
-              key: titleKey,
-              controller: _title,
-              style: TextStyle(
-                  fontSize: 20
-              ),
-              decoration: InputDecoration(
-                labelText: '商品标题',
-                border: OutlineInputBorder(borderSide: BorderSide()),
-                contentPadding: EdgeInsets.all(8),
-              ),
-              validator: (value) {
-                if (value.isEmpty) {
-                  return "起个标题啊拜托";
-                }
-                return null;
-              },
-            )
-        ),
-
-        Container(
-            margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            child: TextFormField(
-              keyboardType: TextInputType.number,
-              key: priceKey,
-              controller: _price,
-              style: TextStyle(
-                  fontSize: 20
-              ),
-              decoration: InputDecoration(
-                labelText: '商品价格',
-                border: OutlineInputBorder(borderSide: BorderSide()),
-                contentPadding: EdgeInsets.all(8),
-              ),
-              validator: (value) {
-                if (value.isEmpty) {
-                  return "价格不可为空哦";
-                }
-                return null;
-              },
-            )
-        ),
-
-        Container(
-          margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
-          child: Align(
-            alignment: AlignmentDirectional.topStart,
-            child: Text(
-              '商品简介（可为空）:',
-              style: TextStyle(
-                  fontSize: 22
-              ),
-            ),
-          ),
-        ),
-
-        //商品简介(自动换行):
-        Container(
-          margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-          child: TextField(
-            controller: _description,
-            maxLines: null,
-            style: TextStyle(
-                fontSize: 20
-            ),
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.all(8),
-            ),
-          ),
-        ),
-        Container(
-            margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            child: TextFormField(
-              key: contactKey,
-               controller: _contact,
-              style: TextStyle(
-                  fontSize: 20
-              ),
-              decoration: InputDecoration(
-                labelText: '留一下联系方式吧',
-                contentPadding: EdgeInsets.all(8),
-              ),
-              validator: (value) {
-                if (value.isEmpty) {
-                  return "忘记留联系方式啦！";
-                }
-                return null;
-              },
-            )
-        ),
-
-
-        Row(
-          children: [
-            Expanded(
-              child: Center(
-                child: FlatButton(
-                  // color: Colors.white,
-                  child: Container(
-                    margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          child: Icon(
-                            Icons.add_a_photo_outlined, size: 30, color: Colors.lightBlue,),
-                        ),
-                        Container(
-                          child: Column(
-                     children: [
-                       Text('添加图片',
-                         style: TextStyle(
-                             fontSize: 20,
-                             color: Colors.grey
-                         ),
-                       ),
-                       _imageCondition ? _imageUploaded() : _imageUnUploaded()
-                               ],
-                            )
-                        )
-                      ],
+        //标题&价格
+        Card(
+          margin: EdgeInsets.only(top: 20),
+          child:Column(
+        children: [
+            //标题
+            Container(
+            margin: EdgeInsets.fromLTRB(10, 0, 20, 5),
+            child:   Row(
+              children: [
+                Container(
+                  margin: EdgeInsets.only(right: 15),
+                  child:Text(
+                    '商品标题',
+                    style: TextStyle(
+                        fontSize: 15
                     ),
                   ),
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => TestPage()));
-                  },
                 ),
-              ),
-            ),
 
-            Expanded(
-              child: Center(
-                child: FlatButton(
-                  // color: Colors.white,
-                  child: Container(
-                    margin: EdgeInsets.fromLTRB(0, 20, 10, 0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          child: Icon(
-                            Icons.add_box_outlined, size: 30, color: Colors
-                              .lightBlue,),
-                        ),
-                        Container(
-                          child: Column(
-                            children: [
-                              Text('选择分类',
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.grey
-                                ),
-                              ),
-                              _categoryCondition ? _categoryChoosed() : _categoryUnChoosed()
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  onPressed: () {
-                    showModalBottomSheet(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              ListTile(
-                                leading: Icon(Icons.android),
-                                title: Text("数码产品"),
-                                onTap: () {
-                                  _categoryCondition=true;
-                                  setState(() {
-                                    category = '数码产品';
-                                    Navigator.pop(context);
-                                  });
-                                },
-                              ),
-                              ListTile(
-                                leading: Icon(Icons.book),
-                                title: Text("二手书"),
-                                onTap: () {
-                                  _categoryCondition=true;
-                                  setState(() {
-                                    category = '二手书';
-                                    Navigator.pop(context);
-                                  });
-                                },
-                              ),
-                              ListTile(
-                                leading: Icon(Icons.food_bank_outlined),
-                                title: Text("食品"),
-                                onTap: () {
-                                  _categoryCondition=true;
-                                  setState(() {
-                                    category = '食品';
-                                    Navigator.pop(context);
-                                  });
-                                },
-                              ),
-                              ListTile(
-                                leading: Icon(Icons.accessibility_new),
-                                title: Text("生活用品"),
-                                onTap: () {
-                                  _categoryCondition=true;
-                                  setState(() {
-                                    category = '生活用品';
-                                    Navigator.pop(context);
-                                  });
-                                },
-                              ),
-                              ListTile(
-                                leading: Icon(Icons.auto_fix_high),
-                                title: Text("美妆"),
-                                onTap: () {
-                                  _categoryCondition=true;
-                                  setState(() {
-                                    category = '美妆';
-                                    Navigator.pop(context);
-                                  });
-                                },
-                              ),
-                              ListTile(
-                                leading: Icon(Icons.assessment_outlined),
-                                title: Text("其他"),
-                                onTap: () {
-                                  _categoryCondition=true;
-                                  setState(() {
-                                    category = '其他';
-                                    Navigator.pop(context);
-                                  });
-                                },
-                              ),
-                            ],
-                          );
+                Expanded(
+                    child: TextFormField(
+                      key: titleKey,
+                      controller: _title,
+                      style: TextStyle(
+                          fontSize: 15
+                      ),
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return "起个标题啊拜托";
                         }
-                    );
-                  },
+                        return null;
+                      },
+                    )
+                ),
+              ],
+            ),
+          ),
+            //价格
+            Container(
+            margin: EdgeInsets.fromLTRB(10, 5, 20, 5),
+            child:   Row(
+              children: [
+                Container(
+                  margin: EdgeInsets.only(right: 15),
+                  child:Text(
+                    '商品价格',
+                    style: TextStyle(
+                        fontSize: 15
+                    ),
+                  ),
+                ),
+
+                Expanded(
+                    child: TextFormField(
+                      keyboardType: TextInputType.number,
+                      key: priceKey,
+                      controller: _price,
+                      style: TextStyle(
+                          fontSize: 15
+                      ),
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return "价格不可为空哦";
+                        }
+                        return null;
+                      },
+                    )
+                ),
+              ],
+            ),
+          ),
+      ],
+        ),
+        ),
+        //商品简介(自动换行):
+        Card(
+          margin: EdgeInsets.only(top: 10),
+          child:Column(
+            children: [
+              Container(
+                margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                child: Align(
+                  alignment: AlignmentDirectional.topStart,
+                  child: Text(
+                    '商品简介（可为空嗷）:',
+                    style: TextStyle(
+                        fontSize: 18
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ],
+              Container(
+                margin: EdgeInsets.fromLTRB(10, 0, 20, 10),
+                child: TextField(
+                  controller: _description,
+                  maxLines: null,
+                  style: TextStyle(
+                      fontSize: 20
+                  ),
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.all(8),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-        // Row(
-        //   children: [
-        //     Container(
-        //         margin: EdgeInsets.fromLTRB(10, 5, 0, 0),
-        //         child: imageCondition ? _imageUploaded() : _imageUnUploaded()
-        //     ),
-        //     Container(
-        //         margin: EdgeInsets.fromLTRB(0, 5, 10, 0),
-        //         child: categoryCondition
-        //             ? _categoryChoosed()
-        //             : _categoryUnChoosed()
+
+        //分类
+        Card(
+          margin: EdgeInsets.only(top: 10),
+          child: FlatButton(
+            // color: Colors.white,
+            child: Container(
+              margin: EdgeInsets.fromLTRB(0, 20, 10, 20),
+              child: Row(
+                children: [
+                  Container(
+                    child:Row(
+                    children: [
+                      Icon(
+                        Icons.add_box_outlined, size: 30, color: Colors.lightBlue,),
+                      Text('   选择分类',
+                        style: TextStyle(
+                            fontSize: 17,
+                            color: Colors.black
+                        ),
+                      ),
+                    ],
+                    )
+
+                  ),
+                        Expanded(
+                            child:  Container(
+                              alignment: Alignment.center,
+                              child: _categoryCondition ? _categoryChoosed() : _categoryUnChoosed() ,
+                            ),
+                        ),
+                ],
+              ),
+            ),
+            onPressed: () {
+              showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        ListTile(
+                          leading: Icon(Icons.android),
+                          title: Text("数码产品"),
+                          onTap: () {
+                            _categoryCondition=true;
+                            setState(() {
+                              category = '数码产品';
+                              Navigator.pop(context);
+                            });
+                          },
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.book),
+                          title: Text("二手书"),
+                          onTap: () {
+                            _categoryCondition=true;
+                            setState(() {
+                              category = '二手书';
+                              Navigator.pop(context);
+                            });
+                          },
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.food_bank_outlined),
+                          title: Text("食品"),
+                          onTap: () {
+                            _categoryCondition=true;
+                            setState(() {
+                              category = '食品';
+                              Navigator.pop(context);
+                            });
+                          },
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.accessibility_new),
+                          title: Text("生活用品"),
+                          onTap: () {
+                            _categoryCondition=true;
+                            setState(() {
+                              category = '生活用品';
+                              Navigator.pop(context);
+                            });
+                          },
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.auto_fix_high),
+                          title: Text("美妆"),
+                          onTap: () {
+                            _categoryCondition=true;
+                            setState(() {
+                              category = '美妆';
+                              Navigator.pop(context);
+                            });
+                          },
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.assessment_outlined),
+                          title: Text("其他"),
+                          onTap: () {
+                            _categoryCondition=true;
+                            setState(() {
+                              category = '其他';
+                              Navigator.pop(context);
+                            });
+                          },
+                        ),
+                      ],
+                    );
+                  }
+              );
+            },
+          ),
+        ),
+
+        // Container(
+        //     margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+        //     child: TextFormField(
+        //       key: contactKey,
+        //        controller: _contact,
+        //       style: TextStyle(
+        //           fontSize: 20
+        //       ),
+        //       decoration: InputDecoration(
+        //         labelText: '留一下联系方式吧',
+        //         contentPadding: EdgeInsets.all(8),
+        //       ),
+        //       validator: (value) {
+        //         if (value.isEmpty) {
+        //           return "忘记留联系方式啦！";
+        //         }
+        //         return null;
+        //       },
         //     )
-        //   ],
         // ),
 
+        //添加图片
+        Card(
+          margin: EdgeInsets.only(top: 10),
+          child: Padding(
+              padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+              child: Column(
+                children: [
+                  Row(
+                    children: <Widget>[
+                      this._img == null ? Expanded(
+                        flex: 1,
+                        child: Text(""),
+                      ) : Expanded(
+                        flex: 1,
+                        child: Container(
+                          width: double.infinity,
+                          height: 50,
+                          child: ListView.builder(
+                            controller: _imgController,
+                            shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            itemCount: this._img.length,
+                            itemBuilder: (context, index){
+                              return Container(
+                                width: 50,
+                                height: 50,
+                                margin: EdgeInsets.only(right: 10),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(4.0),
+                                    border: Border.all(
+                                      style: BorderStyle.solid,
+                                      color: Colors.black26,
+                                    )
+                                ),
+                                child: AssetThumb(
+                                  asset: this._img[index],
+                                  width: 50,
+                                  height: 50,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        child: Container(
+                          width: 50,
+                          height: 50,
+                          margin: EdgeInsets.only(right: 10),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4.0),
+                              border: Border.all(
+                                style: BorderStyle.solid,
+                                color: Colors.black26,
+                              )
+                          ),
+                          child: Center(
+                            child: Icon(Icons.add_a_photo_outlined,color: Colors.blue,),
+                          ),
+                        ),
+                        onTap: _openGallerySystem ,
+                      )
+                    ],
+                  ),
+                ],
+              )
+          ),
+        ),
+        //提交 按钮
         Center(
           child: Container(
             margin: EdgeInsets.only(top: 50),
@@ -312,17 +379,19 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
               },
             ),
           ),
-        )
+        ),
+
       ],
     );
   }
 
+  //图片状态
   Widget _imageUploaded() {
     return Text(
         '图片已上传',
         style: TextStyle(
             fontSize: 20,
-            color: Colors.indigoAccent
+            color: Colors.grey
         ),
       );
   }
@@ -332,17 +401,18 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
         '图片未上传',
         style: TextStyle(
             fontSize: 20,
-            color: Colors.indigoAccent
+            color: Colors.grey
         ),
     );
   }
 
+  //分类状态
   Widget _categoryChoosed() {
     return Text(
         '所选分类：$category',
         style: TextStyle(
             fontSize: 17,
-            color: Colors.indigoAccent
+            color: Colors.grey
         ),
     );
   }
@@ -352,8 +422,58 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
         '未选择分类',
         style: TextStyle(
             fontSize: 20,
-            color: Colors.indigoAccent
+            color: Colors.grey
         ),
     );
+  }
+
+  //选择文件上传
+  void _openGallerySystem () async {
+    List<Asset> resultList = List<Asset>();
+    resultList = await MultiImagePicker.pickImages(
+      //最多选择几张照片
+      maxImages: 9,
+      //是否可以拍照
+      enableCamera: true,
+      selectedAssets: _img,
+      materialOptions:MaterialOptions(
+          startInAllView:true,
+          allViewTitle:'所有照片',
+          actionBarColor:'#2196F3',
+          //未选择图片时提示
+          textOnNothingSelected:'没有选择照片',
+          //选择图片超过限制弹出提示
+          selectionLimitReachedText: "最多选择9张照片"
+      ),
+    );
+    if (!mounted) return;
+    setState(() {
+      _img = resultList;
+    });
+  }
+
+  //提交数据
+  void _submitData () async {
+    //处理图片
+    List<MultipartFile> imageList = new List<MultipartFile>();
+    for (Asset asset in _img) {
+      //将图片转为二进制数据
+      ByteData byteData = await asset.getByteData();
+      List<int> imageData = byteData.buffer.asUint8List();
+      MultipartFile multipartFile = new MultipartFile.fromBytes(
+        imageData,
+        //这个字段要有，否则后端接收为null
+        filename: 'load_image',
+        //请求contentType，设置一下，不设置的话默认的是application/octet/stream，后台可以接收到数据，但上传后是.octet-stream文件
+        contentType: MediaType("image", "jpg"),
+      );
+      imageList.add(multipartFile);
+    }
+
+    FormData formData = new FormData.fromMap({
+      //后端要用multipartFiles接收参数，否则为null
+      "multipartFiles" : imageList
+    });
+    var res = await Dio().post("URL", data: formData);
   }
 }

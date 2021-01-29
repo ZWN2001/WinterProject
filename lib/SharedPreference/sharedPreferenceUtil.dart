@@ -5,8 +5,9 @@ import '../AdapterAndHelper/user.dart';
 ///数据库相关的工具
 class SharedPreferenceUtil {
   static const String ACCOUNT_NUMBER = "account_number";
-  static const String USERNAME = "username";
+  static const String ACCOUNT = "account";
   static const String PASSWORD = "password";
+  static const String USERNAME = "userName";
 
   ///删掉单个账号
   static void delUser(User user) async {
@@ -23,7 +24,7 @@ class SharedPreferenceUtil {
     List<User> list = await getUsers();
     addNoRepeat(list, user);
     saveUsers(list, sp);
-    print('saved');
+    print('已保存账号');
   }
 
   //去重并维持次序
@@ -40,12 +41,11 @@ class SharedPreferenceUtil {
     List<User> list =List();
     int num = sp.getInt(ACCOUNT_NUMBER) ?? 0;
     for (int i = 0; i < num; i++) {
-      String username = sp.getString("$USERNAME$i");
+      String account = sp.getString("$ACCOUNT$i");
       String password = sp.getString("$PASSWORD$i");
-      list.add(User(username, password));
+      list.add(User(account, password));
     }
-    print('当前列表保存的用户数');
-    print(num);
+    print('当前列表保存的用户数：$num');
     return list;
   }
 
@@ -54,9 +54,25 @@ class SharedPreferenceUtil {
     // sp.clear();
     int size = users.length;
     for (int i = 0; i < size; i++) {
-      sp.setString("$USERNAME$i", users[i].username);
+      sp.setString("$ACCOUNT$i", users[i].account);
       sp.setString("$PASSWORD$i", users[i].password);
     }
     sp.setInt(ACCOUNT_NUMBER, size);
   }
+
+  ///改密码
+  static changePassword(String oldPassword,String newPassword) async {
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    List<User> list = await getUsers();
+    int size = list.length;
+    int i;
+    for (i = 0; i < size; i++) {
+      if(oldPassword==sp.getString("$PASSWORD$i")){
+        break;
+      }
+      break;
+    }
+    sp.setString("$PASSWORD$i",newPassword);
+  }
+
 }

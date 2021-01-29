@@ -14,7 +14,7 @@ class Splash extends StatelessWidget{
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
-        ChangeNotifierProvider<DarkModeModel>(builder: (_) => DarkModeModel())
+        ChangeNotifierProvider<DarkModeModel>(builder: (child) => DarkModeModel())
     ],
     child: Consumer<DarkModeModel>(
     builder: (context, DarkModeModel, child) {

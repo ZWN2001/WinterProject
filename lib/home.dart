@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:winter/ChatArea/ChatPage.dart';
-import 'package:winter/search.dart';
+import 'package:winter/ChatArea/chatGroup.dart';
 import 'package:winter/tradeInfo.dart';
 import 'package:winter/DemandArea/NeedsTabBar.dart';
-import 'mine.dart';
+import 'Mine/mine.dart';
 import 'package:shake_animation_widget/shake_animation_widget.dart';
 
 class Home extends StatelessWidget {
@@ -56,7 +55,7 @@ class MyHomePageState extends State<MyHomePage> {
   final widgetOptions = [
     TradeInfo(),
     NeedsInfo(),
-    ChatPage(),
+    ChatGroup(),
     Mine(),
   ];
   @override
