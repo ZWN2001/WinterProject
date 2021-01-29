@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'AdapterAndHelper/httpUtil.dart';
+import '../AdapterAndHelper/httpUtil.dart';
 import 'dart:async';
 
 class SearchPageWidget extends StatefulWidget {

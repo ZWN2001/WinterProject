@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:winter/search.dart';
+import 'file:///E:/apps/winter/lib/Basic/search.dart';
 import 'dart:async';
 import 'AdapterAndHelper/DarkModeModel.dart';
 import 'AddGoodsAndNeeds/TabBarForAdd.dart';
-import 'home.dart';
+import 'Basic/home.dart';
 import 'logIn.dart';
 
 void main() => runApp(Splash());

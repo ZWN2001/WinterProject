@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
-import 'package:winter/PersonalInfo/showInfo.dart';
+import 'file:///E:/apps/winter/lib/Mine/PersonalInfo/showInfo.dart';
 import 'MyRelease/myReleaseTabBar.dart';
 import 'SetUserInfo/setAccountInfo.dart';
 import 'package:winter/logIn.dart';

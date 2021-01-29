@@ -1,9 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:winter/PersonalInfo/changeInfo.dart';
-import 'package:winter/login.dart';
 
-class showInfo extends StatelessWidget {
+class changeInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,7 +12,7 @@ class showInfo extends StatelessWidget {
             Navigator.of(context).pop();
           },
         ),
-        title: Text('个人资料'),
+        title: Text('修改个人资料'),
       ),
       body: myInfo(),
     );
@@ -28,11 +26,11 @@ class myInfo extends StatelessWidget {
     return ListView(
       children: [
         Card(
-          margin: EdgeInsets.only(top: 20),
+          margin: EdgeInsets.only(top: 10),
           child: Column(
             children: [
               Container(
-                margin: EdgeInsets.fromLTRB(20, 20, 0, 15),
+                margin: EdgeInsets.fromLTRB(20, 10, 0, 15),
                 child: Row(
                   children: [
                     Container(
@@ -142,30 +140,6 @@ class myInfo extends StatelessWidget {
             ),
           ),
         ),
-        Center(
-            child: SizedBox(
-          width: width * 4 / 5,
-          child: Container(
-            margin: EdgeInsets.only(top: 20, bottom: 10),
-            child: RaisedButton(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Container(
-                margin: EdgeInsets.only(top: 10, bottom: 10),
-                child: Text(
-                  '修改个人信息',
-                  style: TextStyle(fontSize: 25, color: Colors.white),
-                ),
-              ),
-              color: Colors.blue,
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => changeInfo()));
-              },
-            ),
-          ),
-        )),
       ],
     );
   }
