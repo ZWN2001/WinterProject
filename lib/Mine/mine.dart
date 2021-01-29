@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
+import 'package:winter/PersonalInfo/showInfo.dart';
 import 'SetUserInfo/setAccountInfo.dart';
 import 'file:///E:/apps/winter/lib/Mine/MyRelease/myReleaseTabBar.dart';
 import 'package:winter/logIn.dart';
@@ -93,7 +94,9 @@ class MinePageState extends State<MinePage> {
                     ),
                   ],
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>showInfo()));
+                },
               ),
             ),
           );

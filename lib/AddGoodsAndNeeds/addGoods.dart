@@ -25,7 +25,6 @@ class AddGoodsPage extends StatefulWidget{
 
 class _AddGoodsPageState extends State<AddGoodsPage> {
 
-  bool _imageCondition = false; //是否传入照片
   bool _categoryCondition = false; //是否传入分类
   String category;
   TextEditingController _title=TextEditingController();
@@ -46,7 +45,6 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
     return ListView(
       children: [
         //标题&价格
@@ -380,7 +378,6 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
             ),
           ),
         ),
-
       ],
     );
   }
