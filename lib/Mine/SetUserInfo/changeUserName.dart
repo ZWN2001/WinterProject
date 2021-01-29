@@ -43,22 +43,18 @@ class ChangeUserName extends StatelessWidget {
               ),
             ),
 
-            Container(
-                  margin: EdgeInsets.only(top: 30),
-                    child:FlatButton(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                      ),
-                     child: Text(
-                       '提交',
-                       style: TextStyle(
-                         fontSize: 25,
-                         color: Colors.lightBlueAccent
-                       ),
-                     ),
-                      onPressed: (){},
-                    ),
-                )
+            Center(
+              child: Container(
+                margin: EdgeInsets.only(top: 50),
+                child: FloatingActionButton(
+                  backgroundColor: Colors.lightBlue,
+                  child: Icon(Icons.assignment_turned_in_rounded, size: 28,),
+                  onPressed: () {
+
+                  },
+                ),
+              ),
+            ),
           ],
         )
 

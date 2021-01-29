@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'changeInfo.dart';
 
-class showInfo extends StatelessWidget {
+class ShowInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -160,7 +160,7 @@ class myInfo extends StatelessWidget {
               color: Colors.blue,
               onPressed: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => changeInfo()));
+                    MaterialPageRoute(builder: (context) => ChangeInfo()));
               },
             ),
           ),

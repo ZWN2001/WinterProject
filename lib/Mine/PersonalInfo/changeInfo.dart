@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class changeInfo extends StatelessWidget {
+class ChangeInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +30,7 @@ class myInfo extends StatelessWidget {
           child: Column(
             children: [
               Container(
-                margin: EdgeInsets.fromLTRB(20, 10, 0, 15),
+                margin: EdgeInsets.fromLTRB(20, 10, 0, 10),
                 child: Row(
                   children: [
                     Container(
@@ -40,27 +40,20 @@ class myInfo extends StatelessWidget {
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
-                    // Expanded(child: Text('')),
-                  ],
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(20, 15, 0, 15),
-                child: Row(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(right: 15),
-                      child: Text(
-                        '账号',
-                        style: TextStyle(fontSize: 20),
-                      ),
+                    Expanded(
+                        child: TextFormField(
+                          scrollPadding: EdgeInsets.all(0),
+                          // controller: _price,
+                          style: TextStyle(
+                              fontSize: 20
+                          ),
+                        )
                     ),
-                    // Expanded(child: Text(LoginPageState.account)),
                   ],
                 ),
               ),
               Container(
-                margin: EdgeInsets.fromLTRB(20, 15, 0, 15),
+                margin: EdgeInsets.fromLTRB(20, 10, 0, 10),
                 child: Row(
                   children: [
                     Container(
@@ -70,12 +63,20 @@ class myInfo extends StatelessWidget {
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
-                    // Expanded(child: Text('')),
+                    Expanded(
+                        child: TextFormField(
+                          scrollPadding: EdgeInsets.all(0),
+                          // controller: _price,
+                          style: TextStyle(
+                              fontSize: 20
+                          ),
+                        )
+                    ),
                   ],
                 ),
               ),
               Container(
-                margin: EdgeInsets.fromLTRB(20, 15, 0, 15),
+                margin: EdgeInsets.fromLTRB(20, 10, 0, 10),
                 child: Row(
                   children: [
                     Container(
@@ -85,12 +86,20 @@ class myInfo extends StatelessWidget {
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
-                    // Expanded(child: Text('')),
+                    Expanded(
+                        child: TextFormField(
+                          scrollPadding: EdgeInsets.all(0),
+                          // controller: _price,
+                          style: TextStyle(
+                              fontSize: 20
+                          ),
+                        )
+                    ),
                   ],
                 ),
               ),
               Container(
-                margin: EdgeInsets.fromLTRB(20, 15, 0, 15),
+                margin: EdgeInsets.fromLTRB(20, 10, 0, 10),
                 child: Row(
                   children: [
                     Container(
@@ -100,12 +109,20 @@ class myInfo extends StatelessWidget {
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
-                    // Expanded(child: Text('')),
+                    Expanded(
+                        child: TextFormField(
+                          scrollPadding: EdgeInsets.all(0),
+                          // controller: _price,
+                          style: TextStyle(
+                              fontSize: 20
+                          ),
+                        )
+                    ),
                   ],
                 ),
               ),
               Container(
-                margin: EdgeInsets.fromLTRB(20, 15, 0, 15),
+                margin: EdgeInsets.fromLTRB(20, 10, 0, 10),
                 child: Row(
                   children: [
                     Container(
@@ -115,7 +132,15 @@ class myInfo extends StatelessWidget {
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
-                    // Expanded(child: Text('')),
+                    Expanded(
+                        child: TextFormField(
+                          scrollPadding: EdgeInsets.all(0),
+                          // controller: _price,
+                          style: TextStyle(
+                              fontSize: 20
+                          ),
+                        )
+                    ),
                   ],
                 ),
               ),
@@ -124,7 +149,7 @@ class myInfo extends StatelessWidget {
         ),
         Card(
           child: Container(
-            margin: EdgeInsets.fromLTRB(20, 15, 0, 15),
+            margin: EdgeInsets.fromLTRB(20, 10, 0, 10),
             child: Row(
               children: [
                 Container(
@@ -135,8 +160,28 @@ class myInfo extends StatelessWidget {
                     style: TextStyle(fontSize: 20),
                   ),
                 ),
-                // Expanded(child: Text('')),
+                Expanded(
+                    child: TextFormField(
+                      scrollPadding: EdgeInsets.all(0),
+                      // controller: _price,
+                      style: TextStyle(
+                          fontSize: 20
+                      ),
+                    )
+                ),
               ],
+            ),
+          ),
+        ),
+        Center(
+          child: Container(
+            margin: EdgeInsets.only(top: 50),
+            child: FloatingActionButton(
+              backgroundColor: Colors.lightBlue,
+              child: Icon(Icons.assignment_turned_in_rounded, size: 28,),
+              onPressed: () {
+
+              },
             ),
           ),
         ),

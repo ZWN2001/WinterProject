@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
-import 'file:///E:/apps/winter/lib/Mine/PersonalInfo/showInfo.dart';
+import 'package:winter/Basic/login.dart';
 import 'MyRelease/myReleaseTabBar.dart';
+import 'PersonalInfo/showInfo.dart';
 import 'SetUserInfo/setAccountInfo.dart';
-import 'package:winter/logIn.dart';
 import 'package:image_picker/image_picker.dart';
 import '../AdapterAndHelper/cropImage.dart';
 
@@ -94,7 +94,7 @@ class MinePageState extends State<MinePage> {
                   ],
                 ),
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>showInfo()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>ShowInfo()));
                 },
               ),
             ),
