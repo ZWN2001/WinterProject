@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:provider/provider.dart';
 import 'package:winter/AdapterAndHelper/expandableText.dart';
+import 'package:shake_animation_widget/shake_animation_widget.dart';
 
 class DemandPage extends StatefulWidget {
   @override
@@ -25,16 +26,24 @@ class DemandPageState extends State<DemandPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      scrollDirection: Axis.vertical,
-      itemCount: ListData.length,
-      itemBuilder: (context, index){
-        return Material(
-          child: itemWidget(index),
-          //color: Colors.grey,
-        );
-      },
+    return Stack(
+      children: [
+        Material(
+          child: ListView.builder(
+            scrollDirection: Axis.vertical,
+            itemCount: ListData.length,
+            itemBuilder: (context, index){
+              return Material(
+                child: itemWidget(index),
+                //color: Colors.grey,
+              );
+            },
+          ),
+        ),
+        buildRoteFloatingBtn(),
+      ],
     );
+
   }
 
   Widget itemWidget(int index) {
@@ -111,6 +120,29 @@ class DemandPageState extends State<DemandPage> {
 
 
 
+  }
+
+  Widget buildRoteFloatingBtn(){
+    return  Positioned(
+      right: 33,
+      bottom: 33,
+      //悬浮按钮
+      child: RoteFloatingButton(
+        //菜单图标组
+        iconList: [
+          Icon(Icons.add),
+          Icon(Icons.search),
+        ],
+        //点击事件回调
+        clickCallback: (int index){
+          if(index==0){
+            Navigator.of(context).pushNamed('add');
+          }else{
+            Navigator.of(context).pushNamed('search');
+          }
+        },
+      ),
+    );
   }
 
 }

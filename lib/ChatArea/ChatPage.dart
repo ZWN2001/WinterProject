@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:provider/provider.dart';
 import 'package:winter/AdapterAndHelper/bubble.dart';
+import 'package:path/path.dart';
 
 class ChatPage extends StatefulWidget {
   ChatPage(
@@ -15,11 +17,33 @@ class ChatPage extends StatefulWidget {
   State<StatefulWidget> createState() => new ChatPageState();
 }
 
+
 class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
   final List<ChatMessage> _messages = <ChatMessage>[];
   final TextEditingController _textController = new TextEditingController();
   bool _isComposing = false;//用户是否输入字段
+  String _dbName = 'historyMessage';
+  String _data = "none";
+  String _createTableSQL = 'CREATE TABLE history_messages (id INTEGER PRIMARY KEY, senderName TEXT, headImage TEXT, timestamp TEXT, text TEXT)';
+  int _dbVersion = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _createDb(_dbName, _dbVersion, _createTableSQL).then((value){
+      setState(() {
+        _getHistoryMessages().then((value) {
+          setState(() {
+
+          });
+        });
+      });
+    });
+    /*setState(() {
+      _getHistoryMessages();
+    });*/
+  }
 
   //点击发送后的处理事项
   void _handleSubmitted(String text) {
@@ -29,19 +53,53 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     setState(() {
       _isComposing = false;
     });
+    _sendMessage(text: text, imageUrl: "https://www.itying.com/images/flutter/4.png");
     //发送消息后，将新消息添加到消息列表中，且为从头插入（时间顺序）
     ChatMessage message = new ChatMessage(
       text: text,
       animationController: new AnimationController(
           duration: new Duration(milliseconds: 300),
           vsync: this //此选项将当前窗口控件树保留在显示内存中，直到Flutter的渲染引擎完成刷新周期
-      ),
+      ),        //被删除的动画部分
     );
     setState(() {
-      _messages.insert(0, message);
+      //_messages.insert(0, message);
+      //_getHistoryMessages();
+      _messages.insert(0,ChatMessage()..senderName = '$_name'..headImage = "https://www.itying.com/images/flutter/4.png"..text = '$text');
     });
-    message.animationController.forward();//每当将新消息添加到聊天列表中时动画应播放
+    message.animationController.forward();//每当将新消息添加到聊天列表中时动画应播放*/   //被删除的动画部分
   }
+
+  void _sendMessage({String text, String imageUrl}) {
+    String time = new DateTime.now().toString();
+    String sql = "INSERT INTO history_messages(senderName,headImage,timestamp,text) VALUES('$_name','$imageUrl','$time','$text')";
+    _add(_dbName, sql);
+  }
+
+  Future<void> _getHistoryMessages() async {
+    String sql = 'SELECT * FROM history_messages';
+    var databasesPath = await getDatabasesPath();
+    String path = join(databasesPath, _dbName);
+    Database db = await openDatabase(path);
+    List<Map> list = await db.rawQuery(sql);
+    await db.close();
+    if (list.length == 0) {
+      print("no history");
+      return;
+    };
+    int i = list.length-1;
+    while (i >= 0){
+      /*print(runtimeType);
+      _messages[i].senderName = list[i]['senderName'];
+      print(runtimeType);
+      _messages[i].headImage = list[i]['headImage'];
+      _messages[i].text = list[i]['text'];
+      i++;*/
+      _messages.add(ChatMessage()..senderName = list[i]['senderName']..headImage = list[i]['headImage']..text = list[i]['text']);
+      print(_messages.toString());
+      i--;
+    }
+   }
 
   //不再需要资源时释放动画处理器的资源
   @override
@@ -49,42 +107,9 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     for (ChatMessage message in _messages)
       message.animationController.dispose();
     super.dispose();
-  }
+  }   //被删除的动画部分
 
-  //输入框
-  Widget _buildTextComposer() {
-    return new IconTheme(
-        data: new IconThemeData(color: Theme.of(context).accentColor),
-        child: new Container(
-            margin: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: new Row(
-                children: <Widget> [
-                  new Flexible(
-                      child: new TextField(
-                        controller: _textController,
-                        onChanged: (String text) {
-                          setState(() {
-                            _isComposing = text.length > 0;
-                          });
-                        },
-                        onSubmitted: _handleSubmitted,
-                        decoration: new InputDecoration.collapsed(hintText: '发送消息'),
-                      )
-                  ),
-                  new Container(
-                    margin: new EdgeInsets.symmetric(horizontal: 4.0),
-                    child: new IconButton(
-                        icon: new Icon(Icons.send),
-                        onPressed: _isComposing ?
-                            () => _handleSubmitted(_textController.text) : null
-                    ),
-                  )
-                ]
-            )
-        )
-    );
-  }
-
+  //总UI
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -114,18 +139,97 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     );
   }
 
+
+  //输入框
+  Widget _buildTextComposer() {
+    return new Container(
+        margin: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: new Row(
+            children: <Widget> [
+              new Flexible(
+                  child: new TextField(
+                    controller: _textController,
+                    onChanged: (String text) {
+                      setState(() {
+                        _isComposing = text.length > 0;
+                      });
+                    },
+                    onSubmitted: _handleSubmitted,
+                    decoration: new InputDecoration.collapsed(hintText: '发送消息'),
+                  )
+              ),
+              new Container(
+                margin: new EdgeInsets.symmetric(horizontal: 4.0),
+                child: new IconButton(
+                    icon: new Icon(Icons.send),
+                    onPressed: _isComposing ?
+                        () => _handleSubmitted(_textController.text) : null
+                ),
+              )
+            ]
+        )
+    );
+  }
+
+
+
+  ///创建数据库db
+  Future<void> _createDb(String dbName,int vers,String dbTables) async {
+    //获取数据库路径
+    var databasesPath = await getDatabasesPath();
+    String path = join(databasesPath, dbName);
+    print("数据库路径：$path数据库版本$vers");
+    //打开数据库
+    await openDatabase(
+        path,
+        version:vers,
+        onUpgrade: (Database db, int oldVersion, int newVersion) async{
+          //数据库升级,只回调一次
+          print("数据库需要升级！旧版：$oldVersion,新版：$newVersion");
+        },
+        onCreate: (Database db, int vers) async{
+          //创建表，只回调一次
+          await db.execute(dbTables);
+          await db.close();
+          setState(() {
+
+          });
+
+        }
+    );
+    setState(() {
+      _data = "成功创建数据库db！\n数据库路径: $path \n数据库版本$vers";
+    });
+  }
+  ///增
+  _add(String dbName,String sql) async {
+    //获取数据库路径
+    var databasesPath = await getDatabasesPath();
+    String path = join(databasesPath, dbName);
+    print("数据库路径：$path");
+
+    Database db = await openDatabase(path);
+    await db.transaction((txn) async {
+      int count = await txn.rawInsert(sql);
+    });
+    await db.close();
+
+    setState(() {
+      _data = "插入数据成功！";
+    });
+  }
+
 }
 
 //表示单个聊天消息的控件
 const String _name = "Ryan";
 class ChatMessage extends StatelessWidget {
-  ChatMessage({this.text, this.animationController, this.senderName, this.userName, this.myHeadImage, this.sheHeadImage});
-  final String text;
+  ChatMessage({this.text, this.animationController, this.senderName, this.userName, this.headImage});
+  String text;
   final AnimationController animationController;//动画控制器
-  final String senderName;
+  String senderName;
   final String userName;
-  final String myHeadImage;
-  final String sheHeadImage;
+  String headImage;
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +241,7 @@ class ChatMessage extends StatelessWidget {
           Container(
             margin: const EdgeInsets.only(right: 16.0),
             child: CircleAvatar(
-              backgroundImage: NetworkImage(sheHeadImage),
+              backgroundImage: NetworkImage(headImage),
             ),
           ),
           Flexible(
@@ -188,19 +292,19 @@ class ChatMessage extends StatelessWidget {
           Container(
             margin: const EdgeInsets.only(left: 16.0),
             child: CircleAvatar(
-              backgroundImage: NetworkImage(myHeadImage),
+              backgroundImage: NetworkImage(headImage),
             ),
           )
         ],
       );
     }
 
-    return new SizeTransition(
-        sizeFactor: new CurvedAnimation(
+    return new Material(
+       /* sizeFactor: new CurvedAnimation(
           parent: animationController,
           curve: Curves.easeOut
-        ),
-      axisAlignment: 0.0,
+        ),*/
+      //axisAlignment: 0.0,
       child: Consumer<DarkModeModel>(builder: (context, DarkModeModel, child){
         return Container(
           margin: EdgeInsets.symmetric(vertical: 10.0),
@@ -217,7 +321,7 @@ class ChatMessage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,//start
                     children: [
-                      Text(_name,
+                      Text(senderName,
                       style: Theme.of(context).textTheme.subhead),
                       Container(
                         margin: const EdgeInsets.only(top: 5.0),
@@ -236,7 +340,7 @@ class ChatMessage extends StatelessWidget {
                   )),
               Container(
                 margin: const EdgeInsets.only(left: 16.0),//right
-                child: CircleAvatar(backgroundImage: NetworkImage("https://www.itying.com/images/flutter/4.png")),
+                child: CircleAvatar(backgroundImage: NetworkImage(headImage)),
               ),
             ],
           ),

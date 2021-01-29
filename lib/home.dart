@@ -66,9 +66,7 @@ class MyHomePageState extends State<MyHomePage> {
           Center(
             child: widgetOptions.elementAt(selectedIndex),
           ),
-
-          _buildRoteFloatingBtn(),//右下角的浮动按钮
-
+          //_buildRoteFloatingBtn(),//右下角的浮动按钮
         ],
       ),
 
@@ -93,7 +91,7 @@ class MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  Widget _buildRoteFloatingBtn(){
+  Widget buildRoteFloatingBtn(){
     return  Positioned(
       right: 33,
       bottom: 33,
