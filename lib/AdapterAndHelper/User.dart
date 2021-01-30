@@ -15,6 +15,6 @@ class User{
 
   @override
   bool operator ==(other) {
-    return (_account == other._username) && (_password == other._password);
+    return (_account == other._account) && (_password == other._password);
   }
 }
