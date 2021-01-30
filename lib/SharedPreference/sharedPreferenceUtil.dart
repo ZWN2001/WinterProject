@@ -51,7 +51,7 @@ class SharedPreferenceUtil {
 
   ///保存账号列表
   static saveUsers(List<User> users, SharedPreferences sp){
-    // sp.clear();
+    sp.clear();
     int size = users.length;
     for (int i = 0; i < size; i++) {
       sp.setString("$ACCOUNT$i", users[i].account);
