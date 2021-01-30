@@ -250,7 +250,8 @@ class ChatMessage extends StatelessWidget {
                 children: [
                   Text(senderName,style: Theme.of(context).textTheme.subhead),
                   Container(
-                    margin: const EdgeInsets.only(top: 5.0),
+                    //TODO
+                    margin: const EdgeInsets.only(top: 5.0,right: 50),
                     child: Bubble(
                       direction: BubbleDirection.left,
                       color: Colors.blue,
@@ -324,7 +325,8 @@ class ChatMessage extends StatelessWidget {
                       Text(senderName,
                       style: Theme.of(context).textTheme.subhead),
                       Container(
-                        margin: const EdgeInsets.only(top: 5.0),
+                        //TODO
+                        margin: const EdgeInsets.only(top: 5.0,left: 50),
                         child: Bubble(
                           direction: BubbleDirection.right,
                           color: Colors.blue,
