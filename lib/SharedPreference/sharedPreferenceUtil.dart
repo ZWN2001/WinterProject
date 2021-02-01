@@ -1,5 +1,6 @@
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:winter/AdapterAndHelper/searchHistory.dart';
 import '../AdapterAndHelper/user.dart';
 
 ///数据库相关的工具
@@ -12,18 +13,18 @@ class SharedPreferenceUtil {
   ///删掉单个账号
   static void delUser(User user) async {
     SharedPreferences sp = await SharedPreferences.getInstance();
-    List<User> list = await getUsers();
-    list.remove(user);
-    saveUsers(list, sp);
+    List<User> accountList = await getUsers();
+    accountList.remove(user);
+    saveUsers(accountList, sp);
     print('removed');
   }
 
   //保存账号，如果重复，就将最近登录账号放在第一个
   static void saveUser(User user) async {
     SharedPreferences sp = await SharedPreferences.getInstance();
-    List<User> list = await getUsers();
-    addNoRepeat(list, user);
-    saveUsers(list, sp);
+    List<User> accountList = await getUsers();
+    addNoRepeat(accountList, user);
+    saveUsers(accountList, sp);
     print('已保存账号');
   }
 
@@ -38,15 +39,15 @@ class SharedPreferenceUtil {
   ///获取已经登录的账号列表
   static Future<List<User>> getUsers() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
-    List<User> list =List();
+    List<User> accountList =List();
     int num = sp.getInt(ACCOUNT_NUMBER) ?? 0;
     for (int i = 0; i < num; i++) {
       String account = sp.getString("$ACCOUNT$i");
       String password = sp.getString("$PASSWORD$i");
-      list.add(User(account, password));
+      accountList.add(User(account, password));
     }
     print('当前列表保存的用户数：$num');
-    return list;
+    return accountList;
   }
 
   ///保存账号列表
@@ -74,5 +75,55 @@ class SharedPreferenceUtil {
     }
     sp.setString("$PASSWORD$i",newPassword);
   }
+
+  //查找界面的一些操作
+  static const String HISTORY = "history";
+  static const String HISTORY_NUMBER = "history_number";
+
+  static void saveHistory(String history) async {
+    SharedPreferences historySP = await SharedPreferences.getInstance();
+    List<String> historiesList = await getHistories();
+    saveHistories(historiesList, historySP);
+    addWithoutRepeat(historiesList, history);
+    print('已保存历史记录');
+  }
+  //去重并维持次序
+  static void addWithoutRepeat(List<String> histories, String history) {
+    if (histories.contains(history)) {
+      histories.remove(history);
+    }
+    histories.insert(0, history);
+  }
+  ///保存历史记录列表
+  static saveHistories(List<String> histories, SharedPreferences sp){
+    sp.clear();
+    int size = histories.length;
+    for (int i = 0; i < size; i++) {
+      sp.setString("$HISTORY$i", histories[i]);
+    }
+    print('历史记录列表保存完成');
+  }
+  //删列表
+  static void delHistories() async {
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    List<String> historiesList = await getHistories();
+    historiesList.clear();
+    saveHistories(historiesList, sp);
+    print('已经清除所有历史记录');
+  }
+
+  ///获取已经登录的账号列表
+  static Future<List<String>> getHistories() async {
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    List<String> historiesList =List();
+    int num = sp.getInt(HISTORY_NUMBER) ?? 0;
+    for (int i = 0; i < num; i++) {
+      String history = sp.getString("$HISTORY$i");
+      historiesList.add(history);
+    }
+    print('当前列表保存的历史记录数：$num');
+    return historiesList;
+  }
+
 
 }

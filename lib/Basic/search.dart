@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:winter/AdapterAndHelper/searchHistory.dart';
+import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';
 import '../AdapterAndHelper/httpUtil.dart';
 import 'dart:async';
 
@@ -11,6 +13,22 @@ class SearchPageWidget extends StatefulWidget {
 class SearchPageState extends State<SearchPageWidget>{
 
   static final TextEditingController controller = new TextEditingController();
+  ///建议
+  static List<String> recommend = ['数码产品', '二手书', '食品', '生活用品', '美妆', '其他'];
+  ///历史 暂时使用本地默认数据
+  static List<String> history = ['数码产品', '二手书', '食品', '生活用品', '美妆', '其他'];
+  void _getHistories() async{
+    SharedPreferenceUtil.saveHistory('数码产品');
+    history.addAll(await SharedPreferenceUtil.getHistories());
+  }
+
+  //初始化
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getHistories();
+  }
 
   ///搜索页form文字
   static String searchStr = "";
@@ -33,19 +51,13 @@ class SearchPageState extends State<SearchPageWidget>{
           setState(() {
             //动态搜索
             searchStr = controller.text;
+            SharedPreferenceUtil.saveHistory(searchStr);
             centerContent = realTimeSearch(searchStr);
           });
         }
       }
     });
   }
-
-  ///建议
-  static List<String> recommend = ['java', 'c/c++', 'mysql', 'redis', 'html', 'golang', 'python', '卧槽', '666666'
-  ];
-  ///历史 暂时使用本地默认数据
-  static List<String> history = ['李四','网吧','啊啊','22','33','44','55','66','77','88'];
-
 
   ///中间内容
   Widget centerContent = defaultDisplay();
@@ -56,45 +68,38 @@ class SearchPageState extends State<SearchPageWidget>{
       padding: const EdgeInsets.only(left: 10,right: 15),
       child: Column(
         children: <Widget>[
-          Container(
-            margin: EdgeInsets.only(top: 10),
-                child: Column(
-                  // crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Stack(
+                    Row(
                         children: [
-                          Align(
-                            alignment: AlignmentDirectional.bottomStart,
+                          Expanded(
+                            // alignment: AlignmentDirectional.bottomStart,
                             child:Text(
                               "历史记录：",
                               style: TextStyle(fontSize: 20),
                             ),
                           ),
 
-                          Align(
-                            alignment:AlignmentDirectional.bottomEnd,
+                          Container(
+                            // alignment:AlignmentDirectional.topEnd,
                             child:  IconButton(
-                              padding: EdgeInsets.all(0),
                                 icon: Image(
                                   image: AssetImage("images/myClear.png"),
                                 ),
                                 onPressed: () {
-
+                                  //TODO
+                                  SharedPreferenceUtil.delHistories();
                                 }
                             ),
                           ),
                         ],
                       ),
                     Container(
-                      alignment: AlignmentDirectional.centerStart,
+                      alignment: AlignmentDirectional.topStart,
                       child: Wrap(
                         spacing: 10,
-                        children: defaultData(history),
+                        children: history==null?_buildNull:_buildData(history),
                       ),
                     ),
-                  ],
-                ),
-          ),
+
           Container(
             margin: EdgeInsets.only(top: 10),
             child: Column(
@@ -111,7 +116,7 @@ class SearchPageState extends State<SearchPageWidget>{
                   margin: EdgeInsets.only(top: 15),
                   child:   Wrap(
                     spacing: 10,
-                    children: defaultData(recommend),
+                    children: _buildData(recommend),
                   ),
                 ),
               ],
@@ -123,21 +128,28 @@ class SearchPageState extends State<SearchPageWidget>{
     );
   }
 
+  static List<Widget> _buildNull(){
+    return null;
+   }
   ///默认显示内容
-  static List<Widget> defaultData(List<String> items){
-    return items.map((item) {
-      return InkWell(
-        child: Chip(
-            label: Text(item),
-            shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
-        ),
-        onTap: () {
-          //更新到搜索框
-          controller.text = item;
-        },
-      );
-    }).toList();
+  static List<Widget> _buildData(List<String> items){
+    if(items==null){
+      return null;
+    }else{
+      return items.map((item) {
+        return InkWell(
+          child: Chip(
+              label: Text(item),
+              shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
+          ),
+          onTap: () {
+            //更新到搜索框
+            controller.text = item;
+          },
+        );
+      }).toList();
+    }
   }
 
   ///实时搜索结果
@@ -236,9 +248,12 @@ class SearchPageState extends State<SearchPageWidget>{
                             //设置四周边框
                             border: new Border.all(width: 1, color: Colors.white12),
                           ),
-                          child:  Container(
+                          child: Container(
                             alignment: Alignment.center,
                             child: TextFormField(
+                              style: TextStyle(
+                                fontSize: 20
+                              ),
                               controller: controller,
                               decoration: InputDecoration(
                                 border: InputBorder.none,
