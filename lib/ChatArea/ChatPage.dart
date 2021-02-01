@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
@@ -23,9 +24,9 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   final List<ChatMessage> _messages = <ChatMessage>[];
   final TextEditingController _textController = new TextEditingController();
   bool _isComposing = false;//用户是否输入字段
-  String _dbName = 'historyMessage';
+  String _dbName = 'localHistoryMessages';
   String _data = "none";
-  String _createTableSQL = 'CREATE TABLE history_messages (id INTEGER PRIMARY KEY, senderName TEXT, headImage TEXT, timestamp TEXT, text TEXT)';
+  String _createTableSQL = 'CREATE TABLE history_messages (id INTEGER PRIMARY KEY, senderName TEXT, userName TEXT, sheName TEXT, headImage TEXT, timestamp TEXT, text TEXT)';
   int _dbVersion = 1;
 
   @override
@@ -33,7 +34,7 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     super.initState();
     _createDb(_dbName, _dbVersion, _createTableSQL).then((value){
       setState(() {
-        _getHistoryMessages().then((value) {
+        _getHistoryMessagesFromLocal(_name, "zwn").then((value) {
           setState(() {
 
           });
@@ -72,11 +73,11 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
   void _sendMessage({String text, String imageUrl}) {
     String time = new DateTime.now().toString();
-    String sql = "INSERT INTO history_messages(senderName,headImage,timestamp,text) VALUES('$_name','$imageUrl','$time','$text')";
+    String sql = "INSERT INTO history_messages(userName,sheName,senderName,headImage,timestamp,text) VALUES('$_name','zwn','$_name','$imageUrl','$time','$text')";
     _add(_dbName, sql);
   }
 
-  Future<void> _getHistoryMessages() async {
+  Future<void> _getHistoryMessagesFromLocal(String userName, String sheName) async {
     String sql = 'SELECT * FROM history_messages';
     var databasesPath = await getDatabasesPath();
     String path = join(databasesPath, _dbName);
@@ -86,7 +87,7 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     if (list.length == 0) {
       print("no history");
       return;
-    };
+    }
     int i = list.length-1;
     while (i >= 0){
       /*print(runtimeType);
@@ -95,8 +96,10 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
       _messages[i].headImage = list[i]['headImage'];
       _messages[i].text = list[i]['text'];
       i++;*/
-      _messages.add(ChatMessage()..senderName = list[i]['senderName']..headImage = list[i]['headImage']..text = list[i]['text']);
-      print(_messages.toString());
+      if (list[i]['userName'] == userName && list[i]['sheName'] == sheName){
+        _messages.add(ChatMessage()..senderName = list[i]['senderName']..headImage = list[i]['headImage']..text = list[i]['text']);
+        print(_messages.toString());
+      }
       i--;
     }
    }
@@ -115,6 +118,36 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         title: Text("zwn"),//暂时
+        actions:<Widget> [
+          new PopupMenuButton(
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                PopupMenuItem(
+                    child: FlatButton(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.min,
+                        children:<Widget> [
+                          Text("删除历史记录"),
+                          Icon(Icons.delete)
+                        ],
+                      ),
+                      onPressed: () async {
+                        bool delete = await showDeleteConfirmDialog();
+                        if (delete == null) {
+                          print("取消删除");
+                        } else {
+                          print("确认删除");
+                          String sql = 'DELETE FROM history_messages where sheName = "zwn"';
+                          _delete(_dbName, sql);
+                          print(_data);
+                          _messages.clear();
+                          _getHistoryMessagesFromLocal(_name, "zwn");
+                        }
+                      },
+                    )
+                )
+              ])
+        ],
         //title: Text(widget.sheName),
       ),
       body: Column(
@@ -171,7 +204,25 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     );
   }
 
-
+  Future<bool> showDeleteConfirmDialog() {
+    return showDialog<bool>(
+      context: this.context,
+      builder: (context) {
+          return AlertDialog(
+            title: Text('提示'),
+            content: Text("您要删除历史记录吗？"),
+            actions:<Widget> [
+              FlatButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text("取消")),
+              FlatButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: Text("删除"))
+            ],
+          );
+      }
+    );
+  }
 
   ///创建数据库db
   Future<void> _createDb(String dbName,int vers,String dbTables) async {
@@ -218,18 +269,38 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
       _data = "插入数据成功！";
     });
   }
+  ///删
+  _delete(String dbName, String sql) async {
+    var databasesPath = await getDatabasesPath();
+    String path = join(databasesPath, dbName);
+    Database db = await openDatabase(path);
+    int count = await db.rawDelete(sql);
+    await db.close();
+    if (count > 0) {
+      setState(() {
+        _data = "执行删除操作完成，该sql删除条件下的数目为：$count";
+      });
+    } else {
+      setState(() {
+        _data = "无法执行删除操作，该sql删除条件下的数目为：$count";
+      });
+    }
+  }
+
+
 
 }
 
 //表示单个聊天消息的控件
 const String _name = "Ryan";
 class ChatMessage extends StatelessWidget {
-  ChatMessage({this.text, this.animationController, this.senderName, this.userName, this.headImage});
+  ChatMessage({this.text, this.animationController, this.senderName, this.userName, this.headImage, this.sheName});
   String text;
   final AnimationController animationController;//动画控制器
   String senderName;
   final String userName;
   String headImage;
+  String sheName;
 
   @override
   Widget build(BuildContext context) {
