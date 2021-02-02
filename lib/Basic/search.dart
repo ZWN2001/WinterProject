@@ -37,12 +37,17 @@ class SearchPageState extends State<SearchPageWidget>{
   void initState() {
     // TODO: implement initState
     _getHistories();
+    setState(() {
+      centerContent=defaultDisplay();
+    });
     print('init...搜索界面历史记录');
     super.initState();
   }
 
   ///搜索页form文字
   static String searchStr = "";
+  ///中间内容
+  Widget centerContent;
 
   SearchPageState() {
     ///监听搜索页form
@@ -70,11 +75,8 @@ class SearchPageState extends State<SearchPageWidget>{
     });
   }
 
-  ///中间内容
-  Widget centerContent = defaultDisplay();
-
   ///默认显示(推荐 + 历史记录)
-  static Widget defaultDisplay(){
+   Widget defaultDisplay(){
     return Container(
       padding: const EdgeInsets.only(left: 10,right: 15),
       child: Column(
@@ -96,6 +98,9 @@ class SearchPageState extends State<SearchPageWidget>{
                       onPressed: () {
                         //TODO
                         SharedPreferenceUtil.delHistories();
+                        setState(() {
+                          SharedPreferenceUtil.delHistories();
+                        });
                       }
                   ),
                 ),
@@ -140,9 +145,6 @@ class SearchPageState extends State<SearchPageWidget>{
   
   ///默认显示内容
   static List<Widget> _buildData(List<String> items){
-    // if(items==null){
-    //   return null;
-    // }else{
       return items.map((item) {
         return InkWell(
           child: Chip(
@@ -156,7 +158,6 @@ class SearchPageState extends State<SearchPageWidget>{
           },
         );
       }).toList();
-    // }
   }
 
   ///实时搜索结果
@@ -213,10 +214,12 @@ class SearchPageState extends State<SearchPageWidget>{
             itemCount: list == null ? 0 : list.length,
           )
       );
-      setState(() {
-        //更新提示列表
-        centerContent = widget;
-      });
+      if(mounted) {
+        setState(() {
+          //更新提示列表
+          centerContent = widget;
+        });
+      }
     });
     return widget;
   }
@@ -258,6 +261,7 @@ class SearchPageState extends State<SearchPageWidget>{
                           child: Container(
                             alignment: Alignment.center,
                             child: TextFormField(
+                              autofocus: true,
                               style: TextStyle(
                                 fontSize: 20
                               ),
