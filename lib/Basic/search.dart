@@ -1,10 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:winter/AdapterAndHelper/searchHistory.dart';
 import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';
 import '../AdapterAndHelper/httpUtil.dart';
 import 'dart:async';
 
+class SearchPage extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+  return Scaffold(
+    body: SearchPageWidget(),
+  );
+  }
+
+}
 class SearchPageWidget extends StatefulWidget {
   @override
   SearchPageState createState() => new SearchPageState();
@@ -16,18 +24,21 @@ class SearchPageState extends State<SearchPageWidget>{
   ///建议
   static List<String> recommend = ['数码产品', '二手书', '食品', '生活用品', '美妆', '其他'];
   ///历史 暂时使用本地默认数据
-  static List<String> history = ['数码产品', '二手书', '食品', '生活用品', '美妆', '其他'];
+  static List<String> _history = List() ;
   void _getHistories() async{
-    SharedPreferenceUtil.saveHistory('数码产品');
-    history.addAll(await SharedPreferenceUtil.getHistories());
+    if(_history!=null) {
+      _history.clear();
+    }
+    _history.addAll(await SharedPreferenceUtil.getHistories());
   }
 
   //初始化
   @override
   void initState() {
     // TODO: implement initState
-    super.initState();
     _getHistories();
+    print('init...搜索界面历史记录');
+    super.initState();
   }
 
   ///搜索页form文字
@@ -67,36 +78,35 @@ class SearchPageState extends State<SearchPageWidget>{
     return Container(
       padding: const EdgeInsets.only(left: 10,right: 15),
       child: Column(
-        children: <Widget>[
-                    Row(
-                        children: [
-                          Expanded(
-                            // alignment: AlignmentDirectional.bottomStart,
-                            child:Text(
-                              "历史记录：",
-                              style: TextStyle(fontSize: 20),
-                            ),
-                          ),
+        children: [
+            Row(
+              children: [
+                Expanded(
+                  child:Text(
+                    "历史记录：",
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ),
 
-                          Container(
-                            // alignment:AlignmentDirectional.topEnd,
-                            child:  IconButton(
-                                icon: Image(
-                                  image: AssetImage("images/myClear.png"),
-                                ),
-                                onPressed: () {
-                                  //TODO
-                                  SharedPreferenceUtil.delHistories();
-                                }
-                            ),
-                          ),
-                        ],
+                Container(
+                  child:  IconButton(
+                      icon: Image(
+                        image: AssetImage("images/myClear.png"),
                       ),
+                      onPressed: () {
+                        //TODO
+                        SharedPreferenceUtil.delHistories();
+                      }
+                  ),
+                ),
+              ],
+            ),
+
                     Container(
                       alignment: AlignmentDirectional.topStart,
                       child: Wrap(
                         spacing: 10,
-                        children: history==null?_buildNull:_buildData(history),
+                        children: _history==null?_buildData(recommend):_buildData(_history),
                       ),
                     ),
 
@@ -122,20 +132,17 @@ class SearchPageState extends State<SearchPageWidget>{
               ],
             ),
           ),
-
         ],
       ),
     );
   }
-
-  static List<Widget> _buildNull(){
-    return null;
-   }
+  
+  
   ///默认显示内容
   static List<Widget> _buildData(List<String> items){
-    if(items==null){
-      return null;
-    }else{
+    // if(items==null){
+    //   return null;
+    // }else{
       return items.map((item) {
         return InkWell(
           child: Chip(
@@ -149,7 +156,7 @@ class SearchPageState extends State<SearchPageWidget>{
           },
         );
       }).toList();
-    }
+    // }
   }
 
   ///实时搜索结果

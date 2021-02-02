@@ -83,25 +83,28 @@ class SharedPreferenceUtil {
   static void saveHistory(String history) async {
     SharedPreferences historySP = await SharedPreferences.getInstance();
     List<String> historiesList = await getHistories();
-    saveHistories(historiesList, historySP);
     addWithoutRepeat(historiesList, history);
-    print('已保存历史记录');
+    saveHistories(historiesList, historySP);
+    print('已保存历史记录$history');
   }
   //去重并维持次序
-  static void addWithoutRepeat(List<String> histories, String history) {
-    if (histories.contains(history)) {
-      histories.remove(history);
+  static void addWithoutRepeat(List<String> historiesList, String history) {
+    if (historiesList.contains(history)) {
+      historiesList.remove(history);
     }
-    histories.insert(0, history);
+    historiesList.insert(0, history);
   }
   ///保存历史记录列表
-  static saveHistories(List<String> histories, SharedPreferences sp){
+  static saveHistories(List<String> historiesList, SharedPreferences sp){
     sp.clear();
-    int size = histories.length;
+    int size = historiesList.length;
     for (int i = 0; i < size; i++) {
-      sp.setString("$HISTORY$i", histories[i]);
+      sp.setString("$HISTORY$i", historiesList[i]);
     }
-    print('历史记录列表保存完成');
+    sp.setInt(HISTORY_NUMBER, size);
+    print('历史记录列表保存完成,长度为$size');
+    print('打印当前列表');
+    print(historiesList);
   }
   //删列表
   static void delHistories() async {

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'Basic/login.dart';
-import 'file:///E:/apps/winter/lib/Basic/search.dart';
 import 'dart:async';
 import 'AdapterAndHelper/DarkModeModel.dart';
 import 'AddGoodsAndNeeds/TabBarForAdd.dart';
 import 'Basic/home.dart';
+import 'Basic/search.dart';
 
 void main() => runApp(Splash());
 
@@ -25,7 +25,7 @@ class Splash extends StatelessWidget {
                 'MyHomePage': (context) => MyHomePage(),
                 'LoginPage': (context) => LoginPage(),
                 'add': (context) => TabBarForAdd(),
-                'search': (context) => SearchPageWidget(),
+                'search': (context) => SearchPage(),
                 'home': (context) => Home(),
               },
               theme: DarkModeModel.darkMode
