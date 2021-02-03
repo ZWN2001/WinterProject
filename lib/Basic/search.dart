@@ -21,10 +21,12 @@ class SearchPageWidget extends StatefulWidget {
 class SearchPageState extends State<SearchPageWidget>{
 
   static final TextEditingController controller = new TextEditingController();
+
   ///建议
   static List<String> recommend = ['数码产品', '二手书', '食品', '生活用品', '美妆', '其他'];
   ///历史 暂时使用本地默认数据
   static List<String> _history = List() ;
+
   void _getHistories() async{
     if(_history!=null) {
       _history.clear();
@@ -172,7 +174,16 @@ class SearchPageState extends State<SearchPageWidget>{
   Widget realTimeSearch(String key){
     //http请求
     Future future = get(realTimeSearchUrl, paramStr);
-    Widget widget = Container(child: Text("搜索中..."),);
+    Widget widget = Expanded(
+      child: Center(
+        child: Text(
+            "搜索中...",
+          style: TextStyle(
+            fontSize: 20
+          ),
+        ),
+      ),
+    );
     future.then((value){
       //赋值
       list = value;
