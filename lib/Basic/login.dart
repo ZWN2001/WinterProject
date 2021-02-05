@@ -339,17 +339,16 @@ class LoginPageState extends State<LoginPage> {
     );
   }
   //验证身份
-  Future<void> _verify(String account,String password) async {
-    Response response= await Dio().post(
+  void _verify(String account,String password) {
+    Response response;
+    Dio().post(
         'http://widealpha.top:8080/shop/user/login',
       queryParameters: {
           'account':account,
           'password':password
-      });
-        // .then((value) {
-        // response=value;
+      }).then((value) {
+        response=value;
         print(response);
-        // Map<String, dynamic> responseData =  jsonDecode(response.data);
       if(response.data['code']==0){
           Toast.show("登陆成功", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
           Navigator.of(context).pushNamedAndRemoveUntil('MyHomePage', (Route<dynamic> route) => false);
@@ -367,6 +366,6 @@ class LoginPageState extends State<LoginPage> {
       }else{
         Toast.show("未知错误", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
       }
-    // });
+    });
   }
 }
