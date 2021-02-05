@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:toast/toast.dart';
-import 'package:winter/AdapterAndHelper/dio.dart';
+
 
 class Register extends StatelessWidget {
   @override

@@ -194,11 +194,8 @@ class LoginPageState extends State<LoginPage> {
           borderRadius: BorderRadius.all(Radius.circular(30.0)),
         ),
         padding: EdgeInsets.fromLTRB(25.0, 15.0, 25.0, 15.0),
-        onPressed: (){
+        onPressed: () async {
           if(accountKey.currentState.validate()&&pwdKey.currentState.validate()) {
-            // myHttpClient.sendHttpRequest('http://106.15.192.117:8080/shop/login?userName='+userName+'?password='+_passWord);
-            // if(myHttpClient.data==)
-            //
             SharedPreferenceUtil.saveUser(User(account, _passWord));
             logged=true;
             _verify(account,_passWord);//验证
@@ -342,20 +339,22 @@ class LoginPageState extends State<LoginPage> {
     );
   }
   //验证身份
-  void _verify(String account,String password){
-    Response response;
-    Dio().post(
-        'http://widealpha.top/shop/user/login',
+  Future<void> _verify(String account,String password) async {
+    Response response= await Dio().post(
+        'http://widealpha.top:8080/shop/user/login',
       queryParameters: {
           'account':account,
           'password':password
-      }).then((value) {
-        response=value;
-        if(response.data['code']==0){
-          Navigator.of(context).pushNamedAndRemoveUntil('MyHomePage', (Route<dynamic> route) => false);
+      });
+        // .then((value) {
+        // response=value;
+        print(response);
+        // Map<String, dynamic> responseData =  jsonDecode(response.data);
+      if(response.data['code']==0){
           Toast.show("登陆成功", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+          Navigator.of(context).pushNamedAndRemoveUntil('MyHomePage', (Route<dynamic> route) => false);
           //token??????
-        }else if(response.data['code']==-4){
+        } else if(response.data['code']==-4){
           Toast.show("用户名不存在", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
         }else if(response.data['code']==-5){
           Toast.show("用户名或密码错误", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
@@ -363,7 +362,11 @@ class LoginPageState extends State<LoginPage> {
           Toast.show("登陆状态错误", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
         }else if(response.data['code']==-7){
           Toast.show("权限不足", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-        }
-    });
+        }else if(response.data['code']==-8){
+        Toast.show("Token无效", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      }else{
+        Toast.show("未知错误", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      }
+    // });
   }
 }

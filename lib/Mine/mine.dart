@@ -352,7 +352,8 @@ class MinePageState extends State<MinePage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Hi , 亲爱的' + RegisterPageState.userName,
+                            //TODO
+                            'Hi , 亲爱的' ,
                             textAlign: TextAlign.center,
                             overflow: TextOverflow.clip,
                             style: TextStyle(
