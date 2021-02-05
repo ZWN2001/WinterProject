@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:winter/Basic/login.dart';
+import 'package:winter/Basic/register.dart';
 import 'MyRelease/myReleaseTabBar.dart';
 import 'PersonalInfo/showInfo.dart';
 import 'SetUserInfo/setAccountInfo.dart';
@@ -351,7 +352,7 @@ class MinePageState extends State<MinePage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Hi , 亲爱的' + LoginPageState.account,
+                            'Hi , 亲爱的' + RegisterPageState.userName,
                             textAlign: TextAlign.center,
                             overflow: TextOverflow.clip,
                             style: TextStyle(

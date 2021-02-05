@@ -1,4 +1,6 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/myHttpClient.dart';
 import 'package:winter/AdapterAndHelper/user.dart';
 import 'package:winter/Basic/register.dart';
@@ -199,7 +201,7 @@ class LoginPageState extends State<LoginPage> {
             //
             SharedPreferenceUtil.saveUser(User(account, _passWord));
             logged=true;
-            Navigator.of(context).pushNamedAndRemoveUntil('MyHomePage', (Route<dynamic> route) => false);
+            _verify(account,_passWord);//验证
           }
         },
         child: Text(
@@ -338,5 +340,30 @@ class LoginPageState extends State<LoginPage> {
         });
       },
     );
+  }
+  //验证身份
+  void _verify(String account,String password){
+    Response response;
+    Dio().post(
+        'http://widealpha.top/shop/user/login',
+      queryParameters: {
+          'account':account,
+          'password':password
+      }).then((value) {
+        response=value;
+        if(response.data['code']==0){
+          Navigator.of(context).pushNamedAndRemoveUntil('MyHomePage', (Route<dynamic> route) => false);
+          Toast.show("登陆成功", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+          //token??????
+        }else if(response.data['code']==-4){
+          Toast.show("用户名不存在", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+        }else if(response.data['code']==-5){
+          Toast.show("用户名或密码错误", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+        }else if(response.data['code']==-6){
+          Toast.show("登陆状态错误", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+        }else if(response.data['code']==-7){
+          Toast.show("权限不足", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+        }
+    });
   }
 }

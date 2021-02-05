@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -17,10 +18,10 @@ class Register extends StatelessWidget {
 class RegisterPage extends StatefulWidget {
   RegisterPage({Key key}) : super(key: key);
   @override
-  _RegisterPageState createState() => _RegisterPageState();
+  RegisterPageState createState() => RegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class RegisterPageState extends State<RegisterPage> {
   //全局KEY
   GlobalKey<FormState> registerKey = new GlobalKey<FormState>();
   var pass1Key = GlobalKey<FormFieldState>();
@@ -28,12 +29,14 @@ class _RegisterPageState extends State<RegisterPage> {
   var accountKey = GlobalKey<FormFieldState>();
   var userNameKey = GlobalKey<FormFieldState>();
 
-  String _userName = "";//用户名
+  String _account = "";//用户名
+  static String userName = "";//用户名
   String _password1 = "";//密码
   String _password2 = "";//确认密码
   int _backCode;
   bool pwdShow = true;// 默认不显示密码
 
+  final _usernameCotroller = TextEditingController();
   final _password1Controller = TextEditingController();
   final _password2Controller = TextEditingController();
 
@@ -51,7 +54,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 direction: Axis.vertical,
                 children:<Widget> [
                   new Container(
-                    padding: EdgeInsets.fromLTRB(20.0, 30.0, 20.0, 25.0),
+                    padding: EdgeInsets.fromLTRB(20.0, 30.0, 20.0, 15.0),
                     child: Image.asset('images/appIcon.png')
                   ),
                   Card(
@@ -98,7 +101,7 @@ class _RegisterPageState extends State<RegisterPage> {
           return null;
         },
         onChanged: (value) {
-          _userName = value;
+          _account = value;
         },
       ),
     );
@@ -116,14 +119,16 @@ class _RegisterPageState extends State<RegisterPage> {
           // filled: true,
           prefixIcon: Icon(Icons.accessibility_new),
         ),
-        validator: (value) {
-          if (value.isEmpty) {
-            return "用户名不可为空";
-          }
-          return null;
-        },
+
+        // validator: (value) {
+        //   if (value.isEmpty) {
+        //     return "用户名不可为空";
+        //   }
+        //   return null;
+        // },
+
         onChanged: (value) {
-          _userName = value;
+          userName = value;
         },
       ),
     );
@@ -170,7 +175,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Widget _registerPassword2() {
     return Container(
-      margin: EdgeInsets.fromLTRB(10, 10, 10, 15),
+      margin: EdgeInsets.fromLTRB(10, 0, 10, 15),
       child: TextFormField(
         decoration: InputDecoration(
             labelText: "请确认密码",
@@ -211,7 +216,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   _getFeedBack() async
   {
-    var url = 'http://106.15.192.117:8080/shop/register?userName='+_userName+'&password='+_password2;
+    var url = 'http://106.15.192.117:8080/shop/register?userName='+userName+'&password='+_password2;
     var httpClient = new HttpClient();
 
     int result;
@@ -245,13 +250,18 @@ class _RegisterPageState extends State<RegisterPage> {
           borderRadius: BorderRadius.all(Radius.circular(30.0)),
         ),
         onPressed: (){
-          if (userNameKey.currentState.validate() && accountKey.currentState.validate() && pass1Key.currentState.validate() && pass2Key.currentState.validate()){
-            _getFeedBack();
-            if (_backCode == 0) {
-              Toast.show("注册成功", context,duration: Toast.LENGTH_LONG,gravity: Toast.BOTTOM);
-              Navigator.pop(context);
-            }else if (_backCode == 1) {
-              Toast.show("用户名已存在，起名真难", context,duration: Toast.LENGTH_SHORT,gravity: Toast.BOTTOM);
+          if ( accountKey.currentState.validate() && pass1Key.currentState.validate() && pass2Key.currentState.validate()){
+            // _getFeedBack();
+            // if (_backCode == 0) {
+            //   Toast.show("注册成功", context,duration: Toast.LENGTH_LONG,gravity: Toast.BOTTOM);
+            //   Navigator.pop(context);
+            // }else if (_backCode == 1) {
+            //   Toast.show("用户名已存在，起名真难", context,duration: Toast.LENGTH_SHORT,gravity: Toast.BOTTOM);
+            // }
+            if(_usernameCotroller.text==null) {
+              _commit(_account, _password1);
+            }else{
+              _commit(_account, _password1,userName);
             }
           }
         },
@@ -277,5 +287,30 @@ class _RegisterPageState extends State<RegisterPage> {
     }
     return null;
   }*/
+  void _commit(String account,String password,[String username]){
+    Response response;
+    Dio().post(
+        'http://widealpha.top/shop/user/register',
+        queryParameters: {
+          'account':account,
+          'password':password,
+          'username':username
+        }).then((value) {
+      response=value;
+      if(response.data['code']==0){
+        Navigator.of(context).pushNamedAndRemoveUntil('loginPage', (Route<dynamic> route) => false);
+        Toast.show("注册成功", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+        //token??????
+      }else if(response.data['code']==-4){
+        Toast.show("用户名不存在", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      }else if(response.data['code']==-5){
+        Toast.show("用户名或密码错误", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      }else if(response.data['code']==-6){
+        Toast.show("登陆状态错误", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      }else if(response.data['code']==-7){
+        Toast.show("权限不足", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      }
+    });
+  }
 }
 
