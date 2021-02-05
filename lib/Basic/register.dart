@@ -1,9 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:toast/toast.dart';
+import 'package:winter/AdapterAndHelper/dio.dart';
 
 class Register extends StatelessWidget {
   @override
@@ -28,6 +30,7 @@ class _RegisterPageState extends State<RegisterPage> {
   var accountKey = GlobalKey<FormFieldState>();
   var userNameKey = GlobalKey<FormFieldState>();
 
+  String _account = "";
   String _userName = "";//用户名
   String _password1 = "";//密码
   String _password2 = "";//确认密码
@@ -40,6 +43,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text("欢迎注册"),
       ),
@@ -94,11 +98,17 @@ class _RegisterPageState extends State<RegisterPage> {
         validator: (value) {
           if (value.isEmpty) {
             return "账号不可为空";
+          } else {
+            for (int i = 0; i < value.length; i++) {
+              if (value[i] == " "){
+                return "账号不能含有空格";
+              }
+            }
+            return null;
           }
-          return null;
         },
         onChanged: (value) {
-          _userName = value;
+          _account = value;
         },
       ),
     );
@@ -244,15 +254,31 @@ class _RegisterPageState extends State<RegisterPage> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(30.0)),
         ),
-        onPressed: (){
+        onPressed: () async {
+          Response response;
+          String feedback;
+          Dio dio = Dio();
+          //dio.options.baseUrl = "http://widealpha.top:8080/shop";
           if (userNameKey.currentState.validate() && accountKey.currentState.validate() && pass1Key.currentState.validate() && pass2Key.currentState.validate()){
-            _getFeedBack();
-            if (_backCode == 0) {
-              Toast.show("注册成功", context,duration: Toast.LENGTH_LONG,gravity: Toast.BOTTOM);
-              Navigator.pop(context);
-            }else if (_backCode == 1) {
-              Toast.show("用户名已存在，起名真难", context,duration: Toast.LENGTH_SHORT,gravity: Toast.BOTTOM);
-            }
+            //postHttp('http://widealpha.top/shop/user/register?account='+_account+'&password='+_password2+'&username='+_userName);
+            //response = await dio.post("/user/register",data: {"account": _account, "password": _password2, "username": _userName});
+            response = await dio.post(
+              'http://widealpha.top:8080/shop/user/register',
+              queryParameters: {
+                'account': _account,
+                'password': _password2,
+                'username': _userName,
+              }
+            );
+            feedback = response.data.toString();
+              print(feedback);
+              if (response.data['code'] == 0) {
+                Toast.show("注册成功！", context,duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+                Navigator.of(context).pop();
+              } else {
+                Toast.show("注册失败，换个账号吧", context,duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+              }
+            ;
           }
         },
       ),
