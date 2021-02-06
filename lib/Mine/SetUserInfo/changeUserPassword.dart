@@ -2,20 +2,21 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
 import 'package:winter/Basic/login.dart';
+
 class ChangeUserPassword extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          title: Text('修改密码'),
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
-        body: ChangeUserPasswordPage(),
+        title: Text('修改密码'),
+      ),
+      body: ChangeUserPasswordPage(),
     );
   }
 }
@@ -79,56 +80,68 @@ class ChangeUserPasswordPage extends StatelessWidget {
             },
           ),
         ),
-              Center(
-              child: Container(
-                margin: EdgeInsets.only(top: 50),
-                child: FloatingActionButton(
-                  backgroundColor: Colors.lightBlue,
-                  child: Icon(Icons.assignment_turned_in_rounded, size: 28,),
-                  onPressed: () {
-                    if(oldpwdKey.currentState.validate()&&newpwdKey1.currentState.validate()&&newpwdKey2.currentState.validate()){
-                      if(newPwdTextController1.text!=newPwdTextController2.text){
-                        Toast.show("新密码不一致", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-                      }else{
-                        _commit(newPwdTextController2.text, oldPwdController.text,context);
-                      }
-                    }
-                  },
-                ),
+        Center(
+          child: Container(
+            margin: EdgeInsets.only(top: 50),
+            child: FloatingActionButton(
+              backgroundColor: Colors.lightBlue,
+              child: Icon(
+                Icons.assignment_turned_in_rounded,
+                size: 28,
+              ),
+              onPressed: () {
+                if (oldpwdKey.currentState.validate() &&
+                    newpwdKey1.currentState.validate() &&
+                    newpwdKey2.currentState.validate()) {
+                  if (newPwdTextController1.text !=
+                      newPwdTextController2.text) {
+                    Toast.show("新密码不一致", context,
+                        duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                  } else {
+                    _commit(newPwdTextController2.text, oldPwdController.text,
+                        context);
+                  }
+                }
+              },
             ),
+          ),
         )
       ],
     );
   }
-  void _commit(String newPassword,String password,BuildContext context){
+
+  void _commit(String newPassword, String password, BuildContext context) {
     Response response;
-    Dio().post(
-        'http://widealpha.top:8080/shop/user/changePassword',
-        options: Options(
-          headers:LoginPageState.token
-        ),
+    Dio().post('http://widealpha.top:8080/shop/user/changePassword',
+        options: Options(headers:{'Authorization':'Bearer '+LoginPageState.token.toString()}),
         queryParameters: {
-          'newPassword':newPassword,
-          'password':password
+          'newPassword': newPassword,
+          'password': password
         }).then((value) {
-      response=value;
+      response = value;
       print(response);
-      if(response.data['code']==0){
-        Toast.show("修改密码成功", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      if (response.data['code'] == 0) {
+        Toast.show("修改密码成功", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
         Navigator.of(context).pop();
-        //token??????
-      } else if(response.data['code']==-4){
-        Toast.show("用户名不存在", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-      }else if(response.data['code']==-5){
-        Toast.show("用户名或密码错误", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-      }else if(response.data['code']==-6){
-        Toast.show("登陆状态错误", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-      }else if(response.data['code']==-7){
-        Toast.show("权限不足", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-      }else if(response.data['code']==-8){
-        Toast.show("Token无效", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-      }else{
-        Toast.show("未知错误", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      } else if (response.data['code'] == -4) {
+        Toast.show("用户名不存在", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      } else if (response.data['code'] == -5) {
+        Toast.show("用户名或密码错误", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      } else if (response.data['code'] == -6) {
+        Toast.show("登陆状态错误", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      } else if (response.data['code'] == -7) {
+        Toast.show("权限不足", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      } else if (response.data['code'] == -8) {
+        Toast.show("Token无效", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      } else {
+        Toast.show("未知错误", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
       }
     });
   }

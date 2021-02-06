@@ -5,7 +5,6 @@ import 'package:winter/AdapterAndHelper/user.dart';
 import 'package:winter/Basic/register.dart';
 import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';
 
-
 class LoginPage extends StatefulWidget {
   @override
   LoginPageState createState() => LoginPageState();
@@ -15,6 +14,7 @@ class LoginPageState extends State<LoginPage> {
   GlobalKey<FormState> loginKey = new GlobalKey<FormState>(); //全局key
   var accountKey = GlobalKey<FormFieldState>();
   var pwdKey = GlobalKey<FormFieldState>();
+
   // final userNameController=TextEditingController();
   // final pwdController =TextEditingController();
   static String account = ""; //账号
@@ -22,9 +22,9 @@ class LoginPageState extends State<LoginPage> {
   bool pwdShow = true; //默认不展示密码
   bool _expand = false; //是否展示历史账号
   List<User> _users = List(); //历史账号
-  static Map token;
+  static String token;
 
-  static bool logged=false;//登录状态
+  static bool logged = false; //登录状态
 
   @override
   void initState() {
@@ -45,38 +45,35 @@ class LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-        appBar: AppBar(
-          title: Text('欢迎登录'),
-        ),
-        body: Stack(
-          children: <Widget>[
-            Center(
-              child: Container(
-                  child: Flex(
-                direction: Axis.vertical,
-                children: <Widget>[
-                  new Container(
-                      padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 25.0),
-                      child: Image.asset('images/appIcon.png')),
-                  _buildUsername(),
-                  _buildPassword(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildLoginButton(),
-                      _buildAddAccount()
-                    ],
-                  ),
-                ],
-              )),
-            ),
-            Offstage(
-              child: _buildListView(),
-              offstage: !_expand,
-            ),
-          ],
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('欢迎登录'),
+      ),
+      body: Stack(
+        children: <Widget>[
+          Center(
+            child: Container(
+                child: Flex(
+              direction: Axis.vertical,
+              children: <Widget>[
+                new Container(
+                    padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 25.0),
+                    child: Image.asset('images/appIcon.png')),
+                _buildUsername(),
+                _buildPassword(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [_buildLoginButton(), _buildAddAccount()],
+                ),
+              ],
+            )),
+          ),
+          Offstage(
+            child: _buildListView(),
+            offstage: !_expand,
+          ),
+        ],
+      ),
     );
   }
 
@@ -185,19 +182,20 @@ class LoginPageState extends State<LoginPage> {
   }
 
 //  登录按钮
-  Widget _buildLoginButton(){
-    return  Container(
+  Widget _buildLoginButton() {
+    return Container(
       margin: EdgeInsets.fromLTRB(0, 30, 15.0, 0),
-      child:  FlatButton(
+      child: FlatButton(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(30.0)),
         ),
         padding: EdgeInsets.fromLTRB(25.0, 15.0, 25.0, 15.0),
         onPressed: () async {
-          if(accountKey.currentState.validate()&&pwdKey.currentState.validate()) {
+          if (accountKey.currentState.validate() &&
+              pwdKey.currentState.validate()) {
             SharedPreferenceUtil.saveUser(User(account, _passWord));
-            logged=true;
-            _verify(account,_passWord);//验证
+            logged = true;
+            _verify(account, _passWord); //验证
           }
         },
         child: Text(
@@ -210,6 +208,7 @@ class LoginPageState extends State<LoginPage> {
       ),
     );
   }
+
   //注册按钮
   Widget _buildAddAccount() {
     return Container(
@@ -339,33 +338,39 @@ class LoginPageState extends State<LoginPage> {
   }
 
   //验证身份
-  void _verify(String account,String password) {
+  void _verify(String account, String password) {
     Response response;
-    Dio().post(
-        'http://widealpha.top:8080/shop/user/login',
-      queryParameters: {
-          'account':account,
-          'password':password
-      }).then((value) {
-        response=value;
-        print(response);
-        token=response.data['data'];
-      if(response.data['code']==0){
-          Toast.show("登陆成功", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-          Navigator.of(context).pushNamedAndRemoveUntil('MyHomePage', (Route<dynamic> route) => false);
-          //token??????
-        } else if(response.data['code']==-4){
-          Toast.show("用户名不存在", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-        }else if(response.data['code']==-5){
-          Toast.show("用户名或密码错误", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-        }else if(response.data['code']==-6){
-          Toast.show("登陆状态错误", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-        }else if(response.data['code']==-7){
-          Toast.show("权限不足", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-        }else if(response.data['code']==-8){
-        Toast.show("Token无效", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-      }else{
-        Toast.show("未知错误", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+    Dio().post('http://widealpha.top:8080/shop/user/login', queryParameters: {
+      'account': account,
+      'password': password
+    }).then((value) {
+      response = value;
+      print(response);
+      token = response.data['data'];
+      if (response.data['code'] == 0) {
+        Toast.show("登陆成功", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            'MyHomePage', (Route<dynamic> route) => false);
+        //token??????
+      } else if (response.data['code'] == -4) {
+        Toast.show("用户名不存在", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      } else if (response.data['code'] == -5) {
+        Toast.show("用户名或密码错误", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      } else if (response.data['code'] == -6) {
+        Toast.show("登陆状态错误", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      } else if (response.data['code'] == -7) {
+        Toast.show("权限不足", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      } else if (response.data['code'] == -8) {
+        Toast.show("Token无效", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      } else {
+        Toast.show("未知错误", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
       }
     });
   }
