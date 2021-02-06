@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
-import 'package:winter/AdapterAndHelper/myHttpClient.dart';
 import 'package:winter/AdapterAndHelper/user.dart';
 import 'package:winter/Basic/register.dart';
 import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';
@@ -13,7 +12,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class LoginPageState extends State<LoginPage> {
-  MyHttpClient myHttpClient = MyHttpClient();
   GlobalKey<FormState> loginKey = new GlobalKey<FormState>(); //全局key
   var accountKey = GlobalKey<FormFieldState>();
   var pwdKey = GlobalKey<FormFieldState>();
@@ -24,6 +22,7 @@ class LoginPageState extends State<LoginPage> {
   bool pwdShow = true; //默认不展示密码
   bool _expand = false; //是否展示历史账号
   List<User> _users = List(); //历史账号
+  static Map token;
 
   static bool logged=false;//登录状态
 
@@ -350,6 +349,7 @@ class LoginPageState extends State<LoginPage> {
       }).then((value) {
         response=value;
         print(response);
+        token=response.data['data'];
       if(response.data['code']==0){
           Toast.show("登陆成功", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
           Navigator.of(context).pushNamedAndRemoveUntil('MyHomePage', (Route<dynamic> route) => false);
