@@ -27,7 +27,7 @@ class SearchPageState extends State<SearchPageWidget>{
   ///历史 暂时使用本地默认数据
   static List<String> _history = List() ;
 
-  void _getHistories() async{
+  Future<void> _getHistories() async{
     if(_history!=null) {
       _history.clear();
     }
@@ -38,9 +38,10 @@ class SearchPageState extends State<SearchPageWidget>{
   @override
   void initState() {
     // TODO: implement initState
-    _getHistories();
-    setState(() {
-      centerContent=defaultDisplay();
+    _getHistories().then((value) {
+      setState(() {
+        centerContent=defaultDisplay();
+      });
     });
     print('init...搜索界面历史记录');
     super.initState();

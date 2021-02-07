@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:toast/toast.dart';
 import 'dart:io';
 //ByteData这里需要引入dart:typed_data文件，引入service.dart的话app里可以检索到文件个数，但是传递到后台一直是null，时间紧迫我也没抓包看是咋回事儿先这么用吧
@@ -7,6 +8,7 @@ import 'package:dio/dio.dart';
 //MediaType用
 import 'package:http_parser/http_parser.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:winter/Basic/login.dart';
 
 class AddGoods extends StatelessWidget {
   @override
@@ -26,11 +28,11 @@ class AddGoodsPage extends StatefulWidget{
 class _AddGoodsPageState extends State<AddGoodsPage> {
 
   bool _categoryCondition = false; //是否传入分类
-  String category;
+  String _category;
+  double _price;
   TextEditingController _title=TextEditingController();
-  TextEditingController _price=TextEditingController();
+  static TextEditingController _myPrice=TextEditingController();
   TextEditingController _description=TextEditingController();
-  TextEditingController _contact=TextEditingController();
 
   GlobalKey<FormState> addGoodsKey = new GlobalKey<FormState>();
   var titleKey = GlobalKey<FormFieldState>();
@@ -103,8 +105,11 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
                 Expanded(
                     child: TextFormField(
                       keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        WhitelistingTextInputFormatter.digitsOnly
+                      ],
                       key: priceKey,
-                      controller: _price,
+                      controller: _myPrice,
                       style: TextStyle(
                           fontSize: 15
                       ),
@@ -202,7 +207,7 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
                           onTap: () {
                             _categoryCondition=true;
                             setState(() {
-                              category = '数码产品';
+                              _category = '数码产品';
                               Navigator.pop(context);
                             });
                           },
@@ -213,7 +218,7 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
                           onTap: () {
                             _categoryCondition=true;
                             setState(() {
-                              category = '二手书';
+                              _category = '二手书';
                               Navigator.pop(context);
                             });
                           },
@@ -224,7 +229,7 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
                           onTap: () {
                             _categoryCondition=true;
                             setState(() {
-                              category = '食品';
+                              _category = '食品';
                               Navigator.pop(context);
                             });
                           },
@@ -235,7 +240,7 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
                           onTap: () {
                             _categoryCondition=true;
                             setState(() {
-                              category = '生活用品';
+                              _category = '生活用品';
                               Navigator.pop(context);
                             });
                           },
@@ -246,7 +251,7 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
                           onTap: () {
                             _categoryCondition=true;
                             setState(() {
-                              category = '美妆';
+                              _category = '美妆';
                               Navigator.pop(context);
                             });
                           },
@@ -257,7 +262,7 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
                           onTap: () {
                             _categoryCondition=true;
                             setState(() {
-                              category = '其他';
+                              _category = '其他';
                               Navigator.pop(context);
                             });
                           },
@@ -269,27 +274,6 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
             },
           ),
         ),
-
-        // Container(
-        //     margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-        //     child: TextFormField(
-        //       key: contactKey,
-        //        controller: _contact,
-        //       style: TextStyle(
-        //           fontSize: 20
-        //       ),
-        //       decoration: InputDecoration(
-        //         labelText: '留一下联系方式吧',
-        //         contentPadding: EdgeInsets.all(8),
-        //       ),
-        //       validator: (value) {
-        //         if (value.isEmpty) {
-        //           return "忘记留联系方式啦！";
-        //         }
-        //         return null;
-        //       },
-        //     )
-        // ),
 
         //添加图片
         Card(
@@ -371,6 +355,10 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
                   Toast.show("选择分类啊喂", context,duration: Toast.LENGTH_SHORT,gravity: Toast.BOTTOM);
                 }else{
                   if(titleKey.currentState.validate()&&priceKey.currentState.validate()&&contactKey.currentState.validate()){
+                    _submitDetails(_title.text, double.parse(_myPrice.text), _description.text, _category);
+
+
+
                     Navigator.of(context).pop();
                   }
                 }
@@ -382,31 +370,10 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
     );
   }
 
-  //图片状态
-  Widget _imageUploaded() {
-    return Text(
-        '图片已上传',
-        style: TextStyle(
-            fontSize: 20,
-            color: Colors.grey
-        ),
-      );
-  }
-
-  Widget _imageUnUploaded() {
-    return Text(
-        '图片未上传',
-        style: TextStyle(
-            fontSize: 20,
-            color: Colors.grey
-        ),
-    );
-  }
-
   //分类状态
   Widget _categoryChoosed() {
     return Text(
-        '所选分类：$category',
+        '所选分类：$_category',
         style: TextStyle(
             fontSize: 17,
             color: Colors.grey
@@ -449,8 +416,9 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
     });
   }
 
+
   //提交数据
-  void _submitData () async {
+  void _submitImages () async {
     //处理图片
     List<MultipartFile> imageList = new List<MultipartFile>();
     for (Asset asset in _img) {
@@ -471,6 +439,79 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
       //后端要用multipartFiles接收参数，否则为null
       "multipartFiles" : imageList
     });
-    var res = await Dio().post("URL", data: formData);
+
+    Response addImagesResponse  = await Dio().post('http://widealpha.top:8080/shop/commodity/addCommodity',
+        options: Options(headers:{'Authorization':'Bearer '+LoginPageState.token}),
+        data: formData);
+        print(addImagesResponse);
+        if (addImagesResponse.data['code'] == 0) {
+          Toast.show("图片上传成功", context,
+              duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+          Navigator.of(context).pop();
+        }  else {
+          Toast.show("图片上传失败，请重试", context,
+              duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+        }
   }
+
+  void _submitDetails(String title,double price,String description,String category){
+    Response addGoodsResponse;
+    Dio().post('http://widealpha.top:8080/shop/commodity/addCommodity',
+        options: Options(headers:{'Authorization':'Bearer '+LoginPageState.token}),
+        queryParameters: {
+          'title':title,
+          'price':price,
+          'description':description,
+          'category':category
+        }).then((value) {
+      addGoodsResponse = value;
+      print(addGoodsResponse);
+      if (addGoodsResponse.data['code'] == 0) {
+        Toast.show("商品发布成功", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+        Navigator.of(context).pop();
+      }  else if (addGoodsResponse.data['code'] == -6) {
+        Toast.show("登陆状态错误", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      } else if (addGoodsResponse.data['code'] == -7) {
+        Toast.show("权限不足", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      } else if (addGoodsResponse.data['code'] == -8) {
+        Toast.show("Token无效", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      } else {
+        Toast.show("未知错误", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      }
+    });
+  }
+  // void _submitImages(){
+  //   Response addImagesResponse;
+  //   Dio().post('http://widealpha.top:8080/shop/commodity/addCommodity',
+  //       options: Options(headers:{'Authorization':'Bearer '+LoginPageState.token}),
+  //       queryParameters: {
+  //
+  //       }).then((value) {
+  //     addImagesResponse = value;
+  //     print(addImagesResponse);
+  //     if (addImagesResponse.data['code'] == 0) {
+  //       Toast.show("商品发布成功", context,
+  //           duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+  //       Navigator.of(context).pop();
+  //     }  else if (addImagesResponse.data['code'] == -6) {
+  //       Toast.show("登陆状态错误", context,
+  //           duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+  //     } else if (addImagesResponse.data['code'] == -7) {
+  //       Toast.show("权限不足", context,
+  //           duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+  //     } else if (addImagesResponse.data['code'] == -8) {
+  //       Toast.show("Token无效", context,
+  //           duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+  //     } else {
+  //       Toast.show("未知错误", context,
+  //           duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+  //     }
+  //   });
+  // }
+
 }

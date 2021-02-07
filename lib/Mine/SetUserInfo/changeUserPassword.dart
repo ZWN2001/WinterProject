@@ -113,7 +113,7 @@ class ChangeUserPasswordPage extends StatelessWidget {
   void _commit(String newPassword, String password, BuildContext context) {
     Response response;
     Dio().post('http://widealpha.top:8080/shop/user/changePassword',
-        options: Options(headers:{'Authorization':'Bearer '+LoginPageState.token.toString()}),
+        options: Options(headers:{'Authorization':'Bearer '+LoginPageState.token}),
         queryParameters: {
           'newPassword': newPassword,
           'password': password
@@ -124,13 +124,7 @@ class ChangeUserPasswordPage extends StatelessWidget {
         Toast.show("修改密码成功", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
         Navigator.of(context).pop();
-      } else if (response.data['code'] == -4) {
-        Toast.show("用户名不存在", context,
-            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-      } else if (response.data['code'] == -5) {
-        Toast.show("用户名或密码错误", context,
-            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-      } else if (response.data['code'] == -6) {
+      }  else if (response.data['code'] == -6) {
         Toast.show("登陆状态错误", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
       } else if (response.data['code'] == -7) {
