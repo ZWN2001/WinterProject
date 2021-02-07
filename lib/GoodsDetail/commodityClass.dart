@@ -3,7 +3,7 @@ class Commodity {
   int commodityId;
   String title;
   String description;
-  double price;
+  String price;
   String category;
   String image;
   String account;
