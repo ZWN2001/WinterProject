@@ -356,9 +356,7 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
                 }else{
                   if(titleKey.currentState.validate()&&priceKey.currentState.validate()&&contactKey.currentState.validate()){
                     _submitDetails(_title.text, double.parse(_myPrice.text), _description.text, _category);
-
-
-
+                    _submitImages();
                     Navigator.of(context).pop();
                   }
                 }
@@ -437,7 +435,7 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
 
     FormData formData = new FormData.fromMap({
       //后端要用multipartFiles接收参数，否则为null
-      "multipartFiles" : imageList
+      "image" : imageList
     });
 
     Response addImagesResponse  = await Dio().post('http://widealpha.top:8080/shop/commodity/addCommodity',

@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_crop/image_crop.dart';
+import 'package:toast/toast.dart';
+import 'package:winter/Basic/login.dart';
 
 class CropImageRoute extends StatefulWidget {
   CropImageRoute(this.image);
@@ -37,7 +39,7 @@ class _CropImageRouteState extends State<CropImageRoute> {
                 child: Crop.file(
                   widget.image,
                   key: cropKey,
-                  aspectRatio: 1.0,
+                  aspectRatio: 1,
                   alwaysShowGrid: true,
                 ),
               ),
@@ -59,41 +61,40 @@ class _CropImageRouteState extends State<CropImageRoute> {
       //裁剪结果为空
       print('裁剪不成功');
     }
-    // await ImageCrop.requestPermissions().then((value) {
-    //   if (value) {
-    //     ImageCrop.cropImage(
-    //       file: originalFile,
-    //       area: crop.area,
-    //     ).then((value) {
-    //       upload(value);
-    //     }).catchError(() {
-    //       print('裁剪不成功');
-    //     });
-    //   } else {
-    //     upload(originalFile);
-    //   }
-    // });
+    await ImageCrop.requestPermissions().then((value) {
+      if (value) {
+        ImageCrop.cropImage(
+          file: originalFile,
+          area: crop.area,
+        ).then((value) {
+          upload(value);
+        });
+      } else {
+        upload(originalFile);
+      }
+    });
   }
 
+  FormData formData ;
   ///上传头像
-  void upload(File file) {
-    // print(file.path);
-    // Dio dio = Dio();
-    // dio
-    //     .post("http://your ip:port/",
-    //     data: FormData.from({'file': file}))
-    //     .then((response) {
-    //   if (!mounted) {
-    //     return;
-    //   }
-    //   处理上传结果
-  //     UploadIconResult bean = UploadIconResult(response.data);
-  //     print('上传头像结果 $bean');
-  //     if (bean.code == '1') {
-  //       Navigator.pop(context, bean.data.url);//这里的url在上一页调用的result可以拿到
-  //     } else {
-  //       Navigator.pop(context, '');
-  //     }
-  //   });
+  Future<void> upload(File file) async {
+    print(file.path);
+    Response response;
+    response=await Dio().post('http://widealpha.top:8080/shop/user/changeHeadImage',
+        options: Options(headers:{'Authorization':'Bearer '+LoginPageState.token}),
+        // queryParameters: (
+        //     "image" : file
+        // ),
+        data: formData =  FormData.fromMap({
+        "image" : file
+        }));
+    if (response.data['code'] == 0) {
+      Toast.show("图片上传成功", context,
+          duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      Navigator.of(context).pop();
+    }  else {
+      Toast.show("图片上传失败，请重试", context,
+          duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+    }
   }
 }

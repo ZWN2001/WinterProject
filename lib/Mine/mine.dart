@@ -1,9 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:winter/Basic/login.dart';
-import 'package:winter/Basic/register.dart';
 import 'MyRelease/myReleaseTabBar.dart';
 import 'PersonalInfo/showInfo.dart';
 import 'SetUserInfo/setAccountInfo.dart';
@@ -314,38 +314,22 @@ class MinePageState extends State<MinePage> {
           children: [
             Container(
               child: GestureDetector(
-                onTap: () {
-                  showModalBottomSheet(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            ListTile(
-                              leading: Icon(Icons.add_a_photo_outlined),
-                              title: Text("拍照"),
-                              onTap: getImage
-                            ),
-                            ListTile(
-                              leading: Icon(Icons.photo_library_outlined),
-                              title: Text("从相册选择"),
-                              onTap: chooseImage
-                            ),
-                          ],
-                        );
-                      });
-                },
+                onTap: _chooseImage,
                 child: Container(
                   margin: EdgeInsets.fromLTRB(12, 8, 8, 8),
                   child: ClipOval(
-                    child: Image.asset('images/appIcon.png'),
+                    child: _getHeadImage()==null?Image.asset('images/defaultHeadImage.png',fit:BoxFit.cover ,)
+                        :Image.network(
+                      _getHeadImage(),
+                      fit: BoxFit.cover,
+                    )
                   ),
                 ),
               ),
             ),
             Expanded(
                 child:  Container(
-                  margin: EdgeInsets.only(right: 15),
+                  margin: EdgeInsets.only(right: 15,bottom: 20,top: 5),
                     // color: Colors.indigoAccent,
                     child: Center(
                       child: Column(
@@ -405,23 +389,17 @@ class MinePageState extends State<MinePage> {
     );
   }
 
-
-  //头像设置（等后端）
-
-  ///拍摄照片
-  Future getImage() async {
-    await ImagePicker.pickImage(source: ImageSource.camera)
-        .then((image) => cropImage(image))
-    ;
-  }
   ///从相册选取
-  Future chooseImage() async {
-    await ImagePicker.pickImage(source: ImageSource.gallery)
-        .then((image) => cropImage(image))
-    ;
+  Future _chooseImage() async {
+    var image=await ImagePicker.pickImage(source: ImageSource.gallery);
+    if(image==null){
+      return 0;
+    }else{
+      return _cropImage(image);
+    }
   }
 
-  void cropImage(var originalImage) async {
+  void _cropImage(var originalImage) async {
     String result = await Navigator.push(context, MaterialPageRoute(builder: (context) => CropImageRoute(originalImage)));
     if (result.isEmpty) {
       print('上传失败');
@@ -433,5 +411,22 @@ class MinePageState extends State<MinePage> {
         // _upgradeRemoteInfo();//后续数据处理，这里是更新头像信息
       });
     }
+  }
+
+  String _getHeadImage(){
+    Response response;
+    Dio().post('http://widealpha.top:8080/shop/user/headImage',
+        options: Options(headers:{'Authorization':'Bearer '+LoginPageState.token}),
+       ).then((value) {
+      response = value;
+      print(response);
+      if (response.data['code'] == 0) {
+       return response.data['data'];
+      } else {
+        Toast.show("获取头像失败", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+        return;
+      }
+    });
   }
 }
