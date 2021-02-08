@@ -43,11 +43,15 @@ class _CropImageRouteState extends State<CropImageRoute> {
                   alwaysShowGrid: true,
                 ),
               ),
-              RaisedButton(
-                onPressed: () {
-                  _crop(widget.image);
-                },
-                child: Text('ok'),
+              Container(
+                margin: EdgeInsets.only(top: 20),
+                child: FloatingActionButton(
+                  backgroundColor: Colors.lightBlue,
+                  child: Icon(Icons.assignment_turned_in_rounded, size: 28,),
+                  onPressed: () {
+                   _crop(widget.image);
+                  },
+                ),
               ),
             ],
           ),
