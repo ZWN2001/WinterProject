@@ -105,29 +105,6 @@ class myInfo extends StatelessWidget {
                     Container(
                       margin: EdgeInsets.only(right: 15),
                       child: Text(
-                        '生日',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    ),
-                    Expanded(
-                        child: TextFormField(
-                          scrollPadding: EdgeInsets.all(0),
-                          // controller: _price,
-                          style: TextStyle(
-                              fontSize: 20
-                          ),
-                        )
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(20, 10, 0, 10),
-                child: Row(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(right: 15),
-                      child: Text(
                         '现居',
                         style: TextStyle(fontSize: 20),
                       ),

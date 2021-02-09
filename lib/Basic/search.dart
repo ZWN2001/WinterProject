@@ -2,9 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';
-import '../AdapterAndHelper/httpUtil.dart';
 import 'dart:async';
-
 import 'login.dart';
 
 class SearchPage extends StatelessWidget{

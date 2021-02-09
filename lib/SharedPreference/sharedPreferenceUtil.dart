@@ -47,6 +47,7 @@ class SharedPreferenceUtil {
       accountList.add(User(account, password));
     }
     print('当前列表保存的用户数：$num');
+    print(accountList);
     return accountList;
   }
 

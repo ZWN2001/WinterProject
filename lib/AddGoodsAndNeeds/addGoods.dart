@@ -413,8 +413,9 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
 
   //提交数据
   Future<String> _submitImages() async {
+    List<String> imageList=List();
     //处理图片
-    List<MultipartFile> imageList = new List<MultipartFile>();
+    // List<MultipartFile> imageList = new List<MultipartFile>();
     for (Asset asset in _img) {
       //将图片转为二进制数据
       ByteData byteData = await asset.getByteData();
@@ -423,30 +424,25 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
         imageData,
         //这个字段要有，否则后端接收为null
         filename: 'load_image',
-        //请求contentType，设置一下，不设置的话默认的是application/octet/stream，后台可以接收到数据，但上传后是.octet-stream文件
-        contentType: MediaType("image", "jpg"),
+        // //请求contentType，设置一下，不设置的话默认的是application/octet/stream，后台可以接收到数据，但上传后是.octet-stream文件
+        // contentType: MediaType("image", "jpg"),
       );
-      imageList.add(multipartFile);
-    }
-
-    FormData formData = new FormData.fromMap({
-      "image": imageList
-    });
-    if (imageList != null) {
       Response addImagesResponse = await Dio().post(
-          'http://widealpha.top:8080/treehole/article/uploadImage',
-          options: Options(
-              headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
-          queryParameters: {
-            "image":formData
-          },);
-      print(addImagesResponse);
+        'http://widealpha.top:8080/treehole/article/uploadImage',
+        options: Options(
+            headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
+        queryParameters: {
+          "image": multipartFile
+        },
+      );
+      print('商品图片:$addImagesResponse');
       if (addImagesResponse.data['code'] == 0) {
-        return addImagesResponse.data['data'];
+        imageList.add(addImagesResponse.data['data']);
       } else {
         return null;
       }
     }
+    return imageList.toString();
   }
 
   void _submitDetails(String title, double price, String description, String category,String imageUrl) {
