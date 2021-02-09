@@ -18,7 +18,7 @@ class AllGoods extends StatefulWidget {
 class AllGoodsState extends State<AllGoods> {
 
   //临时数据
-  List listData = [
+  /*List listData = [
     {
       "title": "标题1",
       "price": "价格1",
@@ -100,10 +100,11 @@ class AllGoodsState extends State<AllGoods> {
       "category": "null",
       "account": "123"
     }
-  ];
+  ];*/
 
   List<Commodity> commodityList = new List();
   List<Commodity> tempList = new List();
+  Iterable<Commodity> reservedList = new List();
   int startNum = 0;
   int _page = 1;
   bool isLoading = false;//是否正在加载数据
@@ -113,8 +114,9 @@ class AllGoodsState extends State<AllGoods> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _getCommodityData();
-    _transferIntoLocalList();
+    _getCommodityData().then((value) => {
+    _transferIntoLocalList()
+    });
     _scrollController.addListener(() {
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
         print("滑到了最底部");
@@ -129,6 +131,7 @@ class AllGoodsState extends State<AllGoods> {
     response = await dio.post('http://widealpha.top:8080/shop/commodity/allCommodity',
         options: Options(headers: {'Authorization':'Bearer'+LoginPageState.token}));
     String feedback = response.data.toString();
+    print(runtimeType);
     print(feedback);
     if (response.data['code'] == 0) {
       if (response.data['data'] == null) {
@@ -136,8 +139,9 @@ class AllGoodsState extends State<AllGoods> {
         return;
       } else {
         setState(() {
-          List commodityJson = JsonDecoder().convert(response.data['data'].toString());
+          List commodityJson = response.data['data'];
           commodityList = commodityJson.map((e) => Commodity.fromJson(e)).toList();
+          print(commodityList);
         });
       }
     }
@@ -153,12 +157,12 @@ class AllGoodsState extends State<AllGoods> {
         setState(() {
           for (int i = startNum; i < startNum + 10; i++) {
             startNum = i;
-            if (i == commodityList.length) {
+            if (i == commodityList.length-1) {
               print("没有更多数据了");
               isLoading = false;
               return;
             }
-            tempList[i] = commodityList[i];
+            tempList.insert(i, reservedList.elementAt(i));
           }
           _page++;
           isLoading = false;
@@ -169,17 +173,25 @@ class AllGoodsState extends State<AllGoods> {
 
   _transferIntoLocalList() {
     if (commodityList != null) {
-      commodityList.reversed;//确保时间顺序展示
+      reservedList = commodityList.reversed;//确保时间顺序展示
+      print(reservedList);
+      print(reservedList.length);
       //每次加载10条商品信息
       for (int i = 0; i < 10; i++) {
         startNum = i;
-        if (i == commodityList.length){
+        if (reservedList.length == 1){
+          tempList.insert(0, reservedList.elementAt(0));
+          startNum = 1;
+          return;
+        }
+        if (i == reservedList.length - 1){
           print("没有更多数据");
           //startNum = i;
           return;
         }
-        tempList[i] = commodityList[i];
-        print(tempList[i]);
+        //tempList[i] = reservedList.elementAt(i);
+        tempList.insert(i, reservedList.elementAt(i));
+        print(tempList[i].image);
       }
     }
   }
@@ -242,8 +254,9 @@ class AllGoodsState extends State<AllGoods> {
         commodityList.clear();
         tempList.clear();
         startNum = 0;
-        _getCommodityData();
-        _transferIntoLocalList();
+        _getCommodityData().then((value) => {
+          _transferIntoLocalList()
+        });
       });
     });
     Toast.show("刷新成功", context, duration:Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
@@ -268,7 +281,7 @@ class AllGoodsState extends State<AllGoods> {
           return new TopNavigatorBar();
         }));
       },//点击后进入详细页面
-        child:  Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
+        child: Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
           return Container(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -276,11 +289,18 @@ class AllGoodsState extends State<AllGoods> {
                 Row(
                   children: [
                     Expanded(
-                        child:
-                        Image.network(
+                        child:SizedBox(
+                          height: 130,
+                          child: //Text("暂时没有图片哦", style: TextStyle(color: Colors.grey, fontSize: 10),textAlign: TextAlign.center,)
+                          tempList[temp].image.isEmpty//反过来
+                          ? Text("暂时没有图片哦", style: TextStyle(color: Colors.grey, fontSize: 10),textAlign: TextAlign.center)
+                          : Image.network(_imageToList(temp), fit: BoxFit.cover,),
+                        )
+                        /*Image.network(
                           tempList[temp].image,
                           fit: BoxFit.cover,
-                        )),
+                        )*/
+                    ),
                   ],
                 ),
                 Row(
@@ -289,7 +309,7 @@ class AllGoodsState extends State<AllGoods> {
                         child:Text(
                             tempList[temp].title,
                             textAlign: TextAlign.start,
-                            maxLines: 2,
+                            maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontSize: 16.0,
@@ -303,7 +323,7 @@ class AllGoodsState extends State<AllGoods> {
                   children: [
                     Expanded(
                         child:Text(
-                            tempList[temp].price,
+                            tempList[temp].price.toString(),
                             textAlign: TextAlign.start,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -322,6 +342,12 @@ class AllGoodsState extends State<AllGoods> {
           );
         }
     ));
+  }
+
+  //将所有图片放入一个list，默认加载第一张
+  String _imageToList(int temp) {
+    List imageList = json.decode(tempList[temp].image);
+    return imageList[0];
   }
 
 }
