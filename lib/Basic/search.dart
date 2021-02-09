@@ -1,8 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';
 import '../AdapterAndHelper/httpUtil.dart';
 import 'dart:async';
+
+import 'login.dart';
 
 class SearchPage extends StatelessWidget{
   @override
@@ -21,6 +24,8 @@ class SearchPageWidget extends StatefulWidget {
 class SearchPageState extends State<SearchPageWidget>{
 
   static final TextEditingController controller = new TextEditingController();
+  bool _modelCondition=false;
+  String _myModel;
 
   ///建议
   static List<String> recommend = ['数码产品', '二手书', '食品', '生活用品', '美妆', '其他'];
@@ -71,7 +76,7 @@ class SearchPageState extends State<SearchPageWidget>{
             //动态搜索
             searchStr = controller.text;
             SharedPreferenceUtil.saveHistory(searchStr);
-            centerContent = realTimeSearch(searchStr);
+               centerContent=realTimeSearch(searchStr);
           });
         }
       }
@@ -84,6 +89,84 @@ class SearchPageState extends State<SearchPageWidget>{
       padding: const EdgeInsets.only(left: 10,right: 15),
       child: Column(
         children: [
+          FlatButton(
+            child:Row(
+              children: [
+                Expanded(
+                    child: Container(
+                      margin: EdgeInsets.fromLTRB(0, 20, 0, 10),
+                      child:Row(
+                        children: [
+                          Icon(Icons.youtube_searched_for),
+                          Text(
+                              '搜索模式',
+                            style: TextStyle(
+                              fontSize: 18
+                            ),
+                          ),
+                        ],
+                      )
+                    )
+                ),
+                Container(
+                  margin: EdgeInsets.fromLTRB(0, 20, 20, 10),
+                  child: _modelCondition?_modelChoosed():_modelUnChoosed(),
+                )
+              ],
+            ),
+            onPressed: (){
+              showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        ListTile(
+                          title: Text("按关键字搜索商品"),
+                          onTap: () {
+                            setState(() {
+                              _modelCondition=true;
+                              _myModel = '按关键字搜索商品';
+                              Navigator.pop(context);
+                            });
+                          },
+                        ),
+                        ListTile(
+                          title: Text("按ID搜索商品"),
+                          onTap: () {
+                            setState(() {
+                              _modelCondition=true;
+                              _myModel = '按ID搜索商品';
+                              Navigator.pop(context);
+                            });
+                          },
+                        ),
+                        ListTile(
+                          title: Text("按关键字搜索需求"),
+                          onTap: () {
+                            setState(() {
+                              _modelCondition=true;
+                              _myModel = '按关键字搜索需求';
+                              Navigator.pop(context);
+                            });
+                          },
+                        ),
+                        ListTile(
+                          title: Text("按ID搜索需求"),
+                          onTap: () {
+                            setState(() {
+                              _modelCondition=true;
+                              _myModel = '按ID搜索需求';
+                              Navigator.pop(context);
+                            });
+                          },
+                        ),
+                      ],
+                    );
+                  });
+            }
+          ),
+
             Row(
               children: [
                 Expanded(
@@ -102,7 +185,7 @@ class SearchPageState extends State<SearchPageWidget>{
                         //TODO
                         SharedPreferenceUtil.delHistories();
                         setState(() {
-                          SharedPreferenceUtil.delHistories();
+                          initState();
                         });
                       }
                   ),
@@ -144,8 +227,13 @@ class SearchPageState extends State<SearchPageWidget>{
       ),
     );
   }
-  
-  
+  Widget _modelChoosed(){
+    return Text('搜索模式：$_myModel');
+}
+  Widget _modelUnChoosed(){
+    return Text('搜索模式：按关键字搜索商品');
+  }
+
   ///默认显示内容
   static List<Widget> _buildData(List<String> items){
       return items.map((item) {
@@ -166,15 +254,23 @@ class SearchPageState extends State<SearchPageWidget>{
   ///实时搜索结果
   static List list  = new List();
   ///实时搜索url
-  String realTimeSearchUrl = "http://192.168.0.121:8091/article/test/";
-  ///参数
-  String paramStr = "qwe";
-
+  String realTimeSearchUrl;
 
   ///实时搜索列表
   Widget realTimeSearch(String key){
-    //http请求
-    Future future = get(realTimeSearchUrl, paramStr);
+    switch (_myModel){
+      case "按ID搜索商品":
+      realTimeSearchUrl = "http://192.168.0.121:8091/article/test/";
+      break;
+      case "按关键字搜索需求":
+      realTimeSearchUrl = "http://192.168.0.121:8091/article/test/";
+      break;
+      case "按ID搜索需求":
+        realTimeSearchUrl = "http://192.168.0.121:8091/article/test/";
+        break;
+      default:
+        realTimeSearchUrl ="http://192.168.0.121:8091/article/test/";
+    }
     Widget widget = Expanded(
       child: Center(
         child: Text(
@@ -185,9 +281,16 @@ class SearchPageState extends State<SearchPageWidget>{
         ),
       ),
     );
-    future.then((value){
+
+    Response response;
+    Dio().post(
+        realTimeSearchUrl,
+        options: Options(headers:{'Authorization':'Bearer '+LoginPageState.token}),
+        queryParameters: {
+        }
+    ).then((value){
       //赋值
-      list = value;
+      response= value;
     }).whenComplete((){
       widget = Container(
           child: ListView.separated(
@@ -233,7 +336,16 @@ class SearchPageState extends State<SearchPageWidget>{
         });
       }
     });
-    return widget;
+    // return widget;
+  }
+  void _getRealtimeResult()async{
+    //dio请求
+    Response response = await Dio().post(
+        realTimeSearchUrl,
+        options: Options(headers:{'Authorization':'Bearer '+LoginPageState.token}),
+        queryParameters: {
+        }
+    );
   }
 
 
@@ -308,7 +420,6 @@ class SearchPageState extends State<SearchPageWidget>{
               ],
             ),
           ),
-
     );
 
   }

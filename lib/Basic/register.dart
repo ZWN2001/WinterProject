@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:toast/toast.dart';
@@ -87,6 +88,10 @@ class _RegisterPageState extends State<RegisterPage> {
     return Container(
       margin: EdgeInsets.fromLTRB(10, 10, 10, 15),
       child: TextFormField(
+        keyboardType: TextInputType.number,
+        inputFormatters: <TextInputFormatter>[
+          WhitelistingTextInputFormatter.digitsOnly
+        ],
         decoration: InputDecoration(
           hintText: "创建账号/使用学号",
           // border: OutlineInputBorder(borderSide: BorderSide()),

@@ -109,6 +109,8 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
                       validator: (value) {
                         if (value.isEmpty) {
                           return "价格不可为空哦";
+                        }else if(double.parse(_myPrice.text)<0){
+                          return '价格不可为负哦';
                         }
                         return null;
                       },
@@ -348,12 +350,18 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
                 if (_categoryCondition == false) {
                   Toast.show("选择分类啊喂", context,
                       duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-                } else {
+                } else if(!LoginPageState.logged){
+                  Toast.show("请先登录", context,
+                      duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      'LoginPage', (Route<dynamic> route) => false);
+                }else {
                   if (titleKey.currentState.validate() &&
                       priceKey.currentState.validate()) {
                     _submitDetails(_title.text, double.parse(_myPrice.text),
                         _description.text, _category);
-                    _submitImages();
+                    //TODO
+                    // _submitImages();
                     Navigator.of(context).pop();
                   }
                 }
@@ -423,20 +431,20 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
     }
 
     FormData formData = new FormData.fromMap({
-      //后端要用multipartFiles接收参数，否则为null
       "image": imageList
     });
     if (imageList != null) {
       Response addImagesResponse = await Dio().post(
-          'http://widealpha.top:8080/shop/commodity/addCommodity',
+          'http://widealpha.top:8080/treehole/article/uploadImage',
           options: Options(
               headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
-          data: formData);
+          queryParameters: {
+            "image":formData
+          },);
       print(addImagesResponse);
       if (addImagesResponse.data['code'] == 0) {
         Toast.show("图片上传成功", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-        Navigator.of(context).pop();
       } else {
         Toast.show("图片上传失败，请重试", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
@@ -446,8 +454,7 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
     }
   }
 
-  void _submitDetails(
-      String title, double price, String description, String category) {
+  void _submitDetails(String title, double price, String description, String category) {
     Response addGoodsResponse;
     Dio().post('http://widealpha.top:8080/shop/commodity/addCommodity',
         options: Options(
@@ -456,14 +463,14 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
           'title': title,
           'price': price,
           'description': description,
-          'category': category
+          'category': category,
+          'image':''
         }).then((value) {
       addGoodsResponse = value;
       print(addGoodsResponse);
       if (addGoodsResponse.data['code'] == 0) {
         Toast.show("商品发布成功", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-        Navigator.of(context).pop();
       } else if (addGoodsResponse.data['code'] == -6) {
         Toast.show("登陆状态错误", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
