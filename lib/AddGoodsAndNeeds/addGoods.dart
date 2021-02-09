@@ -428,7 +428,7 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
     });
     if (imageList != null) {
       Response addImagesResponse = await Dio().post(
-          'http://widealpha.top:8080/shop/commodity/addCommodity',
+          'http://widealpha.top:8080/treehole/article/uploadImage',
           options: Options(
               headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
           data: formData);

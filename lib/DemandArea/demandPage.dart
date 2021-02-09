@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:provider/provider.dart';
+import 'package:winter/AdapterAndHelper/buildRoteFloatingBtn.dart';
 import 'package:winter/AdapterAndHelper/expandableText.dart';
 
 
@@ -27,7 +28,13 @@ class DemandPageState extends State<DemandPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('查看需求'),
+      ),
+  body:Stack(
+    children: [
+      ListView.builder(
             scrollDirection: Axis.vertical,
             itemCount: ListData.length,
             itemBuilder: (context, index){
@@ -36,7 +43,11 @@ class DemandPageState extends State<DemandPage> {
                 //color: Colors.grey,
               );
             },
-          );
+          ),
+      buildRoteFloatingBtn(),
+    ],
+  ),
+    );
   }
 
   Widget itemWidget(int index) {

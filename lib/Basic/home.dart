@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:winter/ChatArea/chatGroup.dart';
+import 'package:winter/DemandArea/demandPage.dart';
 import 'package:winter/tradeInfo.dart';
-import 'package:winter/DemandArea/DemandTabBar.dart';
 import '../Mine/mine.dart';
 import 'package:shake_animation_widget/shake_animation_widget.dart';
 
@@ -25,7 +25,7 @@ class MyHomePageState extends State<MyHomePage> {
   int selectedIndex = 0; //默认选中的界面索引
   final widgetOptions = [
     TradeInfo(),
-    NeedsInfo(),
+    DemandPage(),
     ChatGroup(),
     Mine(),
   ];
