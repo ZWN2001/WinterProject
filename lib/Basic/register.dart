@@ -88,6 +88,10 @@ class _RegisterPageState extends State<RegisterPage> {
     return Container(
       margin: EdgeInsets.fromLTRB(10, 10, 10, 15),
       child: TextFormField(
+        keyboardType: TextInputType.number,
+        inputFormatters: <TextInputFormatter>[
+          WhitelistingTextInputFormatter.digitsOnly
+        ],
         decoration: InputDecoration(
           hintText: "创建账号/使用学号",
           // border: OutlineInputBorder(borderSide: BorderSide()),
@@ -120,10 +124,6 @@ class _RegisterPageState extends State<RegisterPage> {
       margin: EdgeInsets.fromLTRB(10, 0, 10, 15),
       child: TextFormField(
         key: userNameKey,
-        keyboardType: TextInputType.number,
-        inputFormatters: <TextInputFormatter>[
-          WhitelistingTextInputFormatter.digitsOnly
-        ],
         decoration: InputDecoration(
           hintText: "设置用户名/昵称",
           // border: OutlineInputBorder(borderSide: BorderSide()),
