@@ -109,6 +109,8 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
                       validator: (value) {
                         if (value.isEmpty) {
                           return "价格不可为空哦";
+                        }else if(double.parse(_myPrice.text)<0){
+                          return '价格不可为负哦';
                         }
                         return null;
                       },
@@ -348,7 +350,12 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
                 if (_categoryCondition == false) {
                   Toast.show("选择分类啊喂", context,
                       duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-                } else {
+                } else if(!LoginPageState.logged){
+                  Toast.show("请先登录", context,
+                      duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      'LoginPage', (Route<dynamic> route) => false);
+                }else {
                   if (titleKey.currentState.validate() &&
                       priceKey.currentState.validate()) {
                     _submitDetails(_title.text, double.parse(_myPrice.text),
