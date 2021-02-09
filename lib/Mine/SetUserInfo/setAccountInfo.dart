@@ -1,6 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/darkModeModel.dart';
+import 'package:winter/Basic/login.dart';
 import 'changeUserName.dart';
 import 'changeUserPassword.dart';
 
@@ -116,10 +119,7 @@ class SetAccountInfoPage extends StatelessWidget{
                          FlatButton(
                            child: Text('确定'),
                            onPressed: () {
-                             Navigator.of(logoutContext)
-                                 .pushNamedAndRemoveUntil('LoginPage', (
-                                 Route<dynamic> route) => false);
-                             // Navigator.pushReplacementNamed(logoutContext,'LoginPage');//还不行
+                             _logout(logoutContext);
                            },
                          ),
                        ],
@@ -153,4 +153,23 @@ class SetAccountInfoPage extends StatelessWidget{
  );
   }
 
+  void _logout(BuildContext context){
+    Response response;
+    Dio().post('http://widealpha.top:8080/shop/user/changePassword',
+        options: Options(headers:{'Authorization':'Bearer '+LoginPageState.token}),
+        ).then((value) {
+      response = value;
+      print(response);
+      if (response.data['code'] == 0) {
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('LoginPage', (
+            Route<dynamic> route) => false);
+        Toast.show("退出成功", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      } else {
+        Toast.show("未知错误", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      }
+    });
+  }
 }
