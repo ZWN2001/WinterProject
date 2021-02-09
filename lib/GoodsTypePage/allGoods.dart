@@ -155,9 +155,9 @@ class AllGoodsState extends State<AllGoods> {
       await Future.delayed(Duration(seconds: 1), () {
         print("加载更多");
         setState(() {
-          for (int i = startNum; i < startNum + 10; i++) {
+          for (int i = startNum; i <= startNum + 10; i++) {
             startNum = i;
-            if (i == commodityList.length-1) {
+            if (i == commodityList.length || i == startNum+10) {
               print("没有更多数据了");
               isLoading = false;
               return;
@@ -178,7 +178,7 @@ class AllGoodsState extends State<AllGoods> {
       print(reservedList.length);
       //每次加载10条商品信息
       for (int i = 0; i < 10; i++) {
-        startNum = i;
+        startNum = i+1;
         if (reservedList.length == 1){
           tempList.insert(0, reservedList.elementAt(0));
           startNum = 1;
