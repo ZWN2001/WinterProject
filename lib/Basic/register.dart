@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:toast/toast.dart';
@@ -119,6 +120,10 @@ class _RegisterPageState extends State<RegisterPage> {
       margin: EdgeInsets.fromLTRB(10, 0, 10, 15),
       child: TextFormField(
         key: userNameKey,
+        keyboardType: TextInputType.number,
+        inputFormatters: <TextInputFormatter>[
+          WhitelistingTextInputFormatter.digitsOnly
+        ],
         decoration: InputDecoration(
           hintText: "设置用户名/昵称",
           // border: OutlineInputBorder(borderSide: BorderSide()),
