@@ -422,10 +422,12 @@ class MinePageState extends State<MinePage> {
       print(response);
       if (response.data['code'] == 0) {
        return response.data['data'];
-      } else {
+      } else if (response.data['code'] == -1){
+        Toast.show("您还未设置自己的头像哦", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      }else{
         Toast.show("获取头像失败", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-        return;
       }
     });
   }

@@ -155,7 +155,7 @@ class SetAccountInfoPage extends StatelessWidget{
 
   void _logout(BuildContext context){
     Response response;
-    Dio().post('http://widealpha.top:8080/shop/user/changePassword',
+    Dio().post('http://widealpha.top:8080/shop/user/logout',
         options: Options(headers:{'Authorization':'Bearer '+LoginPageState.token}),
         ).then((value) {
       response = value;
