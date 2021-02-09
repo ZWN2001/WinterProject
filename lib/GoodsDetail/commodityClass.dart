@@ -3,7 +3,7 @@ class Commodity {
   int commodityId;
   String title;
   String description;
-  String price;
+  double price;
   String category;
   String image;
   String account;
@@ -12,6 +12,7 @@ class Commodity {
       this.category, this.image, this.account);
 
   Commodity.fromJson(Map<String, dynamic> jsonMap) {
+    this.commodityId = jsonMap['commodityId'];
     this.title = jsonMap['title'];
     this.description = jsonMap['description'];
     this.price = jsonMap['price'];
