@@ -9,29 +9,12 @@ class TopNavigatorBar extends StatefulWidget {
 class TopNavigatorBarState extends State<TopNavigatorBar> {
   @override
   Widget build(BuildContext context) {
-   return DefaultTabController(
-       length: 2,
-       child: Scaffold(
+   return Scaffold(
          appBar: AppBar(
            title: Text("详细页面"),
-           bottom: TabBar(
-             indicatorColor: Colors.blueGrey,
-             unselectedLabelColor: Colors.white,
-             tabs:<Widget> [
-               Tab(text: "详情"),
-               Tab(text: "评论"),
-             ],
-           ),
          ),
-         body: TabBarView(
-           children:<Widget> [
-             DetailPage(),
-             Container(
-               child: Text("这是评论"),
-             )
-           ],
-         ),
-       ));
+         body: DetailPage(),
+         );
   }
 
 }
