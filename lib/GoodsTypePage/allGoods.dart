@@ -114,6 +114,9 @@ class AllGoodsState extends State<AllGoods> {
   void initState() {
     // TODO: implement initState
     super.initState();
+   /* if (!LoginPageState.logged) {
+      Toast.show("请先登录", context, duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+    }*/
     _getCommodityData().then((value) => {
     _transferIntoLocalList()
     });
@@ -126,23 +129,27 @@ class AllGoodsState extends State<AllGoods> {
   }
 
   Future _getCommodityData() async {
-    Response response;
-    Dio dio = new Dio();
-    response = await dio.post('http://widealpha.top:8080/shop/commodity/allCommodity',
-        options: Options(headers: {'Authorization':'Bearer'+LoginPageState.token}));
-    String feedback = response.data.toString();
-    print(runtimeType);
-    print(feedback);
-    if (response.data['code'] == 0) {
-      if (response.data['data'] == null) {
-        print("no information");
-        return;
-      } else {
-        setState(() {
-          List commodityJson = response.data['data'];
-          commodityList = commodityJson.map((e) => Commodity.fromJson(e)).toList();
-          print(commodityList);
-        });
+    if(LoginPageState.logged) {
+      Response response;
+      Dio dio = new Dio();
+      response = await dio.post('http://widealpha.top:8080/shop/commodity/allCommodity',
+          options: Options(headers: {'Authorization':'Bearer'+LoginPageState.token}));
+      String feedback = response.data.toString();
+      print(runtimeType);
+      print(feedback);
+      if (response.data['code'] == 0) {
+        if (response.data['data'] == null) {
+          print("no information");
+          return;
+        } else {
+          setState(() {
+            List commodityJson = response.data['data'];
+            print("标记");
+            print(commodityJson);
+            commodityList = commodityJson.map((e) => Commodity.fromJson(e)).toList();
+            print(commodityList);
+          });
+        }
       }
     }
   }
@@ -172,28 +179,31 @@ class AllGoodsState extends State<AllGoods> {
   }
 
   _transferIntoLocalList() {
-    if (commodityList != null) {
-      reservedList = commodityList.reversed;//确保时间顺序展示
-      print(reservedList);
-      print(reservedList.length);
-      //每次加载10条商品信息
-      for (int i = 0; i < 10; i++) {
-        startNum = i+1;
-        if (reservedList.length == 1){
-          tempList.insert(0, reservedList.elementAt(0));
-          startNum = 1;
-          return;
+    if(LoginPageState.logged) {
+      if (commodityList != null) {
+        reservedList = commodityList.reversed;//确保时间顺序展示
+        print(reservedList);
+        print(reservedList.length);
+        //每次加载10条商品信息
+        for (int i = 0; i < 10; i++) {
+          startNum = i+1;
+          if (reservedList.length == 1){
+            tempList.insert(0, reservedList.elementAt(0));
+            startNum = 1;
+            return;
+          }
+          if (i == reservedList.length - 1){
+            print("没有更多数据");
+            //startNum = i;
+            return;
+          }
+          //tempList[i] = reservedList.elementAt(i);
+          tempList.insert(i, reservedList.elementAt(i));
+          print(tempList[i].image);
         }
-        if (i == reservedList.length - 1){
-          print("没有更多数据");
-          //startNum = i;
-          return;
-        }
-        //tempList[i] = reservedList.elementAt(i);
-        tempList.insert(i, reservedList.elementAt(i));
-        print(tempList[i].image);
       }
     }
+
   }
 
   @override
@@ -205,9 +215,19 @@ class AllGoodsState extends State<AllGoods> {
 
   @override
   Widget build(BuildContext context) {
-    return commodityList.length == 0
-        ? noCommodityText()
-        : commodityGridView();
+    if (!LoginPageState.logged) {
+      return Center(
+        child: Text("您尚未登录",
+          style: TextStyle(
+            color: Colors.grey,
+            fontSize: 20,
+          ),),
+      );
+    } else {
+      return commodityList.length == 0
+          ? noCommodityText()
+          : commodityGridView();
+    }
     /*GridView.builder(
                 padding: EdgeInsets.symmetric(horizontal: 5),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -278,7 +298,7 @@ class AllGoodsState extends State<AllGoods> {
     return InkWell(
       onTap: (){
         Navigator.push(context,new MaterialPageRoute(builder: (context){
-          return new TopNavigatorBar();
+          return new TopNavigatorBar(commodityId: tempList[temp].commodityId);
         }));
       },//点击后进入详细页面
         child: Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
@@ -292,7 +312,7 @@ class AllGoodsState extends State<AllGoods> {
                         child:SizedBox(
                           height: 130,
                           child: //Text("暂时没有图片哦", style: TextStyle(color: Colors.grey, fontSize: 10),textAlign: TextAlign.center,)
-                          tempList[temp].image.isEmpty//反过来
+                          tempList[temp].image.isEmpty
                           ? Text("暂时没有图片哦", style: TextStyle(color: Colors.grey, fontSize: 10),textAlign: TextAlign.center)
                           : Image.network(_imageToList(temp), fit: BoxFit.cover,),
                         )
