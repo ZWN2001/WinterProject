@@ -29,18 +29,21 @@ class LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    _gainUsers();
+    _gainUsers().then((value){
+      if (_users.length > 0) {
+        setState(() {
+          //默认加载第一个账号
+          account = _users[0].account;
+          _passWord = _users[0].password;
+        });
+      }
+    });
   }
 
   //获取历史用户
-  void _gainUsers() async {
+  Future<void> _gainUsers()  async {
     _users.clear();
     _users.addAll(await SharedPreferenceUtil.getUsers());
-    //默认加载第一个账号
-    if (_users.length > 0) {
-      account = _users[0].account;
-      _passWord = _users[0].password;
-    }
   }
 
   @override
@@ -196,6 +199,7 @@ class LoginPageState extends State<LoginPage> {
             SharedPreferenceUtil.saveUser(User(account, _passWord));
             logged = true;
             _verify(account, _passWord); //验证
+            print('登录验证完成');
           }
         },
         child: Text(
@@ -352,25 +356,28 @@ class LoginPageState extends State<LoginPage> {
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
         Navigator.of(context).pushNamedAndRemoveUntil(
             'MyHomePage', (Route<dynamic> route) => false);
+        print('已登录');
         //token??????
       } else if (response.data['code'] == -4) {
         Toast.show("用户名不存在", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+        print('用户名不存在');
       } else if (response.data['code'] == -5) {
         Toast.show("用户名或密码错误", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-      } else if (response.data['code'] == -6) {
-        Toast.show("登陆状态错误", context,
-            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+        print('用户名或密码错误');
       } else if (response.data['code'] == -7) {
         Toast.show("权限不足", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+        print('权限不足');
       } else if (response.data['code'] == -8) {
         Toast.show("Token无效", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+        print('Token无效');
       } else {
         Toast.show("未知错误", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+        print('未知错误');
       }
     });
   }

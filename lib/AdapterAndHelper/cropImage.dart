@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:image_crop/image_crop.dart';
 import 'package:toast/toast.dart';
 import 'package:winter/Basic/login.dart';
+//MediaType用
+import 'package:http_parser/http_parser.dart';
 
 class CropImageRoute extends StatefulWidget {
   CropImageRoute(this.image);
@@ -65,33 +67,35 @@ class _CropImageRouteState extends State<CropImageRoute> {
       //裁剪结果为空
       print('裁剪不成功');
     }
-    await ImageCrop.requestPermissions().then((value) {
+    await ImageCrop.requestPermissions().then((value) async {
       if (value) {
         ImageCrop.cropImage(
           file: originalFile,
           area: crop.area,
-        ).then((value) {
-          upload(value);
+        ).then((value) async {
+          MultipartFile myfile = await MultipartFile.fromFile(value.path,contentType:MediaType("image", "jpg"));
+          upload(myfile);
         });
       } else {
-        upload(originalFile);
+        MultipartFile myfile = await MultipartFile.fromFile(originalFile.path,contentType:MediaType("image", "jpg"));
+        upload(myfile);
       }
     });
   }
 
   FormData formData ;
   ///上传头像
-  Future<void> upload(File file) async {
-    print(file.path);
+  Future<void> upload(MultipartFile file) async {
     Response response;
     response=await Dio().post('http://widealpha.top:8080/shop/user/changeHeadImage',
         options: Options(headers:{'Authorization':'Bearer '+LoginPageState.token}),
-        // queryParameters: (
-        //     "image" : file
-        // ),
-        data: formData =  FormData.fromMap({
-        "image" : file
-        }));
+        queryParameters: {
+          'image': file
+        },
+        // data: formData =  FormData.fromMap({
+        // "image" : file
+        // })
+    );
     if (response.data['code'] == 0) {
       Toast.show("图片上传成功", context,
           duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);

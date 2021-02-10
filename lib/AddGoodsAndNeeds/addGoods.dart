@@ -425,7 +425,7 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
         //这个字段要有，否则后端接收为null
         filename: 'load_image',
         // //请求contentType，设置一下，不设置的话默认的是application/octet/stream，后台可以接收到数据，但上传后是.octet-stream文件
-        // contentType: MediaType("image", "jpg"),
+        contentType: MediaType("image", "jpg"),
       );
       Response addImagesResponse = await Dio().post(
         'http://widealpha.top:8080/treehole/article/uploadImage',
