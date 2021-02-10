@@ -25,14 +25,27 @@ class MinePage extends StatefulWidget {
 }
 
 class MinePageState extends State<MinePage> {
-  var imageFile;
+  String _headImageUrl;
+  String _username;
+  @override
+  void initState() {
+    // TODO: implement initState
+    if(LoginPageState.logged) {
+      _headImageUrl = _getHeadImage();
+      _username = _getUsername();
+      print('username:$_username');
+      print(_headImageUrl);
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Container(
             margin: EdgeInsets.fromLTRB(20, 50, 20, 8),
-            child: LoginPageState.logged ? _logged() : _unlogged(context)),
+            child: LoginPageState.logged ? _logged() : _unlogged()),
         Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
           return Container(
             margin: EdgeInsets.fromLTRB(20, 0, 20, 8),
@@ -70,7 +83,13 @@ class MinePageState extends State<MinePage> {
                   ],
                 ),
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>ShowInfo()));
+                  if (!LoginPageState.logged) {
+                    Toast.show("请先登录", context,
+                        duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                  } else {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => ShowInfo()));
+                  }
                 },
               ),
             ),
@@ -113,10 +132,15 @@ class MinePageState extends State<MinePage> {
                   ],
                 ),
                 onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => MyReleaseTabBar()));
+                  if (!LoginPageState.logged) {
+                    Toast.show("请先登录", context,
+                        duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                  } else {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MyReleaseTabBar()));
+                  }
                 },
               ),
             ),
@@ -159,10 +183,15 @@ class MinePageState extends State<MinePage> {
                   ],
                 ),
                 onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => SetAccountInfo()));
+                  if (!LoginPageState.logged) {
+                    Toast.show("请先登录", context,
+                        duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                  } else {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SetAccountInfo()));
+                  }
                 },
               ),
             ),
@@ -308,7 +337,7 @@ class MinePageState extends State<MinePage> {
   Widget _logged() {
     return Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
       return Card(
-        color: DarkModeModel.darkMode ? Colors.black: Colors.white,
+        color: DarkModeModel.darkMode ? Colors.black : Colors.white,
         child: Container(
             child: Row(
           children: [
@@ -318,47 +347,48 @@ class MinePageState extends State<MinePage> {
                 child: Container(
                   margin: EdgeInsets.fromLTRB(12, 8, 8, 8),
                   child: ClipOval(
-                    child: _getHeadImage()==null?Image.asset('images/defaultHeadImage.png',fit:BoxFit.cover ,)
-                        :Image.network(
-                      _getHeadImage(),
-                      fit: BoxFit.cover,
-                    )
-                  ),
+                      child: _getHeadImage() == null
+                          ? Image.asset(
+                              'images/defaultHeadImage.png',
+                              fit: BoxFit.cover,
+                            )
+                          : Image.network(
+                              _headImageUrl,
+                              fit: BoxFit.cover,
+                            )),
                 ),
               ),
             ),
             Expanded(
-                child:  Container(
-                  margin: EdgeInsets.only(right: 15,bottom: 20,top: 5),
-                    // color: Colors.indigoAccent,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            //TODO
-                            'Hi , 亲爱的' ,
-                            textAlign: TextAlign.center,
-                            overflow: TextOverflow.clip,
+              child: Container(
+                  margin: EdgeInsets.only(right: 15, bottom: 20, top: 5),
+                  // color: Colors.indigoAccent,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          //TODO
+                          'Hi , 亲爱的$_username',
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.clip,
+                          style: TextStyle(
+                              fontSize: 25.0,
+                              color: DarkModeModel.darkMode
+                                  ? Colors.white
+                                  : Colors.black),
+                        ),
+                        Text('账号：' + LoginPageState.account,
                             style: TextStyle(
-                                fontSize: 25.0,
+                                fontSize: 17,
                                 color: DarkModeModel.darkMode
                                     ? Colors.white
                                     : Colors.black),
-                          ),
-                          Text(
-                              '账号：'+LoginPageState.account,
-                              style: TextStyle(
-                                fontSize: 17,
-                                  color: DarkModeModel.darkMode
-                                      ? Colors.white
-                                      : Colors.black),
-                              overflow: TextOverflow.clip,
-                              textAlign: TextAlign.center),
-                        ],
-                      ),
-                    )
-                ),
+                            overflow: TextOverflow.clip,
+                            textAlign: TextAlign.center),
+                      ],
+                    ),
+                  )),
             ),
           ],
         )),
@@ -366,7 +396,7 @@ class MinePageState extends State<MinePage> {
     });
   }
 
-  Widget _unlogged(BuildContext context) {
+  Widget _unlogged() {
     return Column(
       children: [
         Text(
@@ -379,10 +409,11 @@ class MinePageState extends State<MinePage> {
           ),
           child: Text(
             '前往登录/注册',
-            style: TextStyle( fontSize: 20, color: Colors.lightBlueAccent),
+            style: TextStyle(fontSize: 20, color: Colors.lightBlueAccent),
           ),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginPage()));
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => LoginPage()));
           },
         ),
       ],
@@ -391,41 +422,53 @@ class MinePageState extends State<MinePage> {
 
   ///从相册选取
   Future _chooseImage() async {
-    var image=await ImagePicker.pickImage(source: ImageSource.gallery);
-    if(image==null){
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    if (image == null) {
       return 0;
-    }else{
-      return _cropImage(image);
-    }
-  }
-
-  void _cropImage(var originalImage) async {
-    String result = await Navigator.push(context, MaterialPageRoute(builder: (context) => CropImageRoute(originalImage)));
-    if (result.isEmpty) {
-      print('上传失败');
     } else {
-      //result是图片上传后拿到的url
-      setState(() {
-        var iconUrl = result;
-        print('上传成功：$iconUrl');
-        // _upgradeRemoteInfo();//后续数据处理，这里是更新头像信息
-      });
+         Navigator.push(context,
+          MaterialPageRoute(builder: (context) => CropImageRoute(image)));;
     }
   }
 
-  String _getHeadImage(){
+
+  String _getUsername() {
     Response response;
-    Dio().post('http://widealpha.top:8080/shop/user/headImage',
-        options: Options(headers:{'Authorization':'Bearer '+LoginPageState.token}),
-       ).then((value) {
+    Dio().post(
+      'http://widealpha.top:8080/shop/user/username',
+      options:
+          Options(headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
+    ).then((value) {
       response = value;
-      print(response);
+      print('用户名：$response');
       if (response.data['code'] == 0) {
-       return response.data['data'];
-      } else if (response.data['code'] == -1){
+        print(response.data['data'].toString());
+        return response.data['data'].toString();
+      } else if (response.data['code'] == -1) {
+        Toast.show("您还未设置自己的用户名哦", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      } else {
+        Toast.show("获取用户名失败", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      }
+    });
+  }
+
+  String _getHeadImage() {
+    Response response;
+    Dio().post(
+      'http://widealpha.top:8080/shop/user/headImage',
+      options:
+          Options(headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
+    ).then((value) {
+      response = value;
+      print('头像：$response');
+      if (response.data['code'] == 0) {
+        return response.data['data'];
+      } else if (response.data['code'] == -1) {
         Toast.show("您还未设置自己的头像哦", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-      }else{
+      } else {
         Toast.show("获取头像失败", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
       }

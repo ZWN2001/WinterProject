@@ -1,5 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:toast/toast.dart';
+import 'package:winter/Basic/login.dart';
+import 'package:winter/Mine/PersonalInfo/userInfo.dart';
 import 'changeInfo.dart';
 
 class ShowInfo extends StatelessWidget {
@@ -15,12 +19,49 @@ class ShowInfo extends StatelessWidget {
         ),
         title: Text('个人资料'),
       ),
-      body: myInfo(),
+      body: ShowInfoPage(),
     );
   }
 }
 
-class myInfo extends StatelessWidget {
+class ShowInfoPage extends StatefulWidget{
+  @override
+  MyInfoState createState() => new MyInfoState();
+}
+
+Future<void> _getInfo(BuildContext context, UserInfo userInfo) async {
+  Response response=await  Dio().post('http://widealpha.top:8080/shop/user/userInfo',
+      options: Options(headers:{'Authorization':'Bearer '+LoginPageState.token}),);
+  print('userInfo:$response');
+  if (response.data['code'] == 0) {
+       userInfo=response.data['data'];
+    }  else if (response.data['code'] == -6) {
+      Toast.show("登陆状态错误", context,
+          duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+    } else if (response.data['code'] == -8) {
+      Toast.show("Token无效", context,
+          duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+    } else {
+      Toast.show("未知错误", context,
+          duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+    }
+}
+class MyInfoState extends State<ShowInfoPage> {
+  String _account;
+  String _headImage;
+  int _age;
+  String _location;
+  String _introduction;
+  int _sex;
+  String _name;
+  UserInfo _userInfo;
+  @override
+  void initState() {
+    // TODO: implement initState
+    _getInfo(context, _userInfo);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -37,11 +78,26 @@ class myInfo extends StatelessWidget {
                     Container(
                       margin: EdgeInsets.only(right: 15),
                       child: Text(
+                        '头像',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ),
+                    Expanded(child: Text('?')),
+                  ],
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.fromLTRB(20, 10, 0, 15),
+                child: Row(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(right: 15),
+                      child: Text(
                         '用户名',
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
-                    // Expanded(child: Text('')),
+                    // Expanded(child: Text()),
                   ],
                 ),
               ),
@@ -56,7 +112,7 @@ class myInfo extends StatelessWidget {
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
-                    // Expanded(child: Text(LoginPageState.account)),
+                    Expanded(child: Text(_userInfo.account)),
                   ],
                 ),
               ),
@@ -71,7 +127,7 @@ class myInfo extends StatelessWidget {
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
-                    // Expanded(child: Text('')),
+                    Expanded(child: Text(_userInfo.name)),
                   ],
                 ),
               ),
@@ -86,22 +142,7 @@ class myInfo extends StatelessWidget {
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
-                    // Expanded(child: Text('')),
-                  ],
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(20, 15, 0, 15),
-                child: Row(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(right: 15),
-                      child: Text(
-                        '生日',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    ),
-                    // Expanded(child: Text('')),
+                    Expanded(child: Text('${_userInfo.age}')),
                   ],
                 ),
               ),
@@ -116,7 +157,7 @@ class myInfo extends StatelessWidget {
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
-                    // Expanded(child: Text('')),
+                    Expanded(child: Text(_userInfo.location)),
                   ],
                 ),
               ),
@@ -136,7 +177,7 @@ class myInfo extends StatelessWidget {
                     style: TextStyle(fontSize: 20),
                   ),
                 ),
-                // Expanded(child: Text('')),
+                Expanded(child: Text(_userInfo.introduction)),
               ],
             ),
           ),

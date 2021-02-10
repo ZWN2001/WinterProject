@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:toast/toast.dart';
-import 'dart:io';
-
 //ByteData这里需要引入dart:typed_data文件，引入service.dart的话app里可以检索到文件个数，但是传递到后台一直是null，时间紧迫我也没抓包看是咋回事儿先这么用吧
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
-
 //MediaType用
 import 'package:http_parser/http_parser.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
@@ -358,10 +355,12 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
                 }else {
                   if (titleKey.currentState.validate() &&
                       priceKey.currentState.validate()) {
+                    String _imageUrl;
+                    _submitImages().then((value) {
+                      _imageUrl=value;
+                    });
                     _submitDetails(_title.text, double.parse(_myPrice.text),
-                        _description.text, _category);
-                    //TODO
-                    // _submitImages();
+                        _description.text, _category,_imageUrl);
                     Navigator.of(context).pop();
                   }
                 }
@@ -413,9 +412,10 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
   }
 
   //提交数据
-  void _submitImages() async {
+  Future<String> _submitImages() async {
+    List<String> imageList=List();
     //处理图片
-    List<MultipartFile> imageList = new List<MultipartFile>();
+    // List<MultipartFile> imageList = new List<MultipartFile>();
     for (Asset asset in _img) {
       //将图片转为二进制数据
       ByteData byteData = await asset.getByteData();
@@ -424,37 +424,28 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
         imageData,
         //这个字段要有，否则后端接收为null
         filename: 'load_image',
-        //请求contentType，设置一下，不设置的话默认的是application/octet/stream，后台可以接收到数据，但上传后是.octet-stream文件
+        // //请求contentType，设置一下，不设置的话默认的是application/octet/stream，后台可以接收到数据，但上传后是.octet-stream文件
         contentType: MediaType("image", "jpg"),
       );
-      imageList.add(multipartFile);
-    }
-
-    FormData formData = new FormData.fromMap({
-      "image": imageList
-    });
-    if (imageList != null) {
       Response addImagesResponse = await Dio().post(
-          'http://widealpha.top:8080/treehole/article/uploadImage',
-          options: Options(
-              headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
-          queryParameters: {
-            "image":formData
-          },);
-      print(addImagesResponse);
+        'http://widealpha.top:8080/treehole/article/uploadImage',
+        options: Options(
+            headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
+        queryParameters: {
+          "image": multipartFile
+        },
+      );
+      print('商品图片:$addImagesResponse');
       if (addImagesResponse.data['code'] == 0) {
-        Toast.show("图片上传成功", context,
-            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+        imageList.add(addImagesResponse.data['data']);
       } else {
-        Toast.show("图片上传失败，请重试", context,
-            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+        return null;
       }
-    } else {
-      return;
     }
+    return imageList.toString();
   }
 
-  void _submitDetails(String title, double price, String description, String category) {
+  void _submitDetails(String title, double price, String description, String category,String imageUrl) {
     Response addGoodsResponse;
     Dio().post('http://widealpha.top:8080/shop/commodity/addCommodity',
         options: Options(
@@ -464,7 +455,7 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
           'price': price,
           'description': description,
           'category': category,
-          'image':''
+          'image':imageUrl
         }).then((value) {
       addGoodsResponse = value;
       print(addGoodsResponse);
