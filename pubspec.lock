@@ -15,13 +15,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.5.0-nullsafety.1"
-  back_button_interceptor:
-    dependency: transitive
-    description:
-      name: back_button_interceptor
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "4.4.1"
   boolean_selector:
     dependency: transitive
     description:
@@ -191,13 +184,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.16.1"
-  jhtoast:
-    dependency: "direct main"
-    description:
-      name: jhtoast
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.5.0"
   matcher:
     dependency: transitive
     description:

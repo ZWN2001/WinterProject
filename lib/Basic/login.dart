@@ -4,7 +4,6 @@ import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/user.dart';
 import 'package:winter/Basic/register.dart';
 import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';
-import 'package:jhtoast/jhtoast.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -344,10 +343,6 @@ class LoginPageState extends State<LoginPage> {
 
   //验证身份
   void _verify(String account, String password) {
-    var hide = JhToast.showIOSLoadingText(
-      context,
-      msg: "正在登录...",
-    );
     Response response;
     Dio().post('http://widealpha.top:8080/shop/user/login', queryParameters: {
       'account': account,
@@ -355,15 +350,12 @@ class LoginPageState extends State<LoginPage> {
     }).then((value) {
       response = value;
       print(response);
-      token = response.data['data'];
       if (response.data['code'] == 0) {
-        hide();
+        token = response.data['data'];
         Toast.show("登陆成功", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
         Navigator.of(context).pushNamedAndRemoveUntil(
             'MyHomePage', (Route<dynamic> route) => false);
-        print('已登录');
-        //token??????
       } else if (response.data['code'] == -4) {
         Toast.show("用户名不存在", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);

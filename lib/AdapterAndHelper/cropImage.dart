@@ -92,10 +92,8 @@ class _CropImageRouteState extends State<CropImageRoute> {
         queryParameters: {
           'image': file
         },
-        // data: formData =  FormData.fromMap({
-        // "image" : file
-        // })
     );
+    print('照片上传：$response');
     if (response.data['code'] == 0) {
       Toast.show("图片上传成功", context,
           duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);

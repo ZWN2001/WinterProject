@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:toast/toast.dart';
+import 'package:winter/AdapterAndHelper/user.dart';
+import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';
 
 
 class Register extends StatelessWidget {
@@ -278,6 +280,7 @@ class _RegisterPageState extends State<RegisterPage> {
             feedback = response.data.toString();
               print(feedback);
               if (response.data['code'] == 0) {
+                SharedPreferenceUtil.saveUser(User(_account,_password2));
                 Toast.show("注册成功！", context,duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
                 Navigator.of(context).pop();
               } else {

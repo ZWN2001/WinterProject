@@ -25,7 +25,19 @@ class MinePage extends StatefulWidget {
 }
 
 class MinePageState extends State<MinePage> {
-  var imageFile;
+  String _headImageUrl;
+  String _username;
+  @override
+  void initState() {
+    // TODO: implement initState
+    if(LoginPageState.logged) {
+      _headImageUrl = _getHeadImage();
+      _username = _getUsername();
+      print('username:$_username');
+      print(_headImageUrl);
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -341,7 +353,7 @@ class MinePageState extends State<MinePage> {
                               fit: BoxFit.cover,
                             )
                           : Image.network(
-                              _getHeadImage(),
+                              _headImageUrl,
                               fit: BoxFit.cover,
                             )),
                 ),
@@ -357,7 +369,7 @@ class MinePageState extends State<MinePage> {
                       children: [
                         Text(
                           //TODO
-                          'Hi , 亲爱的' + _getUsername(),
+                          'Hi , 亲爱的$_username',
                           textAlign: TextAlign.center,
                           overflow: TextOverflow.clip,
                           style: TextStyle(
@@ -414,43 +426,29 @@ class MinePageState extends State<MinePage> {
     if (image == null) {
       return 0;
     } else {
-      return _cropImage(image);
+         Navigator.push(context,
+          MaterialPageRoute(builder: (context) => CropImageRoute(image)));;
     }
   }
 
-  void _cropImage(var originalImage) async {
-    String result = await Navigator.push(context,
-        MaterialPageRoute(builder: (context) => CropImageRoute(originalImage)));
-    if (result.isEmpty) {
-      print('上传失败');
-    } else {
-      //result是图片上传后拿到的url
-      setState(() {
-        var iconUrl = result;
-        print('上传成功：$iconUrl');
-        // _upgradeRemoteInfo();//后续数据处理，这里是更新头像信息
-      });
-    }
-  }
 
   String _getUsername() {
     Response response;
-    Dio()
-        .post(
+    Dio().post(
       'http://widealpha.top:8080/shop/user/username',
       options:
           Options(headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
-    )
-        .then((value) {
+    ).then((value) {
       response = value;
-      print(response);
+      print('用户名：$response');
       if (response.data['code'] == 0) {
-        return response.data['data'];
+        print(response.data['data'].toString());
+        return response.data['data'].toString();
       } else if (response.data['code'] == -1) {
         Toast.show("您还未设置自己的用户名哦", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
       } else {
-        Toast.show("获取头像失败", context,
+        Toast.show("获取用户名失败", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
       }
     });
@@ -458,15 +456,13 @@ class MinePageState extends State<MinePage> {
 
   String _getHeadImage() {
     Response response;
-    Dio()
-        .post(
+    Dio().post(
       'http://widealpha.top:8080/shop/user/headImage',
       options:
           Options(headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
-    )
-        .then((value) {
+    ).then((value) {
       response = value;
-      print(response);
+      print('头像：$response');
       if (response.data['code'] == 0) {
         return response.data['data'];
       } else if (response.data['code'] == -1) {

@@ -19,7 +19,7 @@ class ShowInfo extends StatelessWidget {
         ),
         title: Text('个人资料'),
       ),
-      body: myInfo(),
+      body: ShowInfoPage(),
     );
   }
 }
@@ -30,9 +30,10 @@ class ShowInfoPage extends StatefulWidget{
 }
 
 Future<void> _getInfo(BuildContext context, UserInfo userInfo) async {
-  Response response=await  Dio().post('http://widealpha.top:8080/shop/user/changePassword',
+  Response response=await  Dio().post('http://widealpha.top:8080/shop/user/userInfo',
       options: Options(headers:{'Authorization':'Bearer '+LoginPageState.token}),);
-    if (response.data['code'] == 0) {
+  print('userInfo:$response');
+  if (response.data['code'] == 0) {
        userInfo=response.data['data'];
     }  else if (response.data['code'] == -6) {
       Toast.show("登陆状态错误", context,
@@ -53,11 +54,11 @@ class MyInfoState extends State<ShowInfoPage> {
   String _introduction;
   int _sex;
   String _name;
-  UserInfo userInfo;
+  UserInfo _userInfo;
   @override
   void initState() {
     // TODO: implement initState
-    _getInfo(context, userInfo);
+    _getInfo(context, _userInfo);
     super.initState();
   }
 
@@ -81,7 +82,7 @@ class MyInfoState extends State<ShowInfoPage> {
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
-                    // Expanded(child: Text()),
+                    Expanded(child: Text('?')),
                   ],
                 ),
               ),
@@ -111,7 +112,7 @@ class MyInfoState extends State<ShowInfoPage> {
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
-                    Expanded(child: Text(userInfo.account)),
+                    Expanded(child: Text(_userInfo.account)),
                   ],
                 ),
               ),
@@ -126,7 +127,7 @@ class MyInfoState extends State<ShowInfoPage> {
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
-                    Expanded(child: Text(userInfo.name)),
+                    Expanded(child: Text(_userInfo.name)),
                   ],
                 ),
               ),
@@ -141,7 +142,7 @@ class MyInfoState extends State<ShowInfoPage> {
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
-                    Expanded(child: Text('${userInfo.age}')),
+                    Expanded(child: Text('${_userInfo.age}')),
                   ],
                 ),
               ),
@@ -156,7 +157,7 @@ class MyInfoState extends State<ShowInfoPage> {
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
-                    Expanded(child: Text(userInfo.location)),
+                    Expanded(child: Text(_userInfo.location)),
                   ],
                 ),
               ),
@@ -176,7 +177,7 @@ class MyInfoState extends State<ShowInfoPage> {
                     style: TextStyle(fontSize: 20),
                   ),
                 ),
-                Expanded(child: Text(userInfo.introduction)),
+                Expanded(child: Text(_userInfo.introduction)),
               ],
             ),
           ),

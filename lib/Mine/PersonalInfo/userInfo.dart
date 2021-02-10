@@ -1,11 +1,11 @@
 class UserInfo{
-  String account;
-  String headImage;
-  int age;
-  String location;
-  String introduction;
-  int sex;
-  String name;
+  String account='';
+  String headImage='';
+  int age=0;
+  String location='';
+  String introduction='';
+  int sex=0;
+  String name='';
 
   UserInfo(this.account,this.headImage,this.age,this.location,this.introduction,this.sex,this.name);
   UserInfo.fromJson(Map<String, dynamic> jsonMap) {
