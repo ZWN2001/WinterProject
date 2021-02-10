@@ -45,6 +45,29 @@ class myInfo extends StatelessWidget {
                     Container(
                       margin: EdgeInsets.only(right: 15),
                       child: Text(
+                        '头像',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ),
+                    Expanded(
+                        child: TextFormField(
+                          scrollPadding: EdgeInsets.all(0),
+                          // controller: _price,
+                          style: TextStyle(
+                              fontSize: 20
+                          ),
+                        )
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.fromLTRB(20, 10, 0, 10),
+                child: Row(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(right: 15),
+                      child: Text(
                         '用户名',
                         style: TextStyle(fontSize: 20),
                       ),
@@ -76,6 +99,29 @@ class myInfo extends StatelessWidget {
                         child: TextFormField(
                           scrollPadding: EdgeInsets.all(0),
                           controller: _name,
+                          style: TextStyle(
+                              fontSize: 20
+                          ),
+                        )
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.fromLTRB(20, 10, 0, 10),
+                child: Row(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(right: 15),
+                      child: Text(
+                        '性别',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ),
+                    Expanded(
+                        child: TextFormField(
+                          scrollPadding: EdgeInsets.all(0),
+                          controller: _sex,
                           style: TextStyle(
                               fontSize: 20
                           ),

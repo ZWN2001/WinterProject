@@ -47,7 +47,7 @@ class MinePageState extends State<MinePage> {
                       child: Align(
                         alignment: AlignmentDirectional.centerStart,
                         child:
-                        Icon(Icons.settings, color: Colors.lightBlueAccent),
+                            Icon(Icons.settings, color: Colors.lightBlueAccent),
                       ),
                     ),
                     Expanded(
@@ -71,8 +71,13 @@ class MinePageState extends State<MinePage> {
                   ],
                 ),
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ShowInfo()));
+                  if (!LoginPageState.logged) {
+                    Toast.show("请先登录", context,
+                        duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                  } else {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => ShowInfo()));
+                  }
                 },
               ),
             ),
@@ -115,10 +120,15 @@ class MinePageState extends State<MinePage> {
                   ],
                 ),
                 onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => MyReleaseTabBar()));
+                  if (!LoginPageState.logged) {
+                    Toast.show("请先登录", context,
+                        duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                  } else {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MyReleaseTabBar()));
+                  }
                 },
               ),
             ),
@@ -161,10 +171,15 @@ class MinePageState extends State<MinePage> {
                   ],
                 ),
                 onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => SetAccountInfo()));
+                  if (!LoginPageState.logged) {
+                    Toast.show("请先登录", context,
+                        duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                  } else {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SetAccountInfo()));
+                  }
                 },
               ),
             ),
@@ -228,7 +243,7 @@ class MinePageState extends State<MinePage> {
                       child: Align(
                         alignment: AlignmentDirectional.centerStart,
                         child:
-                        Icon(Icons.update, color: Colors.lightBlueAccent),
+                            Icon(Icons.update, color: Colors.lightBlueAccent),
                       ),
                     ),
                     Expanded(
@@ -313,58 +328,58 @@ class MinePageState extends State<MinePage> {
         color: DarkModeModel.darkMode ? Colors.black : Colors.white,
         child: Container(
             child: Row(
-              children: [
-                Container(
-                  child: GestureDetector(
-                    onTap: _chooseImage,
-                    child: Container(
-                      margin: EdgeInsets.fromLTRB(12, 8, 8, 8),
-                      child: ClipOval(
-                          child: _getHeadImage() == null ? Image.asset(
-                            'images/defaultHeadImage.png', fit: BoxFit.cover,)
-                              : Image.network(
-                            _getHeadImage(),
-                            fit: BoxFit.cover,
-                          )
-                      ),
-                    ),
-                  ),
+          children: [
+            Container(
+              child: GestureDetector(
+                onTap: _chooseImage,
+                child: Container(
+                  margin: EdgeInsets.fromLTRB(12, 8, 8, 8),
+                  child: ClipOval(
+                      child: _getHeadImage() == null
+                          ? Image.asset(
+                              'images/defaultHeadImage.png',
+                              fit: BoxFit.cover,
+                            )
+                          : Image.network(
+                              _getHeadImage(),
+                              fit: BoxFit.cover,
+                            )),
                 ),
-                Expanded(
-                  child: Container(
-                      margin: EdgeInsets.only(right: 15, bottom: 20, top: 5),
-                      // color: Colors.indigoAccent,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              //TODO
-                              'Hi , 亲爱的' + _getUsername(),
-                              textAlign: TextAlign.center,
-                              overflow: TextOverflow.clip,
-                              style: TextStyle(
-                                  fontSize: 25.0,
-                                  color: DarkModeModel.darkMode
-                                      ? Colors.white
-                                      : Colors.black),
-                            ),
-                            Text(
-                                '账号：' + LoginPageState.account,
-                                style: TextStyle(
-                                    fontSize: 17,
-                                    color: DarkModeModel.darkMode
-                                        ? Colors.white
-                                        : Colors.black),
-                                overflow: TextOverflow.clip,
-                                textAlign: TextAlign.center),
-                          ],
+              ),
+            ),
+            Expanded(
+              child: Container(
+                  margin: EdgeInsets.only(right: 15, bottom: 20, top: 5),
+                  // color: Colors.indigoAccent,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          //TODO
+                          'Hi , 亲爱的' + _getUsername(),
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.clip,
+                          style: TextStyle(
+                              fontSize: 25.0,
+                              color: DarkModeModel.darkMode
+                                  ? Colors.white
+                                  : Colors.black),
                         ),
-                      )
-                  ),
-                ),
-              ],
-            )),
+                        Text('账号：' + LoginPageState.account,
+                            style: TextStyle(
+                                fontSize: 17,
+                                color: DarkModeModel.darkMode
+                                    ? Colors.white
+                                    : Colors.black),
+                            overflow: TextOverflow.clip,
+                            textAlign: TextAlign.center),
+                      ],
+                    ),
+                  )),
+            ),
+          ],
+        )),
       );
     });
   }
@@ -420,10 +435,13 @@ class MinePageState extends State<MinePage> {
 
   String _getUsername() {
     Response response;
-    Dio().post('http://widealpha.top:8080/shop/user/username',
-      options: Options(
-          headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
-    ).then((value) {
+    Dio()
+        .post(
+      'http://widealpha.top:8080/shop/user/username',
+      options:
+          Options(headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
+    )
+        .then((value) {
       response = value;
       print(response);
       if (response.data['code'] == 0) {
@@ -438,13 +456,15 @@ class MinePageState extends State<MinePage> {
     });
   }
 
-
   String _getHeadImage() {
     Response response;
-    Dio().post('http://widealpha.top:8080/shop/user/headImage',
-      options: Options(
-          headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
-    ).then((value) {
+    Dio()
+        .post(
+      'http://widealpha.top:8080/shop/user/headImage',
+      options:
+          Options(headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
+    )
+        .then((value) {
       response = value;
       print(response);
       if (response.data['code'] == 0) {

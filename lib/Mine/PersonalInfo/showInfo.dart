@@ -77,6 +77,21 @@ class MyInfoState extends State<ShowInfoPage> {
                     Container(
                       margin: EdgeInsets.only(right: 15),
                       child: Text(
+                        '头像',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ),
+                    // Expanded(child: Text()),
+                  ],
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.fromLTRB(20, 10, 0, 15),
+                child: Row(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(right: 15),
+                      child: Text(
                         '用户名',
                         style: TextStyle(fontSize: 20),
                       ),
