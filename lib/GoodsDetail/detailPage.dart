@@ -1,16 +1,77 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import './imageShowServer.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:provider/provider.dart';
+import 'commodityClass.dart';
+import 'package:winter/Basic/login.dart';
 
 class DetailPage extends StatefulWidget {
+  DetailPage({this.commodityId});
+  final int commodityId;
   @override
-  State<StatefulWidget> createState() => DetailPageState();
+  State<StatefulWidget> createState() => DetailPageState(commodityId: this.commodityId);
 }
 
 class DetailPageState extends State<DetailPage> {
+  
+  DetailPageState({this.commodityId});
+  final int commodityId;
+  
+  Commodity thisCommodity;
+  List imageList;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getDetailData().then((value) {
+      _imageToList();
+    });
+  }
+
+  Future _getDetailData() async {
+    Response response;
+    Dio dio = new Dio();
+    response = await dio.post('http://widealpha.top:8080/shop/commodity/commodity',
+    queryParameters: {'commodityId': commodityId},
+    options: Options(headers: {'Authorization': 'Bearer'+LoginPageState.token}));
+    String feedback = response.data.toString();
+    print(feedback);
+    if (response.data['code'] == 0) {
+      if (response.data['data'] == null) {
+        print("no info");
+        return;
+      } else {
+        setState(() {
+          thisCommodity = new Commodity(
+              response.data['data']['commodityId'],
+              response.data['data']['title'],
+              response.data['data']['description'],
+              response.data['data']['price'],
+              response.data['data']['category'],
+              response.data['data']['image'],
+              response.data['data']['account']);
+          print(thisCommodity);
+        });
+      }
+    }
+  }
+
+  void _imageToList() {
+    if (thisCommodity.image.isNotEmpty) {
+      imageList = json.decode(thisCommodity.image);
+    } else {
+      print("无图");
+    }
+  }
+  
+  
   @override
   Widget build(BuildContext context) {
 
@@ -38,7 +99,7 @@ class DetailPageState extends State<DetailPage> {
           Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
              return Container(
                 padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
-                child: Text("商品简介(简单介绍有什么）,商品简介(简单介绍有什么）,商品简介(简单介绍有什么）【最多三行】",
+                child: Text(thisCommodity.title,
                          maxLines: 3,
                          style: TextStyle(
                            color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
@@ -55,30 +116,29 @@ class DetailPageState extends State<DetailPage> {
                   flex: 1,
                     child: Row(
                       children: [
-                        Text("价格："),
-                        Text('￥100000000000000',style: TextStyle(
+                        Text("价格：￥"),
+                        Text(thisCommodity.price.toString(),style: TextStyle(
                           color: Colors.red,
                           fontSize: 18
                         ),)
                       ],
                     )),
-                /*Expanded(
+                Expanded(
                   flex: 1,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children:<Widget> [
-                        Text("发布人："),
-                        ClipOval(
-                          child: Image.network(
-                              "https://www.itying.com/images/flutter/7.png",
-                            width: 20,
-                            height: 20,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        Text("发布人的用户名")
+                        Icon(Icons.message, size: 18,),
+                        RichText(
+                            text: TextSpan(
+                              text: " 联系卖家",
+                              style: TextStyle(fontSize: 18, color: Colors.blue),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {print("联系卖家");}//跳至聊天
+                            )
+                        )
                       ],
-                    )),*/
+                    )),
               ],
             ),
           ),
@@ -111,7 +171,7 @@ class DetailPageState extends State<DetailPage> {
          Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
             return Container(
               padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
-              child: Text("详细介绍自己要卖什么，为什么卖，产品质量怎么样之类的",style: TextStyle(
+              child: Text(thisCommodity.description,style: TextStyle(
                 color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
               ),),
           );}
