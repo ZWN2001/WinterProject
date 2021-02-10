@@ -318,9 +318,9 @@ class MinePageState extends State<MinePage> {
                 child: Container(
                   margin: EdgeInsets.fromLTRB(12, 8, 8, 8),
                   child: ClipOval(
-                    child: _getHeadImage()==null?Image.asset('images/defaultHeadImage.png',fit:BoxFit.cover ,)
+                    child: _getHeadImage(context)==null?Image.asset('images/defaultHeadImage.png',fit:BoxFit.cover ,)
                         :Image.network(
-                      _getHeadImage(),
+                      _getHeadImage(context),
                       fit: BoxFit.cover,
                     )
                   ),
@@ -337,7 +337,7 @@ class MinePageState extends State<MinePage> {
                         children: [
                           Text(
                             //TODO
-                            'Hi , 亲爱的' ,
+                            'Hi , 亲爱的'+_getUsername() ,
                             textAlign: TextAlign.center,
                             overflow: TextOverflow.clip,
                             style: TextStyle(
@@ -413,7 +413,27 @@ class MinePageState extends State<MinePage> {
     }
   }
 
-  String _getHeadImage(){
+  String _getUsername(){
+    Response response;
+    Dio().post('http://widealpha.top:8080/shop/user/username',
+      options: Options(headers:{'Authorization':'Bearer '+LoginPageState.token}),
+    ).then((value) {
+      response = value;
+      print(response);
+      if (response.data['code'] == 0) {
+        return response.data['data'];
+      } else if (response.data['code'] == -1){
+        Toast.show("您还未设置自己的用户名哦", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      }else{
+        Toast.show("获取头像失败", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      }
+    });
+  }
+}
+
+  String _getHeadImage(BuildContext context){
     Response response;
     Dio().post('http://widealpha.top:8080/shop/user/headImage',
         options: Options(headers:{'Authorization':'Bearer '+LoginPageState.token}),
