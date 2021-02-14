@@ -347,12 +347,7 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
                 if (_categoryCondition == false) {
                   Toast.show("选择分类啊喂", context,
                       duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-                } else if(!LoginPageState.logged){
-                  Toast.show("请先登录", context,
-                      duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                      'LoginPage', (Route<dynamic> route) => false);
-                }else {
+                } else {
                   if (titleKey.currentState.validate() &&
                       priceKey.currentState.validate()) {
                     String _imageUrl;
@@ -442,6 +437,7 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
         return null;
       }
     }
+    print(imageList.toString());
     return imageList.toString();
   }
 

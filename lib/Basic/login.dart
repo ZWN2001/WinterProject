@@ -22,26 +22,27 @@ class LoginPageState extends State<LoginPage> {
   bool pwdShow = true; //默认不展示密码
   bool _expand = false; //是否展示历史账号
   List<User> _users = List(); //历史账号
-  static String token;
+  static String token; //TODO
 
   static bool logged = false; //登录状态
 
   @override
   void initState() {
     super.initState();
-    _gainUsers().then((value){
+    _gainUsers().then((value) {
       if (_users.length > 0) {
         setState(() {
           //默认加载第一个账号
           account = _users[0].account;
           _passWord = _users[0].password;
+          _verify2(account, _passWord);
         });
       }
     });
   }
 
   //获取历史用户
-  Future<void> _gainUsers()  async {
+  Future<void> _gainUsers() async {
     _users.clear();
     _users.addAll(await SharedPreferenceUtil.getUsers());
   }
@@ -57,19 +58,19 @@ class LoginPageState extends State<LoginPage> {
           Center(
             child: Container(
                 child: Flex(
-              direction: Axis.vertical,
-              children: <Widget>[
-                new Container(
-                    padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 25.0),
-                    child: Image.asset('images/appIcon.png')),
-                _buildUsername(),
-                _buildPassword(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [_buildLoginButton(), _buildAddAccount()],
-                ),
-              ],
-            )),
+                  direction: Axis.vertical,
+                  children: <Widget>[
+                    new Container(
+                        padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 25.0),
+                        child: Image.asset('images/appIcon.png')),
+                    _buildUsername(),
+                    _buildPassword(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [_buildLoginButton(), _buildAddAccount()],
+                    ),
+                  ],
+                )),
           ),
           Offstage(
             child: _buildListView(),
@@ -105,13 +106,13 @@ class LoginPageState extends State<LoginPage> {
               },
               child: _expand
                   ? Icon(
-                      Icons.arrow_drop_up,
-                      color: Colors.black,
-                    )
+                Icons.arrow_drop_up,
+                color: Colors.black,
+              )
                   : Icon(
-                      Icons.arrow_drop_down,
-                      color: Colors.grey,
-                    )),
+                Icons.arrow_drop_down,
+                color: Colors.grey,
+              )),
         ),
         validator: (value) {
           if (value.isEmpty) {
@@ -246,7 +247,10 @@ class LoginPageState extends State<LoginPage> {
       if (children.length > 0) {
         RenderBox renderObject = accountKey.currentContext.findRenderObject();
         final position = renderObject.localToGlobal(Offset.zero);
-        double screenW = MediaQuery.of(context).size.width;
+        double screenW = MediaQuery
+            .of(context)
+            .size
+            .width;
         double currentW = renderObject.paintBounds.size.width;
         double currentH = renderObject.paintBounds.size.height;
         double margin = (screenW - currentW) / 2;
@@ -352,6 +356,7 @@ class LoginPageState extends State<LoginPage> {
       print(response);
       if (response.data['code'] == 0) {
         token = response.data['data'];
+        logged = true;
         Toast.show("登陆成功", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
         Navigator.of(context).pushNamedAndRemoveUntil(
@@ -376,6 +381,23 @@ class LoginPageState extends State<LoginPage> {
         Toast.show("未知错误", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
         print('未知错误');
+      }
+    });
+  }
+
+  void _verify2(String account, String password) {
+    Response response;
+    Dio().post('http://widealpha.top:8080/shop/user/login', queryParameters: {
+      'account': account,
+      'password': password
+    }).then((value) {
+      response = value;
+      print(response);
+      if (response.data['code'] == 0) {
+        token = response.data['data'];
+        logged = true;
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            'MyHomePage', (Route<dynamic> route) => false);
       }
     });
   }

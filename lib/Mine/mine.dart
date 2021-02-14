@@ -14,6 +14,10 @@ class Mine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('我的'),
+        elevation: 0,  //这个是去掉底部阴影的代码
+      ),
       body: MinePage(),
     );
   }
@@ -30,21 +34,28 @@ class MinePageState extends State<MinePage> {
   @override
   void initState() {
     // TODO: implement initState
-    if(LoginPageState.logged) {
-      _headImageUrl = _getHeadImage();
-      _username = _getUsername();
-      print('username:$_username');
-      print(_headImageUrl);
-    }
     super.initState();
+    print('initing....');
+    if(LoginPageState.logged) {
+      _getHeadImage().then((value){
+        print(value);
+        _headImageUrl=value;
+      });
+      _getUsername().then((value) {
+        _username=value;
+      });
+      print('headImageUrl:$_headImageUrl');
+      print('username:$_username');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    print('building');
     return Column(
       children: [
         Container(
-            margin: EdgeInsets.fromLTRB(20, 50, 20, 8),
+            margin: EdgeInsets.fromLTRB(0, 0, 0, 8),
             child: LoginPageState.logged ? _logged() : _unlogged()),
         Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
           return Container(
@@ -336,18 +347,19 @@ class MinePageState extends State<MinePage> {
 
   Widget _logged() {
     return Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
-      return Card(
-        color: DarkModeModel.darkMode ? Colors.black : Colors.white,
+      return Expanded(
+        // color: DarkModeModel.darkMode ? Colors.black : Colors.white,
         child: Container(
+          color: DarkModeModel.darkMode ? Colors.black : Colors.blue,
             child: Row(
           children: [
             Container(
               child: GestureDetector(
                 onTap: _chooseImage,
                 child: Container(
-                  margin: EdgeInsets.fromLTRB(12, 8, 8, 8),
+                  margin: EdgeInsets.fromLTRB(30, 8, 8, 8),
                   child: ClipOval(
-                      child: _getHeadImage() == null
+                      child: _headImageUrl == null
                           ? Image.asset(
                               'images/defaultHeadImage.png',
                               fit: BoxFit.cover,
@@ -361,15 +373,15 @@ class MinePageState extends State<MinePage> {
             ),
             Expanded(
               child: Container(
-                  margin: EdgeInsets.only(right: 15, bottom: 20, top: 5),
+                  margin: EdgeInsets.only(right: 15, bottom: 20),
                   // color: Colors.indigoAccent,
-                  child: Center(
+                  // child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           //TODO
-                          'Hi , 亲爱的$_username',
+                          'Hi , 亲爱的',
                           textAlign: TextAlign.center,
                           overflow: TextOverflow.clip,
                           style: TextStyle(
@@ -388,7 +400,8 @@ class MinePageState extends State<MinePage> {
                             textAlign: TextAlign.center),
                       ],
                     ),
-                  )),
+                  // )
+              ),
             ),
           ],
         )),
@@ -432,14 +445,12 @@ class MinePageState extends State<MinePage> {
   }
 
 
-  String _getUsername() {
-    Response response;
-    Dio().post(
+  Future<String> _getUsername() async {
+    Response response=await Dio().post(
       'http://widealpha.top:8080/shop/user/username',
       options:
           Options(headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
-    ).then((value) {
-      response = value;
+    );
       print('用户名：$response');
       if (response.data['code'] == 0) {
         print(response.data['data'].toString());
@@ -451,17 +462,14 @@ class MinePageState extends State<MinePage> {
         Toast.show("获取用户名失败", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
       }
-    });
   }
 
-  String _getHeadImage() {
-    Response response;
-    Dio().post(
+  Future<String> _getHeadImage() async {
+    Response response=await Dio().post(
       'http://widealpha.top:8080/shop/user/headImage',
       options:
           Options(headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
-    ).then((value) {
-      response = value;
+    );
       print('头像：$response');
       if (response.data['code'] == 0) {
         return response.data['data'];
@@ -472,6 +480,6 @@ class MinePageState extends State<MinePage> {
         Toast.show("获取头像失败", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
       }
-    });
+
   }
 }

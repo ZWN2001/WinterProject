@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/darkModeModel.dart';
+import 'package:winter/AdapterAndHelper/user.dart';
 import 'package:winter/Basic/login.dart';
+import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';
 import 'changeUserName.dart';
 import 'changeUserPassword.dart';
 
@@ -161,11 +163,9 @@ class SetAccountInfoPage extends StatelessWidget{
       response = value;
       print(response);
       if (response.data['code'] == 0) {
-        Navigator.of(context)
-            .pushNamedAndRemoveUntil('LoginPage', (
-            Route<dynamic> route) => false);
-        Toast.show("退出成功", context,
-            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+        Navigator.of(context).pushNamedAndRemoveUntil('LoginPage', (Route<dynamic> route) => false);
+        Toast.show("退出成功", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+        SharedPreferenceUtil.saveUser(User('',''));
       } else {
         Toast.show("未知错误", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);

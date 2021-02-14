@@ -71,6 +71,7 @@ flutter:
       - images/myClear.png
       - images/splash.png
       - images/defaultHeadImage.png
+      - images/nullResult.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

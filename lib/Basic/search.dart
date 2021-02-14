@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:toast/toast.dart';
 import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';
 import 'dart:async';
 import 'login.dart';
@@ -12,7 +13,6 @@ class SearchPage extends StatelessWidget{
     body: SearchPageWidget(),
   );
   }
-
 }
 class SearchPageWidget extends StatefulWidget {
   @override
@@ -24,7 +24,11 @@ class SearchPageState extends State<SearchPageWidget>{
   static final TextEditingController controller = new TextEditingController();
   bool _modelCondition=false;
   String _myModel;
-
+  bool _isKeyword;
+  ///搜索页form文字
+  static String searchStr = "";
+  ///中间内容
+  Widget centerContent;
   ///建议
   static List<String> recommend = ['数码产品', '二手书', '食品', '生活用品', '美妆', '其他'];
   ///历史 暂时使用本地默认数据
@@ -40,6 +44,7 @@ class SearchPageState extends State<SearchPageWidget>{
   //初始化
   @override
   void initState() {
+    super.initState();
     // TODO: implement initState
     _getHistories().then((value) {
       setState(() {
@@ -47,13 +52,7 @@ class SearchPageState extends State<SearchPageWidget>{
       });
     });
     print('init...搜索界面历史记录');
-    super.initState();
   }
-
-  ///搜索页form文字
-  static String searchStr = "";
-  ///中间内容
-  Widget centerContent;
 
   SearchPageState() {
     ///监听搜索页form
@@ -68,7 +67,8 @@ class SearchPageState extends State<SearchPageWidget>{
           //显示历史记录
         });
       }
-      } else {
+      }
+      else {
         if(mounted) {
           setState(() {
             //动态搜索
@@ -255,19 +255,23 @@ class SearchPageState extends State<SearchPageWidget>{
   String realTimeSearchUrl;
 
   ///实时搜索列表
-  Widget realTimeSearch(String key){
+  Widget realTimeSearch(String key) {
     switch (_myModel){
       case "按ID搜索商品":
-      realTimeSearchUrl = "http://192.168.0.121:8091/article/test/";
+        _isKeyword=false;
+      realTimeSearchUrl = "http://widealpha.top:8080/shop/commodity/commodity";
       break;
       case "按关键字搜索需求":
-      realTimeSearchUrl = "http://192.168.0.121:8091/article/test/";
+        _isKeyword=true;
+      realTimeSearchUrl = "http://widealpha.top:8080/shop/want/searchCommodity";
       break;
       case "按ID搜索需求":
-        realTimeSearchUrl = "http://192.168.0.121:8091/article/test/";
+        _isKeyword=false;
+        realTimeSearchUrl = "http://widealpha.top:8080/shop/want/commodity";
         break;
       default:
-        realTimeSearchUrl ="http://192.168.0.121:8091/article/test/";
+        _isKeyword=true;
+        realTimeSearchUrl ="http://widealpha.top:8080/shop/commodity/searchCommodity";
     }
     Widget widget = Expanded(
       child: Center(
@@ -281,52 +285,32 @@ class SearchPageState extends State<SearchPageWidget>{
     );
 
     Response response;
-    Dio().post(
+   _isKeyword? Dio().post(
         realTimeSearchUrl,
         options: Options(headers:{'Authorization':'Bearer '+LoginPageState.token}),
         queryParameters: {
+        'key':key
         }
-    ).then((value){
+    ): Dio().post(
+       realTimeSearchUrl,
+       options: Options(headers:{'Authorization':'Bearer '+LoginPageState.token}),
+       queryParameters: {
+         'commodityId':int.parse(key)
+       }
+   ).then((value){
       //赋值
       response= value;
-    }).whenComplete((){
-      widget = Container(
-          child: ListView.separated(
-            shrinkWrap: true,
-            physics: ClampingScrollPhysics(),
-            itemBuilder: (c, i) {
-              return Container(
-                child: Row(
-                  children: <Widget>[
-                    //图标
-                    Container(
-                      padding: const EdgeInsets.only(top: 5, left: 25, bottom: 5.0,),
-                      child: Icon(
-                        Icons.search,
-                        color: Colors.black12,
-                        size: 25.0,
-                        textDirection: TextDirection.rtl,
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.only(
-                        left: 25,
-                        bottom: 5.0,
-                      ),
-                      child: Text(
-                        i == 0 ? key : list[i],
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    )
-                  ],
-                ),
-              );
-            },
-            separatorBuilder: (BuildContext context, int index) =>
-                Divider(height: 1.0, color: Colors.black12),
-            itemCount: list == null ? 0 : list.length,
-          )
-      );
+      print(response);
+          }).whenComplete((){
+      if(response.data['data']==null){
+        widget=nullResult();
+      }else {
+        if(_isKeyword){
+          widget=_keywordResult(response);
+        }else{
+          widget=_IDresult(response);
+        }
+      }
       if(mounted) {
         setState(() {
           //更新提示列表
@@ -342,7 +326,42 @@ class SearchPageState extends State<SearchPageWidget>{
         realTimeSearchUrl,
         options: Options(headers:{'Authorization':'Bearer '+LoginPageState.token}),
         queryParameters: {
+
         }
+    );
+  }
+  Widget _IDresult(Response response){
+    Map goodsData=response.data['data'];
+    return Container(
+      margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
+      child: Card(
+        child: Text('id'),
+      ),
+    );
+  }
+  Widget _keywordResult(Response response){
+    Map goodsData=response.data['data'];
+    return Container(
+        margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
+    child: Card(
+      child: Text('keyword'),
+    ),
+    );
+  }
+  Widget nullResult(){
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset('images/nullResult.png'),
+          Text(
+            '没有找到相关信息呢.......',
+            style: TextStyle(
+              fontSize: 20
+            ),
+          )
+        ],
+      ),
     );
   }
 
