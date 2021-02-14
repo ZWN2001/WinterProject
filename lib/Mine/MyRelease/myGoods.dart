@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:winter/AdapterAndHelper/darkModeModel.dart';
 import 'package:provider/provider.dart';
 import 'package:dio/dio.dart';
@@ -72,6 +73,7 @@ class MyGoodsState extends State<MyGoods> {
   int _page = 1;
   bool isLoading = false;
   ScrollController _scrollController = ScrollController();
+  SlidableController slidableController = SlidableController();
 
   @override
   void initState() {
@@ -187,20 +189,71 @@ class MyGoodsState extends State<MyGoods> {
         });*/
   }
 
+  _showSnack (BuildContext context, type) {
+    print(type);
+  }
+
   //有发布时的页面
   Widget myCommodityListView() {
     return RefreshIndicator(
         onRefresh: _onRefresh,
-        child: ListView.separated(
+        child: ListView.builder(
             itemCount: tempList.length,
             scrollDirection: Axis.vertical,
             controller: _scrollController,
             padding: EdgeInsets.symmetric(horizontal: 5),
-            separatorBuilder: (BuildContext context, int index) => new Divider(),
+            //separatorBuilder: (BuildContext context, int index) => new Divider(),
             itemBuilder: (context, index) {
-              return Material(
+              return Slidable(
+                key: Key(index.toString()),
+                controller: slidableController,
+                actionPane: SlidableScrollActionPane(),
+                actionExtentRatio: 0.2,
+                enabled: true,
+                dismissal: SlidableDismissal(
+                  child: SlidableDrawerDismissal(),
+                  onDismissed: (actionType) {
+                    _showSnack(
+                      context,
+                      actionType == SlideActionType.primary
+                          ? 'Dismiss Archive'
+                          : 'Dismiss Delete');
+                    //setState(() {});
+                  },
+                  onWillDismiss: (actionType) {
+                    return showDialog<bool>(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text("提示"),
+                          content: Text("确认删除这个商品吗？"),
+                          actions:<Widget> [
+                            FlatButton(
+                                onPressed: () => Navigator.of(context).pop(false),
+                                child: Text("取消")),
+                            FlatButton(
+                                onPressed: () => Navigator.of(context).pop(true),
+                                child: Text("确认"))
+                          ],
+                        );
+                      }
+                    );
+                  },
+                ),
                 child: itemWidget2(index),
+                secondaryActions:<Widget> [
+                  IconSlideAction(
+                    caption: 'Delete',
+                    color: Colors.red,
+                    icon: Icons.delete,
+                    closeOnTap: false,
+                    onTap: () => print("delete"),
+                  )
+                ],
               );
+              /*Material(
+                child: itemWidget2(index),
+              );*/
             }),
     );
   }
