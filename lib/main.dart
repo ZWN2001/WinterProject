@@ -73,10 +73,10 @@ class _SplashState extends State<SplashPage> {
                       "images/appIcon.png",
                     ),
                     Container(
-                      margin: EdgeInsets.only(top: 15),
+                      margin: EdgeInsets.only(top: 20),
                       child: Text(
                         'Developed by : zwn & whc',
-                        style: TextStyle(fontSize: 15),
+                        style: TextStyle(fontSize: 18),
                       ),
                     ),
                   ],
@@ -103,6 +103,6 @@ class _SplashState extends State<SplashPage> {
   }
 
   void newHomePage() {
-    Navigator.pushReplacementNamed(context, 'home');
+    Navigator.pushReplacementNamed(context, 'LoginPage');
   }
 }

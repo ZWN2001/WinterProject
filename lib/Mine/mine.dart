@@ -347,10 +347,12 @@ class MinePageState extends State<MinePage> {
 
   Widget _logged() {
     return Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
-      return Expanded(
-        // color: DarkModeModel.darkMode ? Colors.black : Colors.white,
-        child: Container(
-          color: DarkModeModel.darkMode ? Colors.black : Colors.blue,
+      return
+        // Expanded(
+        // // color: DarkModeModel.darkMode ? Colors.black : Colors.white,
+        // child:
+        Container(
+          color: DarkModeModel.darkMode ? Colors.black26: Colors.blue,
             child: Row(
           children: [
             Container(
@@ -362,6 +364,7 @@ class MinePageState extends State<MinePage> {
                       child: _headImageUrl == null
                           ? Image.asset(
                               'images/defaultHeadImage.png',
+                              color: Colors.white,
                               fit: BoxFit.cover,
                             )
                           : Image.network(
@@ -386,16 +389,14 @@ class MinePageState extends State<MinePage> {
                           overflow: TextOverflow.clip,
                           style: TextStyle(
                               fontSize: 25.0,
-                              color: DarkModeModel.darkMode
-                                  ? Colors.white
-                                  : Colors.black),
+                              color: Colors.white
+                          ),
                         ),
                         Text('账号：' + LoginPageState.account,
                             style: TextStyle(
                                 fontSize: 17,
-                                color: DarkModeModel.darkMode
-                                    ? Colors.white
-                                    : Colors.black),
+                                color: Colors.white
+                            ),
                             overflow: TextOverflow.clip,
                             textAlign: TextAlign.center),
                       ],
@@ -404,8 +405,8 @@ class MinePageState extends State<MinePage> {
               ),
             ),
           ],
-        )),
-      );
+        ));
+      // );
     });
   }
 
@@ -442,6 +443,9 @@ class MinePageState extends State<MinePage> {
          Navigator.push(context,
           MaterialPageRoute(builder: (context) => CropImageRoute(image)));;
     }
+    setState(() {
+      initState();//TODO 此处应该是局部更新
+    });
   }
 
 
@@ -480,6 +484,5 @@ class MinePageState extends State<MinePage> {
         Toast.show("获取头像失败", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
       }
-
   }
 }
