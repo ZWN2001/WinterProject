@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:provider/provider.dart'hide BuildContext;
 import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/darkModeModel.dart';
 import 'package:winter/AdapterAndHelper/user.dart';
@@ -31,7 +31,7 @@ class SetAccountInfoPage extends StatelessWidget{
   Widget build(BuildContext context) {
  return MultiProvider(
      providers: [
-     ChangeNotifierProvider<DarkModeModel>(builder: (child) => DarkModeModel())
+     ChangeNotifierProvider<DarkModeModel>(create: (child) => DarkModeModel())
     ],
    child:Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
    return Container(

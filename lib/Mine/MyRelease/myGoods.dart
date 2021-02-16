@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:winter/AdapterAndHelper/darkModeModel.dart';
-import 'package:provider/provider.dart';
+import 'package:provider/provider.dart'hide BuildContext;
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -356,7 +356,7 @@ class MyGoodsState extends State<MyGoods> {
       //onTap: () {},
       child: MultiProvider(
         providers: [
-          ChangeNotifierProvider<DarkModeModel>(builder: (child) => DarkModeModel())
+          ChangeNotifierProvider<DarkModeModel>(create: (child) => DarkModeModel())
         ],
         child: Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
           return Container(

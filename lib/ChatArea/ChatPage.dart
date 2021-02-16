@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
-import 'package:provider/provider.dart';
+import 'package:provider/provider.dart'hide BuildContext;
 import 'package:winter/AdapterAndHelper/bubble.dart';
 import 'package:path/path.dart';
 
