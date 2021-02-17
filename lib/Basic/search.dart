@@ -143,6 +143,7 @@ class SearchPageState extends State<SearchPageWidget> {
                           onPressed: () {
                             myContext.read<searchHistory>().refresh();
                             setState(() {
+                              history.initHistory();
                               controller.text = "";
                             });
                           })
@@ -256,12 +257,9 @@ class SearchPageState extends State<SearchPageWidget> {
                           onPressed: () {
                             //TODO
                             SharedPreferenceUtil.delHistories();
-                            // setState(() {
-                            // centerContent=defaultDisplay();
                             myContext.read<searchHistory>().refresh();
-                            // });
                             setState(() {
-                              history.initHistory();
+                              history.history=new List();
                             });
                           }),
                     ),
@@ -375,14 +373,15 @@ class SearchPageState extends State<SearchPageWidget> {
 
     Response response;
     _isKeyword
-        ? Dio().post(realTimeSearchUrl,
+        ? (Dio().post(realTimeSearchUrl,
             options: Options(
                 headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
-            queryParameters: {'key': key})
-        : Dio().post(realTimeSearchUrl,
+            queryParameters: {'key': key}))
+        :( Dio().post(realTimeSearchUrl,
             options: Options(
                 headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
-            queryParameters: {'commodityId': int.parse(key)}).then((value) {
+            queryParameters: {'commodityId': int.parse(key)}))
+        .then((value) {
             //赋值
             response = value;
             print('搜索结果：$response');
