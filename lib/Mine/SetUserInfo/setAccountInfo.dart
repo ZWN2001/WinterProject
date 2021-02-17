@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:provider/provider.dart'hide BuildContext;
 import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/darkModeModel.dart';
 import 'package:winter/AdapterAndHelper/user.dart';
@@ -31,7 +31,7 @@ class SetAccountInfoPage extends StatelessWidget{
   Widget build(BuildContext context) {
  return MultiProvider(
      providers: [
-     ChangeNotifierProvider<DarkModeModel>(builder: (child) => DarkModeModel())
+     ChangeNotifierProvider<DarkModeModel>(create: (child) => DarkModeModel())
     ],
    child:Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
    return Container(
@@ -166,6 +166,7 @@ class SetAccountInfoPage extends StatelessWidget{
         Navigator.of(context).pushNamedAndRemoveUntil('LoginPage', (Route<dynamic> route) => false);
         Toast.show("退出成功", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
         SharedPreferenceUtil.saveUser(User('',''));
+        LoginPageState.logged=false;
       } else {
         Toast.show("未知错误", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);

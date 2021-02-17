@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import './imageShowServer.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
-import 'package:provider/provider.dart';
+import 'package:provider/provider.dart'hide BuildContext;
 import 'commodityClass.dart';
 import 'package:winter/Basic/login.dart';
 

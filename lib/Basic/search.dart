@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:toast/toast.dart';
 import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';
 import 'dart:async';
 import 'login.dart';
@@ -45,7 +44,6 @@ class SearchPageState extends State<SearchPageWidget>{
   @override
   void initState() {
     super.initState();
-    // TODO: implement initState
     _getHistories().then((value) {
       setState(() {
         centerContent=defaultDisplay();
@@ -81,6 +79,80 @@ class SearchPageState extends State<SearchPageWidget>{
     });
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return  Scaffold(
+      body: Container(
+        margin: EdgeInsets.only(top: 40),
+        child: Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                IconButton(
+                  //iconSize: 30,
+                  iconSize: 25,
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: (){
+                    //回到原来页面
+                    controller.clear();
+                    Navigator.pop(context);
+                  },
+                ),
+                Expanded(
+                  child:Container(
+                      margin: EdgeInsets.only(left: 0),
+                      //设置 child 居中
+                      alignment: Alignment(0, 0),
+                      //边框设置
+                      decoration: new BoxDecoration(
+                        //背景
+                        color: Colors.black12,
+                        //设置四周圆角 角度 这里的角度应该为 父Container height 的一半
+                        borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                        //设置四周边框
+                        border: new Border.all(width: 1, color: Colors.white12),
+                      ),
+                      child: Container(
+                        alignment: Alignment.center,
+                        child: TextFormField(
+                          autofocus: true,
+                          style: TextStyle(
+                              fontSize: 20
+                          ),
+                          controller: controller,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: '输入搜索内容...',
+                            hintStyle: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 20,
+                            ),
+                            prefixIcon: Icon(Icons.search),
+                          ),
+                        ),
+                      )
+                  ),
+                ),
+
+                //清空按钮
+                IconButton(
+                    iconSize:25,
+                    icon: Icon(Icons.clear),
+                    onPressed: () {
+                      setState(() {
+                        controller.text = "";
+                      });
+                    }
+                )
+              ],
+            ),
+            centerContent,
+          ],
+        ),
+      ),
+    );
+  }
+
   ///默认显示(推荐 + 历史记录)
    Widget defaultDisplay(){
     return Container(
@@ -97,7 +169,7 @@ class SearchPageState extends State<SearchPageWidget>{
                         children: [
                           Icon(Icons.youtube_searched_for),
                           Text(
-                              '搜索模式',
+                              '    搜索模式',
                             style: TextStyle(
                               fontSize: 18
                             ),
@@ -183,7 +255,7 @@ class SearchPageState extends State<SearchPageWidget>{
                         //TODO
                         SharedPreferenceUtil.delHistories();
                         setState(() {
-                          initState();
+                          centerContent=defaultDisplay();
                         });
                       }
                   ),
@@ -195,7 +267,7 @@ class SearchPageState extends State<SearchPageWidget>{
                       alignment: AlignmentDirectional.topStart,
                       child: Wrap(
                         spacing: 10,
-                        children: _history==null?_buildData(recommend):_buildData(_history),
+                        children: _buildData(_history)??_buildData(recommend),
                       ),
                     ),
 
@@ -259,18 +331,22 @@ class SearchPageState extends State<SearchPageWidget>{
     switch (_myModel){
       case "按ID搜索商品":
         _isKeyword=false;
-      realTimeSearchUrl = "http://widealpha.top:8080/shop/commodity/commodity";
+        print('按ID搜索商品');
+        realTimeSearchUrl = "http://widealpha.top:8080/shop/commodity/commodity";
       break;
       case "按关键字搜索需求":
         _isKeyword=true;
-      realTimeSearchUrl = "http://widealpha.top:8080/shop/want/searchCommodity";
+        print('按关键字搜索需求');
+        realTimeSearchUrl = "http://widealpha.top:8080/shop/want/searchCommodity";
       break;
       case "按ID搜索需求":
         _isKeyword=false;
+        print('按ID搜索需求');
         realTimeSearchUrl = "http://widealpha.top:8080/shop/want/commodity";
         break;
       default:
         _isKeyword=true;
+        print('按关键字搜索商品');
         realTimeSearchUrl ="http://widealpha.top:8080/shop/commodity/searchCommodity";
     }
     Widget widget = Expanded(
@@ -300,9 +376,9 @@ class SearchPageState extends State<SearchPageWidget>{
    ).then((value){
       //赋值
       response= value;
-      print(response);
+      print('搜索结果：$response');
           }).whenComplete((){
-      if(response.data['data']==null){
+      if(response==null||response.data['data']==null){
         widget=nullResult();
       }else {
         if(_isKeyword){
@@ -318,38 +394,32 @@ class SearchPageState extends State<SearchPageWidget>{
         });
       }
     });
-    // return widget;
-  }
-  void _getRealtimeResult()async{
-    //dio请求
-    Response response = await Dio().post(
-        realTimeSearchUrl,
-        options: Options(headers:{'Authorization':'Bearer '+LoginPageState.token}),
-        queryParameters: {
-
-        }
-    );
+    return widget;
   }
   Widget _IDresult(Response response){
     Map goodsData=response.data['data'];
-    return Container(
+    return Expanded(
+      child:  Container(
       margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
       child: Card(
         child: Text('id'),
       ),
+    ),
     );
   }
   Widget _keywordResult(Response response){
     Map goodsData=response.data['data'];
-    return Container(
-        margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
-    child: Card(
-      child: Text('keyword'),
-    ),
+    return Expanded(
+        child:  Container(
+          margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
+          child: Card(
+            child: Text('keyword'),
+          ),
+        ),
     );
   }
   Widget nullResult(){
-    return Container(
+    return Expanded(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -366,79 +436,5 @@ class SearchPageState extends State<SearchPageWidget>{
   }
 
 
-  @override
-  Widget build(BuildContext context) {
-    return  Scaffold(
-          body: Container(
-            margin: EdgeInsets.only(top: 40),
-            child: Column(
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    IconButton(
-                      //iconSize: 30,
-                      iconSize: 25,
-                      icon: Icon(Icons.arrow_back),
-                      onPressed: (){
-                        //回到原来页面
-                        controller.clear();
-                        Navigator.pop(context);
-                      },
-                    ),
-                    Expanded(
-                        child:   Container(
-                          margin: EdgeInsets.only(left: 0),
-                          //设置 child 居中
-                          alignment: Alignment(0, 0),
-                          //边框设置
-                          decoration: new BoxDecoration(
-                            //背景
-                            color: Colors.black12,
-                            //设置四周圆角 角度 这里的角度应该为 父Container height 的一半
-                            borderRadius: BorderRadius.all(Radius.circular(25.0)),
-                            //设置四周边框
-                            border: new Border.all(width: 1, color: Colors.white12),
-                          ),
-                          child: Container(
-                            alignment: Alignment.center,
-                            child: TextFormField(
-                              autofocus: true,
-                              style: TextStyle(
-                                fontSize: 20
-                              ),
-                              controller: controller,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: '输入搜索内容...',
-                                hintStyle: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 20,
-                                ),
-                                prefixIcon: Icon(Icons.search),
-                              ),
-                            ),
-                          )
-                        ),
-                    ),
-
-                    //清空按钮
-                    IconButton(
-                        iconSize:25,
-                        icon: Icon(Icons.clear),
-                        onPressed: () {
-                          setState(() {
-                            controller.text = "";
-                          });
-                        }
-                    )
-                  ],
-                ),
-                centerContent,
-              ],
-            ),
-          ),
-    );
-
-  }
 
 }
