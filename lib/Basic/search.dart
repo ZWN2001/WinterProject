@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:winter/AdapterAndHelper/darkModeModel.dart';
 import 'package:winter/AdapterAndHelper/searchHistory.dart';
+import 'package:winter/GoodsDetail/commodityClass.dart';
+import 'package:winter/GoodsDetail/topNavigatorBar.dart';
 import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';
 import 'login.dart';
 
@@ -28,26 +33,36 @@ class SearchPageState extends State<SearchPageWidget> {
 
   ///搜索页form文字
   static String searchStr = "";
-
   ///中间内容
   Widget centerContent;
-
   ///建议
   List<String> recommend = ['数码产品', '二手书', '食品', '生活用品', '美妆', '其他'];
-
   ///历史
-  // List<String> _history = List() ;
   searchHistory history = new searchHistory();
+
+  List<Commodity> commodityList = new List();
+  List<Commodity> tempList = new List();
+  Iterable<Commodity> reservedList = new List();
+  int startNum = 0;
+  int _page = 1;
+  bool isLoading = false;//是否正在加载数据
+  ScrollController _scrollController = ScrollController();
 
   //初始化
   @override
   void initState() {
     super.initState();
-    history.initHistory().then((value) {
-      // _history=value;
+    history.initHistory();
+        // .then((value) {
       setState(() {
         centerContent = defaultDisplay();
-      });
+      // });
+    });
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+        print("滑到了最底部");
+        _getMore();
+      }
     });
     print('init...搜索界面历史记录');
   }
@@ -149,7 +164,9 @@ class SearchPageState extends State<SearchPageWidget> {
                           })
                     ],
                   ),
-                  centerContent,
+                  Container(
+                    child:  centerContent,
+                  ),
                 ],
               );
             }),
@@ -330,38 +347,11 @@ class SearchPageState extends State<SearchPageWidget> {
     }).toList();
   }
 
-  ///实时搜索结果
-  static List list = new List();
-
   ///实时搜索url
   String realTimeSearchUrl;
 
   ///实时搜索列表
   Widget realTimeSearch(String key) {
-    switch (_myModel) {
-      case "按ID搜索商品":
-        _isKeyword = false;
-        print('按ID搜索商品');
-        realTimeSearchUrl =
-            "http://widealpha.top:8080/shop/commodity/commodity";
-        break;
-      case "按关键字搜索需求":
-        _isKeyword = true;
-        print('按关键字搜索需求');
-        realTimeSearchUrl =
-            "http://widealpha.top:8080/shop/want/searchCommodity";
-        break;
-      case "按ID搜索需求":
-        _isKeyword = false;
-        print('按ID搜索需求');
-        realTimeSearchUrl = "http://widealpha.top:8080/shop/want/commodity";
-        break;
-      default:
-        _isKeyword = true;
-        print('按关键字搜索商品');
-        realTimeSearchUrl =
-            "http://widealpha.top:8080/shop/commodity/searchCommodity";
-    }
     Widget widget = Expanded(
       child: Center(
         child: Text(
@@ -372,41 +362,121 @@ class SearchPageState extends State<SearchPageWidget> {
     );
 
     Response response;
-    _isKeyword
-        ? (Dio().post(realTimeSearchUrl,
+
+    switch (_myModel) {
+      case "按ID搜索商品":
+        _isKeyword = false;
+        print('按ID搜索商品');
+        realTimeSearchUrl =
+        "http://widealpha.top:8080/shop/commodity/commodity";
+        Dio().post(realTimeSearchUrl,
             options: Options(
                 headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
-            queryParameters: {'key': key}))
-        :( Dio().post(realTimeSearchUrl,
+            queryParameters: {'commodityId': int.parse(key)}).then((value) {
+          //赋值
+          response = value;
+          print('搜索结果：$response');
+        }).whenComplete(() {
+          List goodsData = response.data['data'];
+          if (goodsData.isEmpty) {
+            widget = nullResult();
+          } else {
+            widget = _commodityIDresult(goodsData);
+          }
+          if (mounted) {
+            setState(() {
+              //更新提示列表
+              centerContent = widget;
+            });
+          }
+        });
+        break;
+      case "按关键字搜索需求":
+        _isKeyword = true;
+        print('按关键字搜索需求');
+        realTimeSearchUrl =
+        "http://widealpha.top:8080/shop/want/searchCommodity";
+        break;
+      case "按ID搜索需求":
+        _isKeyword = false;
+        print('按ID搜索需求');
+        realTimeSearchUrl = "http://widealpha.top:8080/shop/want/commodity";
+        break;
+      default:
+        _isKeyword = true;
+        print('按关键字搜索商品');
+        realTimeSearchUrl =
+        "http://widealpha.top:8080/shop/commodity/searchCommodity";
+        Dio().post(realTimeSearchUrl,
             options: Options(
                 headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
-            queryParameters: {'commodityId': int.parse(key)}))
-        .then((value) {
-            //赋值
-            response = value;
-            print('搜索结果：$response');
-          }).whenComplete(() {
-            if (response == null || response.data['data'] == null) {
-              widget = nullResult();
-            } else {
-              if (_isKeyword) {
-                widget = _keywordResult(response);
-              } else {
-                widget = _IDresult(response);
-              }
-            }
-            if (mounted) {
-              setState(() {
-                //更新提示列表
-                centerContent = widget;
-              });
-            }
-          });
-    return widget;
+            queryParameters: {'key': key}).then((value) {
+          response = value;
+          print('搜索结果：$response');
+          print('商品结果：${response.data['data']}');
+        }).whenComplete(() {
+          List goodsData = response.data['data'];
+          if ( goodsData.isEmpty) {
+            widget = nullResult();
+          } else {
+            widget = _commoditykeywordResult(goodsData);
+          }
+          if (mounted) {
+            setState(() {
+              //更新提示列表
+              centerContent = widget;
+            });
+          }
+        });
+    }
+
+  //   _isKeyword
+  //       ? Dio().post(realTimeSearchUrl,
+  //           options: Options(
+  //               headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
+  //           queryParameters: {'key': key}).then((value) {
+  //     response = value;
+  //     print('搜索结果：$response');
+  //     print('商品结果：${response.data['data']}');
+  //         }).whenComplete(() {
+  //     List goodsData = response.data['data'];
+  //     if ( goodsData.isEmpty) {
+  //       widget = nullResult();
+  //     } else {
+  //         widget = _keywordResult(goodsData);
+  //     }
+  //     if (mounted) {
+  //       setState(() {
+  //         //更新提示列表
+  //         centerContent = widget;
+  //       });
+  //     }
+  //   })
+  //       : Dio().post(realTimeSearchUrl,
+  //           options: Options(
+  //               headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
+  //           queryParameters: {'commodityId': int.parse(key)}).then((value) {
+  //           //赋值
+  //           response = value;
+  //           print('搜索结果：$response');
+  //         }).whenComplete(() {
+  //         List goodsData = response.data['data'];
+  //           if (goodsData.isEmpty) {
+  //             widget = nullResult();
+  //           } else {
+  //               widget = _IDresult(goodsData);
+  //           }
+  //           if (mounted) {
+  //             setState(() {
+  //               //更新提示列表
+  //               centerContent = widget;
+  //             });
+  //           }
+  //         });
+  //   // return widget;
   }
 
-  Widget _IDresult(Response response) {
-    Map goodsData = response.data['data'];
+  Widget _commodityIDresult(List goodsData) {
     return Expanded(
       child: Container(
         margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
@@ -417,16 +487,155 @@ class SearchPageState extends State<SearchPageWidget> {
     );
   }
 
-  Widget _keywordResult(Response response) {
-    Map goodsData = response.data['data'];
+  Widget _commoditykeywordResult(List goodsData) {
+    commodityList = goodsData.map((e) => Commodity.fromJson(e)).toList();
     return Expanded(
-      child: Container(
-        margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
-        child: Card(
-          child: Text('keyword'),
-        ),
-      ),
+        child: Container(
+          child:    GridView.builder(
+              shrinkWrap: true,
+              padding: EdgeInsets.symmetric(horizontal: 5),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 5,
+                mainAxisSpacing: 5,
+              ),
+              scrollDirection: Axis.vertical,
+              controller: _scrollController,
+              itemCount: tempList.length,
+              itemBuilder: (context,index){
+                return Material(
+                  child: itemWidget(index),
+                );
+              }),
+        )
     );
+
+  }
+
+  // _transferIntoLocalList() {
+  //   if(LoginPageState.logged) {
+  //     if (commodityList != null) {
+  //       reservedList = commodityList.reversed;//确保时间顺序展示
+  //       print(reservedList);
+  //       print(reservedList.length);
+  //       //每次加载10条商品信息
+  //       for (int i = 0; i < 10; i++) {
+  //         startNum = i+1;
+  //         if (reservedList.length == 1){
+  //           tempList.insert(0, reservedList.elementAt(0));
+  //           startNum = 1;
+  //           return;
+  //         }
+  //         if (i == reservedList.length - 1){
+  //           print("没有更多数据");
+  //           //startNum = i;
+  //           return;
+  //         }
+  //         //tempList[i] = reservedList.elementAt(i);
+  //         tempList.insert(i, reservedList.elementAt(i));
+  //         print(tempList[i].image);
+  //       }
+  //     }
+  //   }
+  // }
+  //将所有图片放入一个list，默认加载第一张
+  String _imageToList(int temp) {
+    List imageList = json.decode(tempList[temp].image);
+    return imageList[0];
+  }
+
+  Future _getMore() async {
+    if (!isLoading) {
+      setState(() {
+        isLoading = true;
+      });
+      await Future.delayed(Duration(seconds: 1), () {
+        print("加载更多");
+        setState(() {
+          for (int i = startNum; i <= startNum + 10; i++) {
+            startNum = i;
+            if (i == commodityList.length || i == startNum+10) {
+              print("没有更多数据了");
+              isLoading = false;
+              return;
+            }
+            tempList.insert(i, reservedList.elementAt(i));
+          }
+          _page++;
+          isLoading = false;
+        });
+      });
+    }
+  }
+  //每个商品的窗口
+  Widget itemWidget(int temp) {
+    return InkWell(
+        onTap: (){
+          Navigator.push(context,new MaterialPageRoute(builder: (context){
+            return new TopNavigatorBar(commodityId: tempList[temp].commodityId);
+          }));
+        },//点击后进入详细页面
+        child: Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
+          return Container(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children:<Widget> [
+                Row(
+                  children: [
+                    Expanded(
+                        child:SizedBox(
+                          height: 130,
+                          child: //Text("暂时没有图片哦", style: TextStyle(color: Colors.grey, fontSize: 10),textAlign: TextAlign.center,)
+                          tempList[temp].image.isEmpty
+                              ? Text("暂时没有图片哦", style: TextStyle(color: Colors.grey, fontSize: 10),textAlign: TextAlign.center)
+                              : Image.network(_imageToList(temp), fit: BoxFit.cover,),
+                        )
+                      /*Image.network(
+                          tempList[temp].image,
+                          fit: BoxFit.cover,
+                        )*/
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                        child:Text(
+                          tempList[temp].title,
+                          textAlign: TextAlign.start,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
+                          ),
+                        )
+                    )
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                        child:Text(
+                          tempList[temp].price.toString(),
+                          textAlign: TextAlign.start,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 12.0,
+                            color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
+                          ),
+                        )
+                    )],
+                ),
+              ],
+            ),
+            decoration: BoxDecoration(
+                border: Border.all(color:DarkModeModel.darkMode ? Colors.white : Colors.black87,width: 1)
+            ),
+          );
+        }
+        ));
   }
 
   Widget nullResult() {
