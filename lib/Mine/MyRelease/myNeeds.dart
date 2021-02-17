@@ -8,7 +8,7 @@ import 'package:winter/Basic/login.dart';
 import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/expandableText.dart';
 import 'package:winter/AdapterAndHelper/darkModeModel.dart';
-import 'package:provider/provider.dart';
+//import 'package:provider/provider.dart';
 
 class MyNeeds extends StatefulWidget {
   @override
@@ -159,7 +159,7 @@ class MyNeedsState extends State<MyNeeds> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(context) {
     return myDemandList.isEmpty
         ? noDemandText()
         : myDemandListView();
@@ -222,10 +222,6 @@ class MyNeedsState extends State<MyNeeds> {
   Widget itemWidget2(int temp) {
     return InkWell(
         onLongPress: () {},
-        child: MultiProvider(
-          providers: [
-            ChangeNotifierProvider<DarkModeModel>(builder: (child) => DarkModeModel())
-          ],
           child: Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
             return Container(
               child: IntrinsicHeight(
@@ -250,10 +246,7 @@ class MyNeedsState extends State<MyNeeds> {
             );
 
           },),
-        )
-
-      )
-    ;
+        );
   }
 
   //每个商品的窗口
