@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:winter/GoodsTypePage/allGoods.dart';
+import 'package:winter/GoodsTypePage/digitalProduct.dart';
+import 'package:winter/GoodsTypePage/usedBook.dart';
+import 'package:winter/GoodsTypePage/food.dart';
+import 'package:winter/GoodsTypePage/dailyNecessity.dart';
+import 'package:winter/GoodsTypePage/cosmetics.dart';
+import 'package:winter/GoodsTypePage/otherGoods.dart';
 import 'package:winter/AdapterAndHelper/buildRoteFloatingBtn.dart';
 
 class TradeInfo extends StatefulWidget {
@@ -51,22 +57,22 @@ class TradeInfoState extends State<TradeInfo> with TickerProviderStateMixin{
                         child: AllGoods(),
                       ),
                       Center(
-                        child: Text("这是数码产品"),
+                        child: DigitalProduct(),
                       ),
                       Center(
-                        child: Text("这是二手书"),
+                        child: UsedBook(),
                       ),
                       Center(
-                        child: Text("这是食物"),
+                        child: Food(),
                       ),
                       Center(
-                        child: Text("这是生活用品"),
+                        child: DailyNecessity(),
                       ),
                       Center(
-                        child: Text("这是美妆用品"),
+                        child: Cosmetics(),
                       ),
                       Center(
-                        child: Text("这是其他物品"),
+                        child: OtherGoods(),
                       ),
                     ],
                   ),
