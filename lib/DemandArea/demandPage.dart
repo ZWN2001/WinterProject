@@ -89,7 +89,7 @@ class DemandPageState extends State<DemandPage> {
             startNum = 1;
             return;
           }
-          if (i == reservedList.length-1) {
+          if (i == reservedList.length) {
             print("没有更多数据");
             return;
           }
@@ -166,7 +166,7 @@ class DemandPageState extends State<DemandPage> {
         child: ListView.builder(
           scrollDirection: Axis.vertical,
           controller: _scrollController,
-          itemCount: ListData.length,
+          itemCount: tempList.length,
           itemBuilder: (context, index){
             return Material(
               child: itemWidget(index),
@@ -210,7 +210,7 @@ class DemandPageState extends State<DemandPage> {
                       child: Row (
                         children: [
                           Expanded(
-                            flex: 1,
+                            flex: 2,
                             child: ClipOval(
                               clipper: _MyClipper(),
                               child: Image.network(ListData[index]["headImage"],
@@ -219,15 +219,22 @@ class DemandPageState extends State<DemandPage> {
                             ),
                           ),
                           Expanded(
-                              flex: 4,
-                              child: Text(
-                                ListData[index]["userName"],
+                              flex: 9,
+                              child: ListTile(
+                                title: Text(tempList[index].account,
+                                style: TextStyle(
+                                  color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
+                                ),),
+                                subtitle: Text("id."+tempList[index].wantId.toString()),
+                              )
+                             /* Text(
+                                tempList[index].account,
                                 style: TextStyle(
                                   color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
                                   //color: Colors.white,
                                   fontSize: 17,
                                 ),
-                              ))
+                              )*/)
                         ],
                       ),
                     ),
@@ -247,7 +254,7 @@ class DemandPageState extends State<DemandPage> {
                       child: Container(
                           padding: EdgeInsets.fromLTRB(55, 5, 5, 0),
                           child: ExpandbaleText(
-                            text: ListData[index]["demand"],
+                            text: tempList[index].description,
                             maxLines: 3,
                             style: TextStyle(fontSize: 15, color: DarkModeModel.darkMode ? Colors.white : Colors.black87),
                           )
