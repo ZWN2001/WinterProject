@@ -25,7 +25,7 @@ class Splash extends StatelessWidget {
                 'MyHomePage': (context) => MyHomePage(),
                 'LoginPage': (context) => LoginPage(),
                 'add': (context) => TabBarForAdd(),
-                'search': (context) => SearchPage(),
+                'search': (context) => SearchPageWidget(),
                 'home': (context) => Home(),
               },
               theme: DarkModeModel.darkMode
