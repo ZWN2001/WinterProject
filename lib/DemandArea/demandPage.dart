@@ -4,9 +4,11 @@ import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:provider/provider.dart'hide BuildContext;
 import 'package:winter/AdapterAndHelper/buildRoteFloatingBtn.dart';
 import 'package:winter/AdapterAndHelper/expandableText.dart';
+import 'package:winter/AdapterAndHelper/getUsername.dart';
 import 'package:winter/DemandArea/demandClass.dart';
 import 'package:winter/Basic/login.dart';
 import 'package:toast/toast.dart';
+import 'package:winter/AdapterAndHelper/getHeadImage.dart';
 
 
 class DemandPage extends StatefulWidget {
@@ -32,6 +34,8 @@ class DemandPageState extends State<DemandPage> {
   List<Demand> demandList = new List();
   List<Demand> tempList = new List();
   Iterable<Demand> reservedList = new List();
+  String _headImageUrl;
+  //String userName;
   int startNum = 0;
   int _page = 1;
   bool isLoading = false;
@@ -39,8 +43,15 @@ class DemandPageState extends State<DemandPage> {
   
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    getHeadImages.getHeadImage(context).then((value) {
+      print(value);
+      _headImageUrl = value;
+    });
+    /*getUserName.getUsername(context).then((value) {
+      print(value);
+      userName = value;
+    });*/
     _getDemandData().then((value) {
       _transferIntoLocalList();
     });
@@ -212,10 +223,14 @@ class DemandPageState extends State<DemandPage> {
                           Expanded(
                             flex: 2,
                             child: ClipOval(
-                              clipper: _MyClipper(),
-                              child: Image.network(ListData[index]["headImage"],
-                                fit: BoxFit.fill,
-                              ),
+                              child: _headImageUrl == null
+                                  ? Image.asset(
+                                'images/defaultHeadImage.png',
+                                color: Colors.grey,
+                                fit: BoxFit.scaleDown,)
+                                  : Image.network(
+                                _headImageUrl,
+                                fit: BoxFit.cover,)
                             ),
                           ),
                           Expanded(
