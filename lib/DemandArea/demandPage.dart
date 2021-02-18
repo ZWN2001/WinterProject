@@ -8,7 +8,7 @@ import 'package:winter/AdapterAndHelper/getUsername.dart';
 import 'package:winter/DemandArea/demandClass.dart';
 import 'package:winter/Basic/login.dart';
 import 'package:toast/toast.dart';
-import 'package:winter/AdapterAndHelper/getHeadImage.dart';
+import 'package:winter/AdapterAndHelper/headImage.dart';
 
 
 class DemandPage extends StatefulWidget {
@@ -44,7 +44,7 @@ class DemandPageState extends State<DemandPage> {
   @override
   void initState() {
     super.initState();
-    getHeadImages.getHeadImage(context).then((value) {
+    HeadImage.getHeadImage(context).then((value) {
       print(value);
       _headImageUrl = value;
     });
