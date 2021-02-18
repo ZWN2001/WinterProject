@@ -346,7 +346,7 @@ class SearchPageState extends State<SearchPageWidget> {
     }).toList();
   }
 
-  _transferIntoLocalList() {
+  _transferIntoLocalList(List commodityList) {
       if (commodityList != null) {
         reservedList = commodityList.reversed;//确保时间顺序展示
         print(reservedList);
@@ -388,7 +388,7 @@ class SearchPageState extends State<SearchPageWidget> {
         isCommodity=true;
         realTimeSearchUrl = "http://widealpha.top:8080/shop/commodity/commodity";
         _getIDResult(widget,key,realTimeSearchUrl,isCommodity);
-        _transferIntoLocalList();
+        _transferIntoLocalList(commodityList);
         break;
       case "按关键字搜索需求":
         print('按关键字搜索需求');
@@ -474,7 +474,7 @@ class SearchPageState extends State<SearchPageWidget> {
 //按关键词搜索商品
   Widget _commodityKeywordResult(List goodsData) {
     commodityList = goodsData.map((e) => Commodity.fromJson(e)).toList();
-    _transferIntoLocalList();
+    _transferIntoLocalList(commodityList);
     return Container(
           margin: EdgeInsets.only(top: 20),
           child:GridView.builder(
@@ -517,33 +517,6 @@ class SearchPageState extends State<SearchPageWidget> {
       ),
     );
   }
-
-  // _transferIntoLocalList() {
-  //   if(LoginPageState.logged) {
-  //     if (commodityList != null) {
-  //       reservedList = commodityList.reversed;//确保时间顺序展示
-  //       print(reservedList);
-  //       print(reservedList.length);
-  //       //每次加载10条商品信息
-  //       for (int i = 0; i < 10; i++) {
-  //         startNum = i+1;
-  //         if (reservedList.length == 1){
-  //           tempList.insert(0, reservedList.elementAt(0));
-  //           startNum = 1;
-  //           return;
-  //         }
-  //         if (i == reservedList.length - 1){
-  //           print("没有更多数据");
-  //           //startNum = i;
-  //           return;
-  //         }
-  //         //tempList[i] = reservedList.elementAt(i);
-  //         tempList.insert(i, reservedList.elementAt(i));
-  //         print(tempList[i].image);
-  //       }
-  //     }
-  //   }
-  // }
 
   //将所有图片放入一个list，默认加载第一张
   String _imageToList(int temp) {
