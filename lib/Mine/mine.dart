@@ -4,6 +4,7 @@ import 'package:provider/provider.dart'hide BuildContext;
 import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:winter/AdapterAndHelper/getHeadImage.dart';
+import 'package:winter/AdapterAndHelper/getUsername.dart';
 import 'package:winter/Basic/login.dart';
 import 'MyRelease/myReleaseTabBar.dart';
 import 'PersonalInfo/showInfo.dart';
@@ -42,7 +43,7 @@ class MinePageState extends State<MinePage> {
         print(value);
         _headImageUrl=value;
       });
-      _getUsername().then((value) {
+      getUserName.getUsername(context).then((value) {
         _username=value;
       });
       print('headImageUrl:$_headImageUrl');
@@ -445,29 +446,29 @@ class MinePageState extends State<MinePage> {
           MaterialPageRoute(builder: (context) => CropImageRoute(image)));;
     }
     setState(() {
-      initState();//TODO 此处应该是局部更新
+
     });
   }
 
 
-  Future<String> _getUsername() async {
-    Response response=await Dio().post(
-      'http://widealpha.top:8080/shop/user/username',
-      options:
-          Options(headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
-    );
-      print('用户名：$response');
-      if (response.data['code'] == 0) {
-        print(response.data['data'].toString());
-        return response.data['data'].toString();
-      } else if (response.data['code'] == -1) {
-        Toast.show("您还未设置自己的用户名哦", context,
-            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-      } else {
-        Toast.show("获取用户名失败", context,
-            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-      }
-  }
+  // Future<String> _getUsername() async {
+  //   Response response=await Dio().post(
+  //     'http://widealpha.top:8080/shop/user/username',
+  //     options:
+  //         Options(headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
+  //   );
+  //     print('用户名：$response');
+  //     if (response.data['code'] == 0) {
+  //       print(response.data['data'].toString());
+  //       return response.data['data'].toString();
+  //     } else if (response.data['code'] == -1) {
+  //       Toast.show("您还未设置自己的用户名哦", context,
+  //           duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+  //     } else {
+  //       Toast.show("获取用户名失败", context,
+  //           duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+  //     }
+  // }
 
   // Future<String> _getHeadImage() async {
   //   Response response=await Dio().post(
