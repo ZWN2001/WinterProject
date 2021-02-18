@@ -1,10 +1,9 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'hide BuildContext;
 import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
-import 'package:winter/AdapterAndHelper/getHeadImage.dart';
 import 'package:winter/AdapterAndHelper/getUsername.dart';
+import 'package:winter/AdapterAndHelper/headImage.dart';
 import 'package:winter/Basic/login.dart';
 import 'MyRelease/myReleaseTabBar.dart';
 import 'PersonalInfo/showInfo.dart';
@@ -39,7 +38,7 @@ class MinePageState extends State<MinePage> {
     super.initState();
     print('initing....');
     if(LoginPageState.logged) {
-      getHeadImages.getHeadImage(context).then((value){
+      HeadImage.getHeadImage(context).then((value){
         print(value);
         _headImageUrl=value;
       });
@@ -350,16 +349,19 @@ class MinePageState extends State<MinePage> {
   Widget _logged() {
     return Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
       return
-        // Expanded(
-        // // color: DarkModeModel.darkMode ? Colors.black : Colors.white,
-        // child:
         Container(
           color: DarkModeModel.darkMode ? Colors.black26: Colors.blue,
             child: Row(
           children: [
             Container(
-              child: GestureDetector(
-                onTap: _chooseImage,
+              child:ChangeNotifierProvider<HeadImage>(
+                create: (_) => HeadImage(),
+                //可以使用child进行渲染UI，用法可以查看第一篇文章https://blog.csdn.net/Mr_Tony/article/details/111414413
+                builder: (myContext, child) {
+              return GestureDetector(
+                onTap:(){  HeadImage.chooseImage(context);
+                myContext.read<HeadImage>().refresh();
+                },
                 child: Container(
                   margin: EdgeInsets.fromLTRB(30, 8, 8, 8),
                   child: ClipOval(
@@ -373,14 +375,13 @@ class MinePageState extends State<MinePage> {
                               _headImageUrl,
                               fit: BoxFit.cover,
                             )),
-                ),
-              ),
+                )
+              );
+                  },),
             ),
             Expanded(
               child: Container(
                   margin: EdgeInsets.only(right: 15, bottom: 20),
-                  // color: Colors.indigoAccent,
-                  // child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -437,19 +438,17 @@ class MinePageState extends State<MinePage> {
   }
 
   ///从相册选取
-  Future _chooseImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    if (image == null) {
-      return 0;
-    } else {
-         Navigator.push(context,
-          MaterialPageRoute(builder: (context) => CropImageRoute(image)));;
-    }
-    setState(() {
-
-    });
-  }
-
+  // Future _chooseImage() async {
+  //   HeadImage.chooseImage(context);
+  //   context.read<HeadImage>();
+  //   // var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+  //   // if (image == null) {
+  //   //   return 0;
+  //   // } else {
+  //   //      Navigator.push(context,
+  //   //       MaterialPageRoute(builder: (context) => CropImageRoute(image)));;
+  //   // }
+  // }
 
   // Future<String> _getUsername() async {
   //   Response response=await Dio().post(

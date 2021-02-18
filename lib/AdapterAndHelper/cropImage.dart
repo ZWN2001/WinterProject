@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_crop/image_crop.dart';
 import 'package:toast/toast.dart';
@@ -34,6 +35,7 @@ class _CropImageRouteState extends State<CropImageRoute> {
         body: Container(
           height: height,
           width: width,
+          margin: EdgeInsets.only(top: 25),
           child: Column(
             children: <Widget>[
               Container(
@@ -52,7 +54,7 @@ class _CropImageRouteState extends State<CropImageRoute> {
                   child: Icon(Icons.assignment_turned_in_rounded, size: 28,),
                   onPressed: () {
                    _crop(widget.image);
-                  },
+              },
                 ),
               ),
             ],
@@ -83,7 +85,6 @@ class _CropImageRouteState extends State<CropImageRoute> {
     });
   }
 
-  FormData formData ;
   ///上传头像
   Future<void> upload(MultipartFile file) async {
     Response response;
@@ -93,9 +94,9 @@ class _CropImageRouteState extends State<CropImageRoute> {
           'image': file
         },
     );
-    print('照片上传：$response');
+    print('头像上传：$response');
     if (response.data['code'] == 0) {
-      Toast.show("图片上传成功", context,
+      Toast.show("头像上传成功", context,
           duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
       Navigator.of(context).pop();
     }  else {

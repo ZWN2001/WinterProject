@@ -1,9 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:toast/toast.dart';
 import 'package:winter/Basic/login.dart';
 
-class getHeadImages{
+import 'cropImage.dart';
+
+class HeadImage with ChangeNotifier{
   static Future<String> getHeadImage(BuildContext context) async {
     Response response=await Dio().post(
       'http://widealpha.top:8080/shop/user/headImage',
@@ -20,5 +24,17 @@ class getHeadImages{
       Toast.show("获取头像失败", context,
           duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
     }
+  }
+  static Future chooseImage(BuildContext context) async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    if (image == null) {
+      return 0;
+    } else {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => CropImageRoute(image)));;
+    }
+  }
+  void refresh(){
+    notifyListeners();
   }
 }

@@ -37,7 +37,7 @@ class SearchPageState extends State<SearchPageWidget> {
   ///建议
   List<String> recommend = ['数码产品', '二手书', '食品', '生活用品', '美妆', '其他'];
   ///历史
-  searchHistory history = new searchHistory();
+  SearchHistory history = new SearchHistory();
 
   List<Commodity> commodityList = new List();
   List<Commodity> tempList = new List();
@@ -99,8 +99,8 @@ class SearchPageState extends State<SearchPageWidget> {
     return Scaffold(
       body: Container(
         margin: EdgeInsets.only(top: 40),
-        child: ChangeNotifierProvider<searchHistory>(
-            create: (_) => searchHistory(),
+        child: ChangeNotifierProvider<SearchHistory>(
+            create: (_) => SearchHistory(),
             //可以使用child进行渲染UI，用法可以查看第一篇文章https://blog.csdn.net/Mr_Tony/article/details/111414413
             builder: (myContext, child) {
               return Column(
@@ -153,7 +153,7 @@ class SearchPageState extends State<SearchPageWidget> {
                           iconSize: 25,
                           icon: Icon(Icons.clear),
                           onPressed: () {
-                            myContext.read<searchHistory>().refresh();
+                            myContext.read<SearchHistory>().refresh();
                             setState(() {
                               history.initHistory();
                               controller.text = "";
@@ -175,8 +175,8 @@ class SearchPageState extends State<SearchPageWidget> {
 
   ///默认显示(推荐 + 历史记录)
   Widget defaultDisplay() {
-    return ChangeNotifierProvider<searchHistory>(
-        create: (_) => searchHistory(),
+    return ChangeNotifierProvider<SearchHistory>(
+        create: (_) => SearchHistory(),
         //可以使用child进行渲染UI，用法可以查看第一篇文章https://blog.csdn.net/Mr_Tony/article/details/111414413
         builder: (myContext, child) {
           return Container(
@@ -273,7 +273,7 @@ class SearchPageState extends State<SearchPageWidget> {
                           onPressed: () {
                             //TODO
                             SharedPreferenceUtil.delHistories();
-                            myContext.read<searchHistory>().refresh();
+                            myContext.read<SearchHistory>().refresh();
                             setState(() {
                               history.history=new List();
                             });
@@ -281,7 +281,7 @@ class SearchPageState extends State<SearchPageWidget> {
                     ),
                   ],
                 ),
-                Consumer<searchHistory>(
+                Consumer<SearchHistory>(
                   builder: (_, searchHistory, child) {
                     //最后一个参数取决于父组件的child值，该值可以决定外部不用修改
                     return Container(
