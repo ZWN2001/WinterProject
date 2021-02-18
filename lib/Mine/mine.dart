@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'hide BuildContext;
 import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
+import 'package:winter/AdapterAndHelper/getHeadImage.dart';
 import 'package:winter/Basic/login.dart';
 import 'MyRelease/myReleaseTabBar.dart';
 import 'PersonalInfo/showInfo.dart';
@@ -37,7 +38,7 @@ class MinePageState extends State<MinePage> {
     super.initState();
     print('initing....');
     if(LoginPageState.logged) {
-      _getHeadImage().then((value){
+      getHeadImages.getHeadImage(context).then((value){
         print(value);
         _headImageUrl=value;
       });
@@ -468,21 +469,21 @@ class MinePageState extends State<MinePage> {
       }
   }
 
-  Future<String> _getHeadImage() async {
-    Response response=await Dio().post(
-      'http://widealpha.top:8080/shop/user/headImage',
-      options:
-          Options(headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
-    );
-      print('头像：$response');
-      if (response.data['code'] == 0) {
-        return response.data['data'];
-      } else if (response.data['code'] == -1) {
-        Toast.show("您还未设置自己的头像哦", context,
-            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-      } else {
-        Toast.show("获取头像失败", context,
-            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-      }
-  }
+  // Future<String> _getHeadImage() async {
+  //   Response response=await Dio().post(
+  //     'http://widealpha.top:8080/shop/user/headImage',
+  //     options:
+  //         Options(headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
+  //   );
+  //     print('头像：$response');
+  //     if (response.data['code'] == 0) {
+  //       return response.data['data'];
+  //     } else if (response.data['code'] == -1) {
+  //       Toast.show("您还未设置自己的头像哦", context,
+  //           duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+  //     } else {
+  //       Toast.show("获取头像失败", context,
+  //           duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+  //     }
+  // }
 }
