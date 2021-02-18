@@ -64,6 +64,7 @@ class MyNeedsState extends State<MyNeeds> {
   List<Demand> myDemandList = new List();
   List<Demand> tempList = new List();
   Iterable<Demand> reservedList = new List();
+  String userName;
   int startNum = 0;
   int _page = 1;
   bool isLoading = false;
@@ -71,8 +72,8 @@ class MyNeedsState extends State<MyNeeds> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    _getUserName();
     _getMyDemandData().then((value) {
       _transferIntoLocalList();
     });
@@ -142,7 +143,7 @@ class MyNeedsState extends State<MyNeeds> {
           startNum = 1;
           return;
         }
-        if (i == reservedList.length-1) {
+        if (i == reservedList.length) {
           print("后端没有更多数据了");
           return;
         }
@@ -151,9 +152,20 @@ class MyNeedsState extends State<MyNeeds> {
     }
   }
 
+  Future<void> _getUserName() async {
+    Response response;
+    Dio dio = new Dio();
+    response = await dio.post('http://widealpha.top:8080/shop/user/username',
+        options: Options(headers: {'Authorization':'Bearer'+LoginPageState.token}));
+    String feedback = response.data.toString();
+    print(feedback);
+    setState(() {
+      userName = response.data['data'];
+    });
+  }
+
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _scrollController.dispose();
   }
@@ -220,12 +232,14 @@ class MyNeedsState extends State<MyNeeds> {
   }
 
   Widget itemWidget2(int temp) {
-    return InkWell(
-        onLongPress: () {},
-          child: Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
-            return Container(
-              child: IntrinsicHeight(
-                child:  Card(
+    return MultiProvider(
+      providers:[
+        ChangeNotifierProvider(create: (child) => DarkModeModel())
+      ],
+      child: InkWell(
+          onLongPress: () {},
+          child: Container(
+            child: Card(
                   color: Colors.blue,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10),),
@@ -235,18 +249,17 @@ class MyNeedsState extends State<MyNeeds> {
                   clipBehavior: Clip.none,
                   margin: EdgeInsets.all(5),
                   child: ListTile(
-                      title: Text(listData[temp]['title']),
+                      title: Text(userName),
                       subtitle: ExpandbaleText(
-                        text: listData[temp]['price'],
+                        text: tempList[temp].description,
                         maxLines: 5,
                       )
                   ),
                 )
-              ),
-            );
 
-          },),
-        );
+          )
+      )
+    );
   }
 
   //每个商品的窗口
