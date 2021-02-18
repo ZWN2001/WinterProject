@@ -128,6 +128,4 @@ class SharedPreferenceUtil {
     print('当前列表保存的历史记录数：$num');
     return historiesList;
   }
-
-
 }
