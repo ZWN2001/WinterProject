@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
+import 'package:winter/AdapterAndHelper/getUsername.dart';
 import 'package:winter/Basic/login.dart';
 class AddNeeds extends StatelessWidget{
   TextEditingController _needsController=TextEditingController();
@@ -50,12 +51,16 @@ class AddNeeds extends StatelessWidget{
    );
   }
   void _submit( String description,BuildContext context) {
+    String username;
+    getUserName.getUsername(context).then((value) {
+      username=value;
+    });
     Response response;
     Dio().post('http://widealpha.top:8080/shop/want/addWant',
         options: Options(
             headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
         queryParameters: {
-          'title': 'title',
+          'title': username,
           'description': description,
         }).then((value) {
       response = value;

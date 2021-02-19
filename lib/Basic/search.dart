@@ -5,7 +5,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:winter/AdapterAndHelper/darkModeModel.dart';
+import 'package:winter/AdapterAndHelper/expandableText.dart';
 import 'package:winter/AdapterAndHelper/searchHistory.dart';
+import 'package:winter/DemandArea/demandClass.dart';
 import 'package:winter/GoodsDetail/commodityClass.dart';
 import 'package:winter/GoodsDetail/topNavigatorBar.dart';
 import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';
@@ -39,15 +41,17 @@ class SearchPageState extends State<SearchPageWidget> {
   ///历史
   SearchHistory history = new SearchHistory();
 
+  List<Demand> demandList = new List();
   List<Commodity> commodityList = new List();
-  List<Commodity> tempList = new List();
-  Iterable<Commodity> reservedList = new List();
+  List tempList = new List();
+  Iterable reservedList = new List();
   int startNum = 0;
   int _page = 1;
   bool isLoading = false;//是否正在加载数据
   ScrollController _scrollController = ScrollController();
   ///实时搜索url
   String realTimeSearchUrl;
+  String _headImageUrl;
 
   //初始化
   @override
@@ -101,7 +105,6 @@ class SearchPageState extends State<SearchPageWidget> {
         margin: EdgeInsets.only(top: 40),
         child: ChangeNotifierProvider<SearchHistory>(
             create: (_) => SearchHistory(),
-            //可以使用child进行渲染UI，用法可以查看第一篇文章https://blog.csdn.net/Mr_Tony/article/details/111414413
             builder: (myContext, child) {
               return Column(
                 children: <Widget>[
@@ -346,9 +349,9 @@ class SearchPageState extends State<SearchPageWidget> {
     }).toList();
   }
 
-  _transferIntoLocalList(List commodityList) {
-      if (commodityList != null) {
-        reservedList = commodityList.reversed;//确保时间顺序展示
+  _transferIntoLocalList(List list) {
+      if (list != null) {
+        reservedList = list.reversed;//确保时间顺序展示
         print(reservedList);
         print(reservedList.length);
         //每次加载10条商品信息
@@ -388,7 +391,7 @@ class SearchPageState extends State<SearchPageWidget> {
         isCommodity=true;
         realTimeSearchUrl = "http://widealpha.top:8080/shop/commodity/commodity";
         _getIDResult(widget,key,realTimeSearchUrl,isCommodity);
-        _transferIntoLocalList(commodityList);
+        // _transferIntoLocalList(commodityList);
         break;
       case "按关键字搜索需求":
         print('按关键字搜索需求');
@@ -396,6 +399,7 @@ class SearchPageState extends State<SearchPageWidget> {
         realTimeSearchUrl =
         "http://widealpha.top:8080/shop/want/searchCommodity";
         _getKeywordResult(widget, key, realTimeSearchUrl, isCommodity);
+        // _transferIntoLocalList(demandList);
         break;
       case "按ID搜索需求":
         print('按ID搜索需求');
@@ -490,7 +494,7 @@ class SearchPageState extends State<SearchPageWidget> {
               itemCount: tempList.length,
               itemBuilder: (context,index){
                 return Material(
-                  child: itemWidget(index),
+                  child: commodityItemWidget(index),
                 );
               }),
     );
@@ -508,12 +512,20 @@ class SearchPageState extends State<SearchPageWidget> {
   }
   //按关键词搜索需求
   Widget _needsKeywordresult(List needsData) {
+    demandList = needsData.map((e) => Demand.fromJson(e)).toList();
+    _transferIntoLocalList(demandList);
     return Expanded(
       child: Container(
-        margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
-        child: Card(
-          child: Text('id'),
-        ),
+          child: ListView.builder(
+              scrollDirection: Axis.vertical,
+              controller: _scrollController,
+              itemCount: tempList.length,
+              itemBuilder: (context, index){
+                return Material(
+                  child: demandItemWidget(index),
+                  //color: Colors.grey,
+                );
+              })
       ),
     );
   }
@@ -549,11 +561,11 @@ class SearchPageState extends State<SearchPageWidget> {
   }
 
   //每个商品的窗口
-  Widget itemWidget(int temp) {
+  Widget commodityItemWidget(int index) {
     return InkWell(
         onTap: (){
           Navigator.push(context,new MaterialPageRoute(builder: (context){
-            return new TopNavigatorBar(commodityId: tempList[temp].commodityId);
+            return new TopNavigatorBar(commodityId: tempList[index].commodityId);
           }));
         },//点击后进入详细页面
         child:MultiProvider(
@@ -571,9 +583,9 @@ class SearchPageState extends State<SearchPageWidget> {
                           child:SizedBox(
                             height: 130,
                             child: //Text("暂时没有图片哦", style: TextStyle(color: Colors.grey, fontSize: 10),textAlign: TextAlign.center,)
-                            tempList[temp].image.isEmpty
+                            tempList[index].image.isEmpty
                                 ? Text("暂时没有图片哦", style: TextStyle(color: Colors.grey, fontSize: 10),textAlign: TextAlign.center)
-                                : Image.network(_imageToList(temp), fit: BoxFit.cover,),
+                                : Image.network(_imageToList(index), fit: BoxFit.cover,),
                           )
                         /*Image.network(
                             tempList[temp].image,
@@ -586,7 +598,7 @@ class SearchPageState extends State<SearchPageWidget> {
                     children: [
                       Expanded(
                           child:Text(
-                            tempList[temp].title,
+                            tempList[index].title,
                             textAlign: TextAlign.start,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -602,7 +614,7 @@ class SearchPageState extends State<SearchPageWidget> {
                     children: [
                       Expanded(
                           child:Text(
-                            tempList[temp].price.toString(),
+                            tempList[index].price.toString(),
                             textAlign: TextAlign.start,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -623,7 +635,92 @@ class SearchPageState extends State<SearchPageWidget> {
     )
     );
   }
-
+  
+  //每个需求的窗口
+  Widget demandItemWidget(int index) {
+    return InkWell(
+      onTap: (){},
+      child: Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
+        return Container(
+          padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
+          color: !DarkModeModel.darkMode ? Colors.white : Colors.black87,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children:<Widget> [
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      height: 60,
+                      child: Row (
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: ClipOval(
+                                child: _headImageUrl == null
+                                    ? Image.asset(
+                                  'images/defaultHeadImage.png',
+                                  color: Colors.grey,
+                                  fit: BoxFit.scaleDown,)
+                                    : Image.network(
+                                  _headImageUrl,
+                                  fit: BoxFit.cover,)
+                            ),
+                          ),
+                          Expanded(
+                              flex: 9,
+                              child: ListTile(
+                                title: Text(tempList[index].account,
+                                  style: TextStyle(
+                                    color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
+                                  ),),
+                                subtitle: Text("id."+tempList[index].wantId.toString()),
+                              )
+                            /* Text(
+                                tempList[index].account,
+                                style: TextStyle(
+                                  color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
+                                  //color: Colors.white,
+                                  fontSize: 17,
+                                ),
+                              )*/)
+                        ],
+                      ),
+                    ),
+                    /*child: ClipOval(
+                      child: Image.network(ListData[index]["headImage"],
+                      width: 30,
+                      height: 30,
+                      fit: BoxFit.fill,
+                      ),
+                    ),*/
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                      child: Container(
+                          padding: EdgeInsets.fromLTRB(55, 5, 5, 0),
+                          child: ExpandbaleText(
+                            text: tempList[index].description,
+                            maxLines: 3,
+                            style: TextStyle(fontSize: 15, color: DarkModeModel.darkMode ? Colors.white : Colors.black87),
+                          )
+                      ))
+                ],
+              ),
+              Divider(
+                color: Colors.grey,
+                indent: 40,
+              )
+            ],
+          ),
+        );
+      }),
+    );
+  }
+  
   Widget nullResult() {
     return Expanded(
       child: Column(

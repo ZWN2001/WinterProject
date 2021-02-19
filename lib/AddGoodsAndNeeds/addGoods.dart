@@ -434,10 +434,9 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
       if (addImagesResponse.data['code'] == 0) {
         imageList.add(addImagesResponse.data['data']);
       } else {
-        return null;
       }
     }
-    print(imageList.toString());
+    print('图片列表： ${imageList.toString()}');
     return imageList.toString();
   }
 

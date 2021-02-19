@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
+import 'package:winter/AdapterAndHelper/getUsername.dart';
 import 'package:winter/Basic/login.dart';
 import 'package:winter/Mine/PersonalInfo/userInfo.dart';
 import 'changeInfo.dart';
@@ -29,13 +30,13 @@ class ShowInfoPage extends StatefulWidget{
   MyInfoState createState() => new MyInfoState();
 }
 
-Future<UserInfo> _getInfo(BuildContext context) async {
+Future _getInfo(BuildContext context) async {
   Response response=await  Dio().post('http://widealpha.top:8080/shop/user/userInfo',
       options: Options(headers:{'Authorization':'Bearer '+LoginPageState.token}),);
   print(response);
   if (response.data['code'] == 0) {
-    print('this userInfo:${response.data['data']}');
-       return response.data['data'].map((e) =>UserInfo.fromJson(e));
+    print('this userInfo:${response}');
+       return UserInfo.fromJson(response.data['data']);
     }  else if (response.data['code'] == -6) {
       Toast.show("登陆状态错误", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
       return null;
@@ -48,20 +49,21 @@ Future<UserInfo> _getInfo(BuildContext context) async {
     }
 }
 class MyInfoState extends State<ShowInfoPage> {
-  String _account;
-  String _headImage;
-  int _age;
-  String _location;
-  String _introduction;
-  int _sex;
-  String _name;
-  UserInfo _userInfo;
+  String _username;
+  UserInfo _userInfo=UserInfo(LoginPageState.account, '', 0, '', '', 0, '');
   @override
   void initState() {
     super.initState();
     // TODO: implement initState
+    getUserName.getUsername(context).then((value) {
+      _username=value;
+    });
     _getInfo(context).then((value) {
-      _userInfo=value;
+      if(mounted) {
+        setState(() {
+          _userInfo = value;
+        });
+      }
     });
     print('userInfo:$_userInfo');
   }
@@ -86,7 +88,25 @@ class MyInfoState extends State<ShowInfoPage> {
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
-                    Expanded(child: Text('?')),
+                    Expanded(
+                        child: Container(
+                          margin: EdgeInsets.only(right: 30),
+                          alignment: Alignment.centerRight,
+                          child: ClipOval(
+                              child:
+                              _userInfo.headImage?.toString()==null ?
+                              Image.asset(
+                                'images/defaultHeadImage.png',
+                                color: Colors.black,
+                                fit: BoxFit.cover,
+                              )
+                                  : Image.network(
+                                _userInfo.headImage?.toString(),
+                                fit: BoxFit.cover,
+                              )
+                          ),
+                        )
+                    ),
                   ],
                 ),
               ),
@@ -101,7 +121,16 @@ class MyInfoState extends State<ShowInfoPage> {
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
-                    // Expanded(child: Text()),
+                    Expanded(
+                      child:Container(
+                        alignment: Alignment.centerRight,
+                        margin: EdgeInsets.only(right: 30),
+                        child: Text(
+                            _username?.toString()??'未设置',
+                          style: TextStyle(fontSize: 20),
+                        )
+                    ),
+                    )
                   ],
                 ),
               ),
@@ -116,7 +145,16 @@ class MyInfoState extends State<ShowInfoPage> {
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
-                    Expanded(child: Text(LoginPageState.account)),
+                    Expanded(
+                      child:Container(
+                          alignment: Alignment.centerRight,
+                          margin: EdgeInsets.only(right: 30),
+                        child: Text(
+                          LoginPageState.account,
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -131,7 +169,16 @@ class MyInfoState extends State<ShowInfoPage> {
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
-                    Expanded(child: Text(_userInfo.name??'未设置')),
+                    Expanded(
+                      child:Container(
+                          alignment: Alignment.centerRight,
+                          margin: EdgeInsets.only(right: 30),
+                        child: Text(
+                          _userInfo.name?.toString()??'未设置',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -146,7 +193,16 @@ class MyInfoState extends State<ShowInfoPage> {
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
-                    Expanded(child: Text('${_userInfo.age}'??'未设置')),
+                    Expanded(
+                      child:Container(
+                          alignment: Alignment.centerRight,
+                          margin: EdgeInsets.only(right: 30),
+                        child: Text(
+                          '${_userInfo.age?.toString()??'未设置'}',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -161,7 +217,16 @@ class MyInfoState extends State<ShowInfoPage> {
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
-                    Expanded(child: Text(_userInfo.location)??'未设置'),
+                    Expanded(
+                      child:Container(
+                          alignment: Alignment.centerRight,
+                          margin: EdgeInsets.only(right: 30),
+                        child: Text(
+                          _userInfo.location?.toString()??'未设置',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -170,7 +235,7 @@ class MyInfoState extends State<ShowInfoPage> {
         ),
         Card(
           child: Container(
-            margin: EdgeInsets.fromLTRB(20, 15, 0, 15),
+            margin: EdgeInsets.fromLTRB(16, 15, 0, 15),
             child: Row(
               children: [
                 Container(
@@ -181,7 +246,16 @@ class MyInfoState extends State<ShowInfoPage> {
                     style: TextStyle(fontSize: 20),
                   ),
                 ),
-                Expanded(child: Text(_userInfo.introduction)??'未设置'),
+                Expanded(
+                  child:Container(
+                      alignment: Alignment.centerRight,
+                      margin: EdgeInsets.only(right: 26),
+                    child: Text(
+                      _userInfo.introduction?.toString()??'未设置',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

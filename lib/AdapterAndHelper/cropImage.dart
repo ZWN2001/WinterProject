@@ -75,11 +75,12 @@ class _CropImageRouteState extends State<CropImageRoute> {
           file: originalFile,
           area: crop.area,
         ).then((value) async {
-          MultipartFile myfile = await MultipartFile.fromFile(value.path,contentType:MediaType("image", "jpg"));
+          MultipartFile myfile = await MultipartFile.fromFile(value.path,filename: 'headImage',contentType:MediaType("image", "jpg"));
+          print(myfile);
           upload(myfile);
         });
       } else {
-        MultipartFile myfile = await MultipartFile.fromFile(originalFile.path,contentType:MediaType("image", "jpg"));
+        MultipartFile myfile = await MultipartFile.fromFile(originalFile.path, filename: 'headImage',contentType:MediaType("image", "jpg"));
         upload(myfile);
       }
     });
