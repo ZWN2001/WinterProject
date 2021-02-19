@@ -300,7 +300,7 @@ class myInfoState extends State<myInfo> {
                         child: Container(
                           margin: EdgeInsets.only(right: 30,left: 45),
                           alignment: Alignment.centerRight,
-                          child: _item( List.generate(200, (index) => (0 + index).toString()), _age, label: '岁'),
+                          child: _item( List.generate(200, (index) => (0 + index).toString()), _age??0, label: '岁'),
                           // child: TextFormField(
                           //   scrollPadding: EdgeInsets.all(0),
                             // controller: _age,
@@ -399,11 +399,11 @@ class myInfoState extends State<myInfo> {
                       child: TextFormField(
                         scrollPadding: EdgeInsets.all(0),
                         decoration: InputDecoration(
-                          hintText: '可添加自我介绍'
+                          helperText: '可添加自我介绍'
                         ),
                         controller: TextEditingController.fromValue(
                           TextEditingValue(
-                            text: _introduction??'可添加自我介绍',
+                            text: _introduction??' ',
                             selection: TextSelection.fromPosition(
                               TextPosition(
                                 affinity: TextAffinity.downstream,
@@ -435,7 +435,7 @@ class myInfoState extends State<myInfo> {
                 HeadImage.getHeadImage(context).then((value) {
                   _headImageUrl=value;
                 });
-                // _submitDetails(_headImageUrl, _age, _introduction, _sex, _name, _location, _username);
+                _submitDetails(_headImageUrl, _age, _introduction, _sex, _name, _location, _username);
               },
             ),
           ),
@@ -566,6 +566,7 @@ class myInfoState extends State<myInfo> {
     if (strEmpty(tname)) return sb.toString();
     sb.write(' - ');
     sb.write(tname);
+    _location=sb.toString();
     return sb.toString();
   }
   /// 字符串为空
@@ -602,7 +603,19 @@ class myInfoState extends State<myInfo> {
         print('longer >>> 返回数据：$p');
         print('longer >>> 返回数据类型：${p.runtimeType}');
         setState(() {
+          if (data == PickerDataType.sex) {
             selectSex = p;
+            switch(selectSex) {
+              case '男':
+                _sex=1;
+                break;
+              default:
+                _sex=0;
+                break;
+            }
+          }else{
+            _age=int.parse(p);
+          }
         });
       },
     );
