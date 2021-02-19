@@ -6,7 +6,7 @@ import 'package:winter/Basic/login.dart';
 class getOthersUserName{
   static Future<String> getOthersUsername(BuildContext context, String targetAccount) async {
     Response response=await Dio().post(
-      'http://widealpha.top:8080/shop/user/username',
+      'http://widealpha.top:8080/shop/user/othersUsername',
       options:
       Options(headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
       queryParameters: {
