@@ -159,6 +159,24 @@ class MyGoodsState extends State<MyGoods> {
       }
     }
   }
+  
+  Future<void> _deleteMyCommodity(int commodityId) async {
+    Dio dio = new Dio();
+    Response response = await dio.post('http://widealpha.top:8080/shop/commodity/deleteMyCommodity',
+    options: Options(headers: {'Authorization':'Bearer'+LoginPageState.token}),
+    queryParameters: {
+      'commodityId': commodityId
+    });
+    print('delete');
+    print(response.data.toString());
+    if (response.data['code'] == 0) {
+      if (response.data['data'] == true) {
+        Toast.show("删除成功", context, duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+      } else {
+        Toast.show("删除失败", context, duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -205,7 +223,7 @@ class MyGoodsState extends State<MyGoods> {
             //separatorBuilder: (BuildContext context, int index) => new Divider(),
             itemBuilder: (context, index) {
               return Slidable(
-                key: Key(index.toString()),
+                key: Key(UniqueKey().toString()),
                 controller: slidableController,
                 actionPane: SlidableScrollActionPane(),
                 actionExtentRatio: 0.2,
@@ -218,7 +236,11 @@ class MyGoodsState extends State<MyGoods> {
                       actionType == SlideActionType.primary
                           ? 'Dismiss Archive'
                           : 'Dismiss Delete');
-                    //setState(() {});
+                      setState(() {
+                        _deleteMyCommodity(tempList[index].commodityId).then((value) {
+                          tempList.removeAt(index);
+                        });
+                      });
                   },
                   onWillDismiss: (actionType) {
                     return showDialog<bool>(
@@ -247,7 +269,8 @@ class MyGoodsState extends State<MyGoods> {
                     color: Colors.red,
                     icon: Icons.delete,
                     closeOnTap: false,
-                    onTap: () => print("delete"),
+                    onTap: (){
+                    },
                   )
                 ],
               );
