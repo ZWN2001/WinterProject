@@ -142,13 +142,16 @@ class AllGoodsState extends State<AllGoods> {
           print("no information");
           return;
         } else {
-          setState(() {
-            List commodityJson = response.data['data'];
-            print("标记");
-            print(commodityJson);
-            commodityList = commodityJson.map((e) => Commodity.fromJson(e)).toList();
-            print(commodityList);
-          });
+          if (mounted) {
+            setState(() {
+              List commodityJson = response.data['data'];
+              print("标记");
+              print(commodityJson);
+              commodityList = commodityJson.map((e) => Commodity.fromJson(e)).toList();
+              print(commodityList);
+            });
+          }
+
         }
       }
     }
