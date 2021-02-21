@@ -79,6 +79,7 @@ class SearchPageState extends State<SearchPageWidget> {
         if (mounted) {
           setState(() {
             searchStr = "";
+            controller.text='';//TODO 想办法清空
             //默认显示
             centerContent = defaultDisplay();
             //显示历史记录
@@ -102,10 +103,7 @@ class SearchPageState extends State<SearchPageWidget> {
     return Scaffold(
       body: Container(
         margin: EdgeInsets.only(top: 40),
-        child: ChangeNotifierProvider<SearchHistory>(
-            create: (_) => SearchHistory(),
-            builder: (myContext, child) {
-              return Column(
+        child:Column(
                 children: <Widget>[
                   Row(
                     children: <Widget>[
@@ -151,7 +149,10 @@ class SearchPageState extends State<SearchPageWidget> {
                       ),
 
                       //清空按钮
-                      IconButton(
+                    ChangeNotifierProvider<SearchHistory>(
+                        create: (_) => SearchHistory(),
+                        builder: (myContext, child) {
+                          return IconButton(
                           iconSize: 25,
                           icon: Icon(Icons.clear),
                           onPressed: () {
@@ -160,7 +161,8 @@ class SearchPageState extends State<SearchPageWidget> {
                               history.initHistory();
                               controller.text = "";
                             });
-                          })
+                          });
+                        }),
                     ],
                   ),
                   Expanded(
@@ -169,8 +171,7 @@ class SearchPageState extends State<SearchPageWidget> {
                       ),
                   ),
                 ],
-              );
-            }),
+              )
       ),
     );
   }
@@ -467,112 +468,115 @@ class SearchPageState extends State<SearchPageWidget> {
   Widget _commodityIDResult(var goodsData) {
     _commodity=Commodity.fromJson(goodsData);
     _IdImageToList();
-    return DetailPageState().build(context);
-    // return Expanded(
-    //   child: Container(
-    //     padding: EdgeInsets.all(5.0),
-    //     child: ListView(
-    //       children:<Widget> [
-    //         Container(
-    //           width: MediaQuery.of(context).size.width,
-    //           height: 200.0,
-    //           child: Swiper(
-    //             itemBuilder: swiperBuilder,
-    //             itemCount: 6,
-    //             pagination: new SwiperPagination(
-    //                 builder: DotSwiperPaginationBuilder(
-    //                   color: Colors.black54,
-    //                   activeColor: Colors.white,
-    //                 )
-    //             ),
-    //             controller: new SwiperController(),
-    //             scrollDirection: Axis.horizontal,
-    //             onTap: (index){},
-    //           ),
-    //         ),
-    //         Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
-    //           return Container(
-    //             padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
-    //             child: Text(_commodity.title,
-    //               maxLines: 3,
-    //               style: TextStyle(
-    //                 color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
-    //                 fontSize: 16,
-    //               ),),
-    //           );
-    //         }),
-    //         Container(
-    //           //height: 40,
-    //           padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
-    //           child: Row(
-    //             children:<Widget> [
-    //               Expanded(
-    //                   flex: 1,
-    //                   child: Row(
-    //                     children: [
-    //                       Text("价格：￥"),
-    //                       Text(_commodity.price.toString(),style: TextStyle(
-    //                           color: Colors.red,
-    //                           fontSize: 18
-    //                       ),)
-    //                     ],
-    //                   )),
-    //               Expanded(
-    //                   flex: 1,
-    //                   child: Row(
-    //                     mainAxisAlignment: MainAxisAlignment.end,
-    //                     children:<Widget> [
-    //                       Icon(Icons.message, size: 18,),
-    //                       RichText(
-    //                           text: TextSpan(
-    //                               text: " 联系卖家",
-    //                               style: TextStyle(fontSize: 18, color: Colors.blue),
-    //                               recognizer: TapGestureRecognizer()
-    //                                 ..onTap = () {print("联系卖家");}//跳至聊天
-    //                           )
-    //                       )
-    //                     ],
-    //                   )),
-    //             ],
-    //           ),
-    //         ),
-    //         Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
-    //           return Container(
-    //             padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
-    //             child: Row(
-    //               children:<Widget> [
-    //                 Expanded(
-    //                     child: Divider(
-    //                       height: 10,
-    //                       color:DarkModeModel.darkMode ? Colors.white : Colors.black87,
-    //                       //indent: 120,
-    //                     )),
-    //                 Expanded(child: Text("详细介绍",
-    //                   style: TextStyle(
-    //                     color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
-    //                   ),
-    //                   textAlign: TextAlign.center,)),
-    //                 Expanded(
-    //                     child: Divider(
-    //                       height: 1,
-    //                       color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
-    //                       //indent: 120,
-    //                     ))
-    //               ],
-    //             ),
-    //           );
-    //         }),
-    //         Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
-    //           return Container(
-    //             padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
-    //             child: Text(_commodity.description,style: TextStyle(
-    //               color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
-    //             ),),
-    //           );}
-    //         )],
-    //     ),
-    //   ),
-    // );
+    return Expanded(
+      child: Container(
+        padding: EdgeInsets.all(5.0),
+        child: ListView(
+          children:<Widget> [
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: 200.0,
+              child: Swiper(
+                itemBuilder: swiperBuilder,
+                itemCount: 6,
+                pagination: new SwiperPagination(
+                    builder: DotSwiperPaginationBuilder(
+                      color: Colors.black54,
+                      activeColor: Colors.white,
+                    )
+                ),
+                controller: new SwiperController(),
+                scrollDirection: Axis.horizontal,
+                onTap: (index){},
+              ),
+            ),
+            // Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
+            //   return
+                Container(
+                padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
+                child: Text(_commodity.title,
+                  maxLines: 3,
+                  style: TextStyle(
+                    // color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
+                    fontSize: 16,
+                  ),),
+              ),
+            // }),
+            Container(
+              //height: 40,
+              padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
+              child: Row(
+                children:<Widget> [
+                  Expanded(
+                      flex: 1,
+                      child: Row(
+                        children: [
+                          Text("价格：￥"),
+                          Text(_commodity.price.toString(),style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 18
+                          ),)
+                        ],
+                      )),
+                  Expanded(
+                      flex: 1,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children:<Widget> [
+                          Icon(Icons.message, size: 18,),
+                          RichText(
+                              text: TextSpan(
+                                  text: " 联系卖家",
+                                  style: TextStyle(fontSize: 18, color: Colors.blue),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {print("联系卖家");}//跳至聊天
+                              )
+                          )
+                        ],
+                      )),
+                ],
+              ),
+            ),
+            // Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
+            //   return
+                Container(
+                padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
+                child: Row(
+                  children:<Widget> [
+                    Expanded(
+                        child: Divider(
+                          height: 10,
+                          // color:DarkModeModel.darkMode ? Colors.white : Colors.black87,
+                          //indent: 120,
+                        )),
+                    Expanded(child: Text("详细介绍",
+                      style: TextStyle(
+                        // color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
+                      ),
+                      textAlign: TextAlign.center,)),
+                    Expanded(
+                        child: Divider(
+                          height: 1,
+                          // color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
+                          //indent: 120,
+                        ))
+                  ],
+                ),
+              ),
+            // }),
+            // Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
+            //   return
+        Container(
+                padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
+                child: Text(_commodity.description,style: TextStyle(
+                  // color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
+                ),),
+              ),
+  // })
+  ],
+        ),
+      ),
+    );
   }
 //按关键词搜索商品
   Widget _commodityKeywordResult(List goodsData) {
@@ -604,6 +608,7 @@ class SearchPageState extends State<SearchPageWidget> {
     return Expanded(
       child: InkWell(
         onTap: (){},
+
         child: Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
           return Container(
             padding: EdgeInsets.fromLTRB(10, 5, 10, 0),

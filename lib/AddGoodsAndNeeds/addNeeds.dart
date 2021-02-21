@@ -14,9 +14,10 @@ class AddNeeds extends StatelessWidget{
          children: [
            Container(
              margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
-               child:TextFormField(
+               child:TextField(
                  textAlign: TextAlign.center,
                  controller: _needsController,
+                 maxLines: null,
                  style: TextStyle(
                      fontSize: 20,
                      textBaseline: TextBaseline.alphabetic

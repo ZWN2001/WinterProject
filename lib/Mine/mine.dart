@@ -15,10 +15,10 @@ class Mine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('我的'),
-        elevation: 0,  //这个是去掉底部阴影的代码
-      ),
+      // appBar: AppBar(
+      //   title: Text('我的'),
+      //   elevation: 0,  //这个是去掉底部阴影的代码
+      // ),
       body: MinePage(),
     );
   }
@@ -30,8 +30,8 @@ class MinePage extends StatefulWidget {
 }
 
 class MinePageState extends State<MinePage> {
-  String _headImageUrl;
-  String _username;
+  String _headImageUrl=' ';
+  String _username=' ';
   @override
   void initState() {
     // TODO: implement initState
@@ -39,11 +39,18 @@ class MinePageState extends State<MinePage> {
     print('initing....');
     if(LoginPageState.logged) {
       HeadImage.getHeadImage(context).then((value){
-        print(value);
-        _headImageUrl=value;
+        if(mounted){
+          setState(() {
+            _headImageUrl=value;
+          });
+        }
       });
       getUserName.getUsername(context).then((value) {
-        _username=value;
+        if(mounted){
+          setState(() {
+            _username=value;
+          });
+        }
       });
       print('headImageUrl:$_headImageUrl');
       print('username:$_username');
@@ -350,65 +357,79 @@ class MinePageState extends State<MinePage> {
     return Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
       return
         Container(
-          color: DarkModeModel.darkMode ? Colors.black26: Colors.blue,
-            child: Row(
-          children: [
-            Container(
-              child:ChangeNotifierProvider<HeadImage>(
-                create: (_) => HeadImage(),
-                //可以使用child进行渲染UI，用法可以查看第一篇文章https://blog.csdn.net/Mr_Tony/article/details/111414413
-                builder: (myContext, child) {
-              return GestureDetector(
-                onTap:(){  HeadImage.chooseImage(context);
-                myContext.read<HeadImage>().refresh();
-                },
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(30, 8, 8, 8),
-                  child: ClipOval(
-                      child: _headImageUrl == null
-                          ? Image.asset(
-                              'images/defaultHeadImage.png',
-                              color: Colors.white,
-                              fit: BoxFit.cover,
-                            )
-                          : Image.network(
-                              _headImageUrl,
-                              fit: BoxFit.cover,
-                            )),
-                )
-              );
-                  },),
-            ),
-            Expanded(
-              child: Container(
-                  margin: EdgeInsets.only(right: 15, bottom: 20),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          //TODO
-                          'Hi , 亲爱的',
-                          textAlign: TextAlign.center,
-                          overflow: TextOverflow.clip,
-                          style: TextStyle(
-                              fontSize: 25.0,
-                              color: Colors.white
-                          ),
-                        ),
-                        Text('账号：' + LoginPageState.account,
-                            style: TextStyle(
-                                fontSize: 17,
-                                color: Colors.white
-                            ),
-                            overflow: TextOverflow.clip,
-                            textAlign: TextAlign.center),
-                      ],
+          color: DarkModeModel.darkMode ? Colors.black12: Colors.blue,
+            child:Column(
+              children: [
+                Container(
+                  child: SizedBox(
+                    height: 70,
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      margin: EdgeInsets.only(left: 15,top: 30),
+                      child: Text('我的',style: TextStyle(fontSize: 21,color: Colors.white),),
                     ),
-                  // )
-              ),
-            ),
-          ],
-        ));
+                  ),
+                ),
+                Row(
+                  children: [
+                    Container(
+                      child:ChangeNotifierProvider<HeadImage>(
+                        create: (_) => HeadImage(),
+                        builder: (myContext, child) {
+                          return GestureDetector(
+                              onTap:(){  HeadImage.chooseImage(context);
+                              myContext.read<HeadImage>().refresh();
+                              },
+                              child: Container(
+                                margin: EdgeInsets.fromLTRB(30, 8, 8, 8),
+                                child: ClipOval(
+                                    child: _headImageUrl == null
+                                        ? Image.asset(
+                                      'images/defaultHeadImage.png',
+                                      color: Colors.white,
+                                      fit: BoxFit.cover,
+                                    )
+                                        : Image.network(
+                                      _headImageUrl,
+                                      fit: BoxFit.cover,
+                                    )),
+                              )
+                          );
+                        },),
+                    ),
+                    Expanded(
+                      child: Container(
+                        margin: EdgeInsets.only(right: 15, bottom: 20),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              //TODO
+                              'Hi , 亲爱的$_username',
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.clip,
+                              style: TextStyle(
+                                  fontSize: 25.0,
+                                  color: Colors.white
+                              ),
+                            ),
+                            Text('账号：' + LoginPageState.account,
+                                style: TextStyle(
+                                    fontSize: 17,
+                                    color: Colors.white
+                                ),
+                                overflow: TextOverflow.clip,
+                                textAlign: TextAlign.center),
+                          ],
+                        ),
+                        // )
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            )
+        );
       // );
     });
   }
