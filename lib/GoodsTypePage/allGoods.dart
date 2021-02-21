@@ -106,9 +106,11 @@ class AllGoodsState extends State<AllGoods> {
   List<Commodity> tempList = new List();
   Iterable<Commodity> reservedList = new List();
   int startNum = 0;
+  int itemLength = 0;
   int _page = 1;
   bool isLoading = false;//是否正在加载数据
   ScrollController _scrollController = ScrollController();
+  Widget centerContent;
 
   @override
   void initState() {
@@ -117,8 +119,20 @@ class AllGoodsState extends State<AllGoods> {
    /* if (!LoginPageState.logged) {
       Toast.show("请先登录", context, duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
     }*/
+   centerContent = _loadingText();
     _getCommodityData().then((value) => {
     _transferIntoLocalList()
+    }).whenComplete(() {
+      itemLength = tempList.length;
+      if (commodityList.isEmpty) {
+        setState(() {
+          centerContent = noCommodityText();
+        });
+      } else {
+        setState(() {
+          centerContent = commodityGridView();
+        });
+      }
     });
     _scrollController.addListener(() {
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
@@ -129,7 +143,6 @@ class AllGoodsState extends State<AllGoods> {
   }
 
   Future _getCommodityData() async {
-    if(LoginPageState.logged) {
       Response response;
       Dio dio = new Dio();
       response = await dio.post('http://widealpha.top:8080/shop/commodity/allCommodity',
@@ -151,10 +164,8 @@ class AllGoodsState extends State<AllGoods> {
               print(commodityList);
             });
           }
-
         }
       }
-    }
   }
 
   Future _getMore() async {
@@ -166,6 +177,8 @@ class AllGoodsState extends State<AllGoods> {
         print("加载更多");
         setState(() {
           for (int i = startNum; i <= startNum + 10; i++) {
+            print('i');
+            print(i);
             startNum = i;
             if (i == commodityList.length || i == startNum+10) {
               print("没有更多数据了");
@@ -173,9 +186,17 @@ class AllGoodsState extends State<AllGoods> {
               return;
             }
             tempList.insert(i, reservedList.elementAt(i));
+            print(tempList);
           }
           _page++;
           isLoading = false;
+
+        });
+      }).whenComplete(() {
+        setState(() {
+          itemLength = tempList.length;
+          centerContent = commodityGridView();
+          print('change');
         });
       });
     }
@@ -195,7 +216,8 @@ class AllGoodsState extends State<AllGoods> {
             startNum = 1;
             return;
           }
-          if (i == reservedList.length - 1){
+          if (i == reservedList.length){
+            startNum = i;
             print("没有更多数据");
             //startNum = i;
             return;
@@ -218,19 +240,10 @@ class AllGoodsState extends State<AllGoods> {
 
   @override
   Widget build(BuildContext context) {
-    if (!LoginPageState.logged) {
-      return Center(
-        child: Text("您尚未登录",
-          style: TextStyle(
-            color: Colors.grey,
-            fontSize: 20,
-          ),),
-      );
-    } else {
-      return commodityList.length == 0
+   return centerContent;
+      /*return commodityList.length == 0
           ? noCommodityText()
-          : commodityGridView();
-    }
+          : commodityGridView();*/
     /*GridView.builder(
                 padding: EdgeInsets.symmetric(horizontal: 5),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -261,7 +274,7 @@ class AllGoodsState extends State<AllGoods> {
             scrollDirection: Axis.vertical,
             controller: _scrollController,
             //itemCount: listData.length,
-            itemCount: tempList.length,
+            itemCount: itemLength,
             itemBuilder: (context,index){
               return Material(
                 child: itemWidget(index),
@@ -279,6 +292,17 @@ class AllGoodsState extends State<AllGoods> {
         startNum = 0;
         _getCommodityData().then((value) => {
           _transferIntoLocalList()
+        }).whenComplete(() {
+          itemLength = tempList.length;
+          if (commodityList.isEmpty) {
+            setState(() {
+              centerContent = noCommodityText();
+            });
+          } else {
+            setState(() {
+              centerContent = commodityGridView();
+            });
+          }
         });
       });
     });
@@ -294,6 +318,15 @@ class AllGoodsState extends State<AllGoods> {
         fontSize: 20,
       ),),
     );
+  }
+
+  Widget _loadingText() {
+    return  Center(
+        child: Text(
+          "加载中...",
+          style: TextStyle(fontSize: 20),
+        ),
+      );
   }
 
   //每个商品的窗口
