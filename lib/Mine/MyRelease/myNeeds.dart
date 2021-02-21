@@ -164,6 +164,44 @@ class MyNeedsState extends State<MyNeeds> {
     });
   }
 
+  Future<bool> showDeleteConfirmDialog() {
+    return showDialog<bool>(
+        context: this.context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('提示'),
+            content: Text('你要删除这个需求吗？'),
+            actions:<Widget> [
+              FlatButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text('取消')),
+              FlatButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: Text('删除'))
+            ],
+          );
+        }
+    );
+  }
+
+  Future<void> _deleteMyDemand(int wantId) async {
+    Dio dio = new Dio();
+    Response response = await dio.post('http://widealpha.top:8080/shop/want/deleteMyWant',
+        options: Options(headers: {'Authorization':'Bearer'+LoginPageState.token}),
+        queryParameters: {
+          'wantId': wantId
+        });
+    print('delete');
+    print(response.data.toString());
+    if (response.data['code'] == 0) {
+      if (response.data['data'] == true) {
+        Toast.show("删除成功", context, duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+      } else {
+        Toast.show("删除失败", context, duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+      }
+    }
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -237,7 +275,19 @@ class MyNeedsState extends State<MyNeeds> {
         ChangeNotifierProvider(create: (child) => DarkModeModel())
       ],
       child: InkWell(
-          onLongPress: () {},
+          onLongPress: () async {
+            bool delete = await showDeleteConfirmDialog();
+            if (delete == null) {
+              print('取消删除');
+            } else {
+              print('确认删除');
+              _deleteMyDemand(tempList[temp].wantId).then((value) {
+                setState(() {
+                  tempList.removeAt(temp);
+                });
+              });
+            }
+          },
           child: Container(
             child: Card(
                   color: Colors.blue,
@@ -249,7 +299,7 @@ class MyNeedsState extends State<MyNeeds> {
                   clipBehavior: Clip.none,
                   margin: EdgeInsets.all(5),
                   child: ListTile(
-                      title: Text(userName),
+                      title: Text(userName ?? " "),
                       subtitle: ExpandbaleText(
                         text: tempList[temp].description,
                         maxLines: 5,
@@ -322,5 +372,7 @@ class MyNeedsState extends State<MyNeeds> {
         )
     );
   }
+  
+
 
 }
