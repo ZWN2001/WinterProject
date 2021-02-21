@@ -5,10 +5,12 @@ import 'package:provider/provider.dart'hide BuildContext;
 import 'package:winter/AdapterAndHelper/buildRoteFloatingBtn.dart';
 import 'package:winter/AdapterAndHelper/expandableText.dart';
 import 'package:winter/AdapterAndHelper/getUsername.dart';
+import 'package:winter/AdapterAndHelper/getOthersUsername.dart';
 import 'package:winter/DemandArea/demandClass.dart';
 import 'package:winter/Basic/login.dart';
 import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/headImage.dart';
+import 'package:winter/AdapterAndHelper/getOthersHeadImage.dart';
 
 
 class DemandPage extends StatefulWidget {
@@ -35,25 +37,37 @@ class DemandPageState extends State<DemandPage> {
   List<Demand> tempList = new List();
   Iterable<Demand> reservedList = new List();
   String _headImageUrl;
+  List<String> headImageList = new List();
   //String userName;
   int startNum = 0;
   int _page = 1;
+  int itemLength;
   bool isLoading = false;
   ScrollController _scrollController = ScrollController();
+  Widget centerContent;
   
   @override
   void initState() {
     super.initState();
-    HeadImage.getHeadImage(context).then((value) {
-      print(value);
-      _headImageUrl = value;
-    });
+    centerContent = _loadingText();
     /*getUserName.getUsername(context).then((value) {
       print(value);
       userName = value;
     });*/
     _getDemandData().then((value) {
       _transferIntoLocalList();
+    }).whenComplete(() {
+      itemLength = tempList.length;
+      _getHeadImageList(demandList);
+      if (demandList.isEmpty) {
+        setState(() {
+          centerContent = noDemandText();
+        });
+      } else {
+        setState(() {
+          centerContent = demandListView();
+        });
+      }
     });
     _scrollController.addListener(() {
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
@@ -101,6 +115,7 @@ class DemandPageState extends State<DemandPage> {
             return;
           }
           if (i == reservedList.length) {
+            startNum = i;
             print("没有更多数据");
             return;
           }
@@ -119,7 +134,13 @@ class DemandPageState extends State<DemandPage> {
         print("加载更多");
         setState(() {
           for (int i = startNum; i <= startNum+8; i++) {
+            print('i');
+            print(i);
             startNum = i;
+            if(i > reservedList.length){
+              print('超长');
+              return;
+            }
             if (i == demandList.length || i == startNum+8) {
               print("没有更多数据了");
               isLoading = false;
@@ -131,9 +152,32 @@ class DemandPageState extends State<DemandPage> {
           isLoading = false;
           print(_page);
         });
+      }).whenComplete(() {
+        setState(() {
+          itemLength = tempList.length;
+          centerContent = demandListView();
+          print('change');
+        });
       });
     }
   }
+
+  Future<void> _getHeadImageList(List<Demand> demandList) async {
+    demandList.forEach((element) {
+      if (LoginPageState.account == element.account) {
+        HeadImage.getHeadImage(context).then((value) {
+          headImageList.add(value);
+        });
+      } else {
+        getOthersHeadImages.getOthersHeadImage(context, element.account).then((value) {
+          headImageList.add(value);
+        });
+      }
+    });
+    print('获取头像成功');
+  }
+
+
 
   @override
   void dispose() {
@@ -150,9 +194,7 @@ class DemandPageState extends State<DemandPage> {
       ),
       body:Stack(
         children: [
-          demandList.length == 0
-          ? noDemandText()
-          : demandListView(),
+          centerContent,
           buildRoteFloatingBtn(),
         ],
       ),
@@ -186,6 +228,14 @@ class DemandPageState extends State<DemandPage> {
           })
     );
   }
+  Widget _loadingText() {
+    return  Center(
+      child: Text(
+        "加载中...",
+        style: TextStyle(fontSize: 20),
+      ),
+    );
+  }
 
   Future<Null> _onRefresh() async {
     await Future.delayed(Duration(seconds: 2), () {
@@ -193,9 +243,22 @@ class DemandPageState extends State<DemandPage> {
       setState(() {
         demandList.clear();
         tempList.clear();
+        headImageList.clear();
         startNum = 0;
         _getDemandData().then((value) {
           _transferIntoLocalList();
+        }).whenComplete(() {
+          itemLength = tempList.length;
+          _getHeadImageList(demandList);
+          if (demandList.isEmpty) {
+            setState(() {
+              centerContent = noDemandText();
+            });
+          } else {
+            setState(() {
+              centerContent = demandListView();
+            });
+          }
         });
       });
     });
@@ -223,13 +286,13 @@ class DemandPageState extends State<DemandPage> {
                           Expanded(
                             flex: 2,
                             child: ClipOval(
-                              child: _headImageUrl == null
+                              child: headImageList.isEmpty || headImageList[index] == null
                                   ? Image.asset(
                                 'images/defaultHeadImage.png',
                                 color: Colors.grey,
                                 fit: BoxFit.scaleDown,)
                                   : Image.network(
-                                _headImageUrl,
+                                headImageList[index],
                                 fit: BoxFit.cover,)
                             ),
                           ),
