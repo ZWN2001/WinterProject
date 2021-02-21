@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:winter/AdapterAndHelper/darkModeModel.dart';
 import 'package:provider/provider.dart'hide BuildContext;
@@ -150,7 +151,7 @@ class MyGoodsState extends State<MyGoods> {
           startNum = 1;
           return;
         }
-        if (i == reservedList.length-1) {
+        if (i == reservedList.length) {
           print("后端没有更多数据了");
           return;
         }
@@ -223,7 +224,7 @@ class MyGoodsState extends State<MyGoods> {
             //separatorBuilder: (BuildContext context, int index) => new Divider(),
             itemBuilder: (context, index) {
               return Slidable(
-                key: Key(UniqueKey().toString()),
+                key: GlobalKey<MyGoodsState>(),
                 controller: slidableController,
                 actionPane: SlidableScrollActionPane(),
                 actionExtentRatio: 0.2,
@@ -238,7 +239,11 @@ class MyGoodsState extends State<MyGoods> {
                           : 'Dismiss Delete');
                       setState(() {
                         _deleteMyCommodity(tempList[index].commodityId).then((value) {
-                          tempList.removeAt(index);
+                          setState(() {
+                            tempList.removeAt(index);
+                          });
+                          print('remove');
+                          print(tempList);
                         });
                       });
                   },
