@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:provider/provider.dart'hide BuildContext;
 import 'package:winter/AdapterAndHelper/buildRoteFloatingBtn.dart';
@@ -214,9 +215,18 @@ class DemandPageState extends State<DemandPage> {
   }
 
   Widget demandListView() {
-    return RefreshIndicator(
-        onRefresh: _onRefresh,
-        child: ListView.builder(
+    return EasyRefresh(
+        header: DeliveryHeader(),
+        firstRefresh: true,//默认加载
+        onRefresh: () async {
+          print("下拉刷新-----");
+          _onRefresh();
+        },
+        onLoad: () async {
+          print("上拉加载-----");
+          _getMore();
+        },
+        child:  ListView.builder(
           scrollDirection: Axis.vertical,
           controller: _scrollController,
           itemCount: tempList.length,

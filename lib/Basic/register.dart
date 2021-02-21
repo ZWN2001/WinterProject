@@ -26,8 +26,6 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  //全局KEY
-  GlobalKey<FormState> registerKey = new GlobalKey<FormState>();
   var pass1Key = GlobalKey<FormFieldState>();
   var pass2Key = GlobalKey<FormFieldState>();
   var accountKey = GlobalKey<FormFieldState>();

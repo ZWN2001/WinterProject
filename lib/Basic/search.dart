@@ -6,6 +6,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:provider/provider.dart';
+import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/darkModeModel.dart';
 import 'package:winter/AdapterAndHelper/expandableText.dart';
 import 'package:winter/AdapterAndHelper/searchHistory.dart';
@@ -69,6 +70,15 @@ class SearchPageState extends State<SearchPageWidget> {
       }
     });
     print('init...搜索界面历史记录');
+    controller.text='';
+  }
+
+  //判定是否为数字
+  bool isNumeric(String s) {
+    if (s == null) {
+      return false;
+    }
+    return double.tryParse(s) != null;
   }
 
   SearchPageState() {
@@ -79,7 +89,7 @@ class SearchPageState extends State<SearchPageWidget> {
         if (mounted) {
           setState(() {
             searchStr = "";
-            controller.text='';//TODO 想办法清空
+            controller.text='';
             //默认显示
             centerContent = defaultDisplay();
             //显示历史记录
@@ -114,7 +124,7 @@ class SearchPageState extends State<SearchPageWidget> {
                         onPressed: () {
                           //回到原来页面
                           controller.clear();
-                          Navigator.pop(context);
+                          Navigator.of(context).pop();
                         },
                       ),
                       Expanded(
@@ -160,16 +170,18 @@ class SearchPageState extends State<SearchPageWidget> {
                             setState(() {
                               history.initHistory();
                               controller.text = "";
+                              centerContent=defaultDisplay();
                             });
                           });
                         }),
                     ],
                   ),
-                  Expanded(
-                      child: Container(
+                  // Expanded(
+                  //     child:
+                      Container(
                         child: centerContent,
                       ),
-                  ),
+                  // ),
                 ],
               )
       ),
@@ -391,20 +403,18 @@ class SearchPageState extends State<SearchPageWidget> {
         isCommodity=true;
         realTimeSearchUrl = "http://widealpha.top:8080/shop/commodity/commodity";
         _getIDResult(widget,key,realTimeSearchUrl,isCommodity);
-        // _transferIntoLocalList(commodityList);
         break;
       case "按关键字搜索需求":
         print('按关键字搜索需求');
         isCommodity=false;
         realTimeSearchUrl =
-        "http://widealpha.top:8080/shop/want/searchCommodity";
+        "http://widealpha.top:8080/shop/want/searchWant";
         _getKeywordResult(widget, key, realTimeSearchUrl, !isCommodity);
-        // _transferIntoLocalList(demandList);
         break;
       case "按ID搜索需求":
         print('按ID搜索需求');
         isCommodity=false;
-        realTimeSearchUrl = "http://widealpha.top:8080/shop/want/commodity";
+        realTimeSearchUrl = "http://widealpha.top:8080/shop/want/want";
        _getIDResult(widget, key, realTimeSearchUrl, !isCommodity);
         break;
       default:
@@ -417,27 +427,35 @@ class SearchPageState extends State<SearchPageWidget> {
 
   void _getIDResult(Widget widget,String key,String realTimeSearchUrl,bool isCommodity){
     Response response;
-    Dio().post(realTimeSearchUrl,
-        options: Options(
-            headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
-        queryParameters: {'commodityId': int.parse(key)}).then((value) {
-      //赋值
-      response = value;
-      print('搜索结果：$response');
-    }).whenComplete(() {
-      var Data = response.data['data'];
-      if (Data.isEmpty) {
-        widget = nullResult();
-      } else {
-        widget = isCommodity?_commodityIDResult(Data):_needsIDresult(Data);
-      }
-      if (mounted) {
-        setState(() {
-          //更新提示列表
-          centerContent = widget;
-        });
-      }return widget;
-    });
+    if(isNumeric(key)) {
+      Dio().post(realTimeSearchUrl,
+          options: Options(
+              headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
+          queryParameters: {'commodityId': int.parse(key)}).then((value) {
+        //赋值
+        response = value;
+        print('搜索结果：$response');
+      }).whenComplete(() {
+        var Data = response.data['data'];
+        if (Data.isEmpty) {
+          widget = nullResult();
+        } else {
+          widget =
+          isCommodity ? _commodityIDResult(Data) : _needsIDresult(Data);
+        }
+        if (mounted) {
+          setState(() {
+            //更新提示列表
+            centerContent = widget;
+          });
+        }
+        return widget;
+      });
+    }else{
+      Toast.show("请输入正确的ID", context,
+          duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      centerContent = nullResult();
+    }
   }
   void _getKeywordResult(Widget widget,String key,String realTimeSearchUrl,bool isCommodity){
     Response response;
@@ -468,8 +486,7 @@ class SearchPageState extends State<SearchPageWidget> {
   Widget _commodityIDResult(var goodsData) {
     _commodity=Commodity.fromJson(goodsData);
     _IdImageToList();
-    return Expanded(
-      child: Container(
+    return  Container(
         padding: EdgeInsets.all(5.0),
         child: ListView(
           children:<Widget> [
@@ -575,7 +592,6 @@ class SearchPageState extends State<SearchPageWidget> {
   // })
   ],
         ),
-      ),
     );
   }
 //按关键词搜索商品
@@ -605,14 +621,14 @@ class SearchPageState extends State<SearchPageWidget> {
   //按ID搜索需求
   Widget _needsIDresult(var needsData) {
     _demand=Demand.fromJson(needsData);
-    return Expanded(
-      child: InkWell(
+    return InkWell(
         onTap: (){},
-
-        child: Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
-          return Container(
+        child:
+        // Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
+        //   return
+            Container(
             padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
-            color: !DarkModeModel.darkMode ? Colors.white : Colors.black87,
+            // color: !DarkModeModel.darkMode ? Colors.white : Colors.black87,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children:<Widget> [
@@ -641,28 +657,14 @@ class SearchPageState extends State<SearchPageWidget> {
                                 child: ListTile(
                                   title: Text(_demand.account,
                                     style: TextStyle(
-                                      color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
+                                      // color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
                                     ),),
                                   subtitle: Text("id."+_demand.wantId.toString()),
                                 )
-                              /* Text(
-                                tempList[index].account,
-                                style: TextStyle(
-                                  color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
-                                  //color: Colors.white,
-                                  fontSize: 17,
-                                ),
-                              )*/)
+                             )
                           ],
                         ),
                       ),
-                      /*child: ClipOval(
-                      child: Image.network(ListData[index]["headImage"],
-                      width: 30,
-                      height: 30,
-                      fit: BoxFit.fill,
-                      ),
-                    ),*/
                     ),
                   ],
                 ),
@@ -674,7 +676,7 @@ class SearchPageState extends State<SearchPageWidget> {
                             child: ExpandbaleText(
                               text: _demand.description,
                               maxLines: 3,
-                              style: TextStyle(fontSize: 15, color: DarkModeModel.darkMode ? Colors.white : Colors.black87),
+                              // style: TextStyle(fontSize: 15, color: DarkModeModel.darkMode ? Colors.white : Colors.black87),
                             )
                         ))
                   ],
@@ -685,9 +687,8 @@ class SearchPageState extends State<SearchPageWidget> {
                 )
               ],
             ),
-          );
-        }),
-      ),
+          ),
+        // }),
     );
   }
 
@@ -695,8 +696,7 @@ class SearchPageState extends State<SearchPageWidget> {
   Widget _needsKeywordresult(List needsData) {
     demandList = needsData.map((e) => Demand.fromJson(e)).toList();
     _transferIntoLocalList(demandList);
-    return Expanded(
-      child: Container(
+    return Container(
           child: ListView.builder(
               scrollDirection: Axis.vertical,
               controller: _scrollController,
@@ -707,7 +707,6 @@ class SearchPageState extends State<SearchPageWidget> {
                   //color: Colors.grey,
                 );
               })
-      ),
     );
   }
   void _IdImageToList() {
@@ -823,10 +822,12 @@ class SearchPageState extends State<SearchPageWidget> {
   Widget demandItemWidget(int index) {
     return InkWell(
       onTap: (){},
-      child: Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
-        return Container(
+      child:
+      // Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
+      //   return
+          Container(
           padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
-          color: !DarkModeModel.darkMode ? Colors.white : Colors.black87,
+          // color: !DarkModeModel.darkMode ? Colors.white : Colors.black87,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children:<Widget> [
@@ -855,28 +856,14 @@ class SearchPageState extends State<SearchPageWidget> {
                               child: ListTile(
                                 title: Text(tempList[index].account,
                                   style: TextStyle(
-                                    color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
+                                    // color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
                                   ),),
                                 subtitle: Text("id."+tempList[index].wantId.toString()),
                               )
-                            /* Text(
-                                tempList[index].account,
-                                style: TextStyle(
-                                  color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
-                                  //color: Colors.white,
-                                  fontSize: 17,
-                                ),
-                              )*/)
+                           )
                         ],
                       ),
                     ),
-                    /*child: ClipOval(
-                      child: Image.network(ListData[index]["headImage"],
-                      width: 30,
-                      height: 30,
-                      fit: BoxFit.fill,
-                      ),
-                    ),*/
                   ),
                 ],
               ),
@@ -888,7 +875,7 @@ class SearchPageState extends State<SearchPageWidget> {
                           child: ExpandbaleText(
                             text: tempList[index].description,
                             maxLines: 3,
-                            style: TextStyle(fontSize: 15, color: DarkModeModel.darkMode ? Colors.white : Colors.black87),
+                            // style: TextStyle(fontSize: 15, color: DarkModeModel.darkMode ? Colors.white : Colors.black87),
                           )
                       ))
                 ],
@@ -899,8 +886,8 @@ class SearchPageState extends State<SearchPageWidget> {
               )
             ],
           ),
-        );
-      }),
+        ),
+      // }),
     );
   }
   

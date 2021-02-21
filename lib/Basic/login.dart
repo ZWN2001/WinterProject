@@ -13,7 +13,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class LoginPageState extends State<LoginPage> {
-  GlobalKey<FormState> loginKey = new GlobalKey<FormState>(); //全局key
+  GlobalKey<FormState> Key = new GlobalKey<FormState>(); //全局key
   var accountKey = GlobalKey<FormFieldState>();
   var pwdKey = GlobalKey<FormFieldState>();
 
