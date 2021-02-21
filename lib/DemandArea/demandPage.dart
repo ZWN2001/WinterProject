@@ -217,7 +217,7 @@ class DemandPageState extends State<DemandPage> {
   Widget demandListView() {
     return EasyRefresh(
         header: DeliveryHeader(),
-        firstRefresh: true,//默认加载
+        firstRefresh: false,//默认加载
         onRefresh: () async {
           print("下拉刷新-----");
           _onRefresh();
