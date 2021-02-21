@@ -402,20 +402,20 @@ class SearchPageState extends State<SearchPageWidget> {
         print('按ID搜索商品');
         isCommodity=true;
         realTimeSearchUrl = "http://widealpha.top:8080/shop/commodity/commodity";
-        _getIDResult(widget,key,realTimeSearchUrl,isCommodity);
+        _getCommodityIDResult(widget,key,realTimeSearchUrl);
         break;
       case "按关键字搜索需求":
         print('按关键字搜索需求');
         isCommodity=false;
         realTimeSearchUrl =
         "http://widealpha.top:8080/shop/want/searchWant";
-        _getKeywordResult(widget, key, realTimeSearchUrl, !isCommodity);
+        _getKeywordResult(widget, key, realTimeSearchUrl,isCommodity);
         break;
       case "按ID搜索需求":
         print('按ID搜索需求');
         isCommodity=false;
         realTimeSearchUrl = "http://widealpha.top:8080/shop/want/want";
-       _getIDResult(widget, key, realTimeSearchUrl, !isCommodity);
+       _getDemandsIDResult(widget, key, realTimeSearchUrl);
         break;
       default:
         print('按关键字搜索商品');
@@ -425,7 +425,7 @@ class SearchPageState extends State<SearchPageWidget> {
     }
   }
 
-  void _getIDResult(Widget widget,String key,String realTimeSearchUrl,bool isCommodity){
+  void _getCommodityIDResult(Widget widget,String key,String realTimeSearchUrl){
     Response response;
     if(isNumeric(key)) {
       Dio().post(realTimeSearchUrl,
@@ -440,8 +440,38 @@ class SearchPageState extends State<SearchPageWidget> {
         if (Data.isEmpty) {
           widget = nullResult();
         } else {
-          widget =
-          isCommodity ? _commodityIDResult(Data) : _needsIDresult(Data);
+          widget = _commodityIDResult(Data) ;
+        }
+        if (mounted) {
+          setState(() {
+            //更新提示列表
+            centerContent = widget;
+          });
+        }
+        return widget;
+      });
+    }else{
+      Toast.show("请输入正确的ID", context,
+          duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      centerContent = nullResult();
+    }
+  }
+  void _getDemandsIDResult(Widget widget,String key,String realTimeSearchUrl){
+    Response response;
+    if(isNumeric(key)) {
+      Dio().post(realTimeSearchUrl,
+          options: Options(
+              headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
+          queryParameters: {'wantId': int.parse(key)}).then((value) {
+        //赋值
+        response = value;
+        print('搜索结果：$response');
+      }).whenComplete(() {
+        var Data = response.data['data'];
+        if (Data.isEmpty) {
+          widget = nullResult();
+        } else {
+          widget = _needsIDresult(Data);
         }
         if (mounted) {
           setState(() {
@@ -486,8 +516,8 @@ class SearchPageState extends State<SearchPageWidget> {
   Widget _commodityIDResult(var goodsData) {
     _commodity=Commodity.fromJson(goodsData);
     _IdImageToList();
-    return  Container(
-        padding: EdgeInsets.all(5.0),
+    return  Expanded(
+        // padding: EdgeInsets.all(5.0),
         child: ListView(
           children:<Widget> [
             Container(

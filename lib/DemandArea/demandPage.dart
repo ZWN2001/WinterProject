@@ -33,6 +33,8 @@ class DemandPageState extends State<DemandPage> {
       "demand": "东临碣石，以观沧海。\n水何澹澹，山岛竦峙。\n树木丛生，百草丰茂。\n秋风萧瑟，洪波涌起。\n日月之行，若出其中；\n星汉灿烂，若出其里。\n幸甚至哉，歌以咏志。\n"
     }
   ];
+  Key key;
+  final LinkHeaderNotifier linkNotifier = LinkHeaderNotifier();
   
   List<Demand> demandList = new List();
   List<Demand> tempList = new List();
