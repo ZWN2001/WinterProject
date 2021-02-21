@@ -6,6 +6,8 @@ import 'AdapterAndHelper/DarkModeModel.dart';
 import 'AddGoodsAndNeeds/TabBarForAdd.dart';
 import 'Basic/home.dart';
 import 'Basic/search.dart';
+import 'Mine/PersonalInfo/changeInfo.dart';
+import 'Mine/PersonalInfo/showInfo.dart';
 
 void main() => runApp(Splash());
 
@@ -27,6 +29,8 @@ class Splash extends StatelessWidget {
                 'add': (context) => TabBarForAdd(),
                 'search': (context) => SearchPageWidget(),
                 'home': (context) => Home(),
+                'changeInfo':  (context) => ChangeInfo(),
+                'showInfo':(context) => ShowInfo()
               },
               theme: DarkModeModel.darkMode
                   ? ThemeData.dark()

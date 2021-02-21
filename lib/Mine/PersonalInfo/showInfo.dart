@@ -278,8 +278,7 @@ class MyInfoState extends State<ShowInfoPage> {
               ),
               color: Colors.blue,
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ChangeInfo()));
+                Navigator.pushReplacementNamed(context,'changeInfo');
               },
             ),
           ),

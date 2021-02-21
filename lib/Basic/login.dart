@@ -1,10 +1,12 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
+import 'package:winter/AdapterAndHelper/error_handle.dart';
 import 'package:winter/AdapterAndHelper/user.dart';
 import 'package:winter/Basic/register.dart';
 import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';
-
+typedef Fail = Function(int code, String msg);
 class LoginPage extends StatefulWidget {
   @override
   LoginPageState createState() => LoginPageState();
@@ -87,7 +89,7 @@ class LoginPageState extends State<LoginPage> {
       margin: EdgeInsets.fromLTRB(10, 20, 10, 10),
       child: TextFormField(
         key: accountKey,
-        autofocus: true,
+        // autofocus: true,
         decoration: InputDecoration(
           hintText: '请输入账号/学号',
           // border: OutlineInputBorder(borderSide: BorderSide()),
@@ -347,43 +349,55 @@ class LoginPageState extends State<LoginPage> {
   }
 
   //验证身份
-  void _verify(String account, String password) {
+  void _verify(String account, String password,{Fail fail}) async{
     Response response;
-    Dio().post('http://widealpha.top:8080/shop/user/login', queryParameters: {
-      'account': account,
-      'password': password
-    }).then((value) {
-      response = value;
-      print(response);
-      if (response.data['code'] == 0) {
-        token = response.data['data'];
-        logged = true;
-        Toast.show("登陆成功", context,
-            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-        Navigator.of(context).pushNamedAndRemoveUntil(
-            'MyHomePage', (Route<dynamic> route) => false);
-      } else if (response.data['code'] == -4) {
-        Toast.show("用户名不存在", context,
-            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-        print('用户名不存在');
-      } else if (response.data['code'] == -5) {
-        Toast.show("用户名或密码错误", context,
-            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-        print('用户名或密码错误');
-      } else if (response.data['code'] == -7) {
-        Toast.show("权限不足", context,
-            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-        print('权限不足');
-      } else if (response.data['code'] == -8) {
-        Toast.show("Token无效", context,
-            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-        print('Token无效');
-      } else {
-        Toast.show("未知错误", context,
-            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-        print('未知错误');
+    try {
+      var connectivityResult = await (new Connectivity().checkConnectivity());
+      if (connectivityResult == ConnectivityResult.none) {
+        ExceptionHandle.onError(ExceptionHandle.net_error, '网络异常，请检查你的网络！', fail,context);
+        return;
       }
-    });
+      response=await Dio().post('http://widealpha.top:8080/shop/user/login', queryParameters: {
+        'account': account,
+        'password': password
+      },
+      options: Options(
+       sendTimeout: 2000
+      ));
+        print(response);
+        if (response.data['code'] == 0) {
+          token = response.data['data'];
+          logged = true;
+          Toast.show("登陆成功", context,
+              duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              'MyHomePage', (Route<dynamic> route) => false);
+        } else if (response.data['code'] == -4) {
+          Toast.show("用户名不存在", context,
+              duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+          print('用户名不存在');
+        } else if (response.data['code'] == -5) {
+          Toast.show("用户名或密码错误", context,
+              duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+          print('用户名或密码错误');
+        } else if (response.data['code'] == -7) {
+          Toast.show("权限不足", context,
+              duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+          print('权限不足');
+        } else if (response.data['code'] == -8) {
+          Toast.show("Token无效", context,
+              duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+          print('Token无效');
+        } else {
+          Toast.show("未知错误", context,
+              duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+          print('未知错误');
+        }
+    }on DioError catch (e) {
+      print(e);
+      final NetError netError = ExceptionHandle.handleException(e);
+      ExceptionHandle.onError(netError.code, netError.msg, fail,context);
+    }
   }
 
   void _verify2(String account, String password) {

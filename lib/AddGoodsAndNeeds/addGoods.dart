@@ -31,7 +31,7 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
   String _category;
   double _price;
   TextEditingController _title = TextEditingController();
-  static TextEditingController _myPrice = TextEditingController();
+  TextEditingController _myPrice = TextEditingController();
   TextEditingController _description = TextEditingController();
 
   GlobalKey<FormState> addGoodsKey = new GlobalKey<FormState>();
@@ -39,12 +39,20 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
   var priceKey = GlobalKey<FormFieldState>();
 
   final arguments;
-
   _AddGoodsPageState(this.arguments);
 
   //上传图片用
   ScrollController _imgController = new ScrollController();
   List<Asset> _img = new List<Asset>();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _title.text=' ';
+    _myPrice.text=' ';
+    _description.text=' ';
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -49,8 +49,7 @@ class myInfoState extends State<myInfo> {
   int _sex;
   String _name;
   String _username;
-
-  String selectSex = '不限';
+  String selectSex = '男';
 
   Future _getInfo(BuildContext context) async {
     Response response=await  Dio().post('http://widealpha.top:8080/shop/user/userInfo',
@@ -445,35 +444,43 @@ class myInfoState extends State<myInfo> {
   }
   void _submitDetails(String headImageUrl, int age, String introduction, int sex,String name,String location,String username) {
     Response addGoodsResponse;
-    Dio().post('http://widealpha.top:8080/shop/user/changeUserInfo',
-        options: Options(
-            headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
-        queryParameters: {
-          'headImage':headImageUrl,
-          'age':age,
-          'introduction':introduction,
-          'sex':sex,
-          'name':name,
-          'location':location,
-          'username':username
-        }).then((value) {
-      addGoodsResponse = value;
-      print(addGoodsResponse);
-      if (addGoodsResponse.data['code'] == 0) {
-        Toast.show("个人信息修改成功", context,
-            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-        Navigator.pop(context);
-      } else if (addGoodsResponse.data['code'] == -6) {
-        Toast.show("登陆状态错误", context,
-            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-      }  else if (addGoodsResponse.data['code'] == -8) {
-        Toast.show("Token无效", context,
-            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-      } else {
-        Toast.show("未知错误", context,
-            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-      }
-    });
+    // try {
+      Dio().post('http://widealpha.top:8080/shop/user/changeUserInfo',
+          options: Options(
+              headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
+          queryParameters: {
+            'headImage': headImageUrl,
+            'age': age,
+            'introduction': introduction,
+            'sex': sex,
+            'name': name,
+            'location': location,
+            'username': username
+          }).then((value) {
+        addGoodsResponse = value;
+        print(addGoodsResponse);
+        if (addGoodsResponse.data['code'] == 0) {
+          Toast.show("个人信息修改成功", context,
+              duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+          Navigator.pushReplacementNamed(context, 'showInfo');
+          // setState(() {});无效
+        } else if (addGoodsResponse.data['code'] == -6) {
+          Toast.show("登陆状态错误", context,
+              duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+        } else if (addGoodsResponse.data['code'] == -8) {
+          Toast.show("Token无效", context,
+              duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+        } else {
+          Toast.show("未知错误", context,
+              duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+        }
+      });
+    // }
+//     on DioError catch (e) {
+// // //      LogUtils.print_('请求出错：' + e.toString());
+// //       final NetError netError = ExceptionHandle.handleException(e);
+// //       _onError(netError.code, netError.msg, fail);
+// //     }
   }
   //location
   Widget _checkLocation() {
