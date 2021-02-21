@@ -24,12 +24,26 @@ class DigitalProductState extends State<DigitalProduct> {
   int _page = 1;
   bool isLoading = false;//是否正在加载数据
   ScrollController _scrollController = ScrollController();
+  int itemLength;
+  Widget centerContent;
 
   @override
   void initState() {
     super.initState();
+    centerContent = loadingText();
     _getCommodityData().then((value) => {
       _transferIntoLocalList()
+    }).whenComplete(() {
+      itemLength = tempList.length;
+      if (digitalProductList.isEmpty) {
+        setState(() {
+          centerContent = noCommodityText();
+        });
+      } else {
+        setState(() {
+          centerContent = commodityGridView();
+        });
+      }
     });
     _scrollController.addListener(() {
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
@@ -119,6 +133,12 @@ class DigitalProductState extends State<DigitalProduct> {
           _page++;
           isLoading = false;
         });
+      }).whenComplete(() {
+        setState(() {
+          itemLength = tempList.length;
+          centerContent = commodityGridView();
+          print('change');
+        });
       });
     }
   }
@@ -131,9 +151,7 @@ class DigitalProductState extends State<DigitalProduct> {
 
   @override
   Widget build(BuildContext context) {
-    return digitalProductList.length == 0
-        ? noCommodityText()
-        : commodityGridView();
+    return centerContent;
   }
 
   Widget commodityGridView() {
@@ -149,7 +167,7 @@ class DigitalProductState extends State<DigitalProduct> {
             scrollDirection: Axis.vertical,
             controller: _scrollController,
             //itemCount: listData.length,
-            itemCount: tempList.length,
+            itemCount: itemLength,
             itemBuilder: (context,index){
               return Material(
                 child: itemWidget(index),
@@ -168,6 +186,14 @@ class DigitalProductState extends State<DigitalProduct> {
     );
   }
 
+  Widget loadingText() {
+    return Center(
+      child: Text(
+        "加载中...",
+        style: TextStyle(fontSize: 20),
+      ),
+    );
+  }
 
   Widget itemWidget(int temp) {
     return InkWell(
@@ -248,6 +274,17 @@ class DigitalProductState extends State<DigitalProduct> {
         startNum = 0;
         _getCommodityData().then((value) => {
           _transferIntoLocalList()
+        }).whenComplete(() {
+          itemLength = tempList.length;
+          if (digitalProductList.isEmpty) {
+            setState(() {
+              centerContent = noCommodityText();
+            });
+          } else {
+            setState(() {
+              centerContent = commodityGridView();
+            });
+          }
         });
       });
     });

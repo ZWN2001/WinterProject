@@ -24,12 +24,26 @@ class UsedBookState extends State<UsedBook> {
   int _page = 1;
   bool isLoading = false;//是否正在加载数据
   ScrollController _scrollController = ScrollController();
+  int itemLength;
+  Widget centerContent;
 
   @override
   void initState() {
     super.initState();
+    centerContent = loadingText();
     _getCommodityData().then((value) => {
       _transferIntoLocalList()
+    }).whenComplete(() {
+    itemLength = tempList.length;
+    if (usedBookList.length == 0) {
+      setState(() {
+        centerContent = noCommodityText();
+      });
+    } else {
+    setState(() {
+    centerContent = commodityGridView();
+    });
+    }
     });
     _scrollController.addListener(() {
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
@@ -64,7 +78,6 @@ class UsedBookState extends State<UsedBook> {
                 usedBookList.add(element);
               }
             });
-            print("digital");
             print(usedBookList);
           });
         }
@@ -119,6 +132,12 @@ class UsedBookState extends State<UsedBook> {
           _page++;
           isLoading = false;
         });
+      }).whenComplete(() {
+        setState(() {
+          itemLength = tempList.length;
+          centerContent = commodityGridView();
+          print('change');
+        });
       });
     }
   }
@@ -131,9 +150,7 @@ class UsedBookState extends State<UsedBook> {
 
   @override
   Widget build(BuildContext context) {
-    return usedBookList.length == 0
-        ? noCommodityText()
-        : commodityGridView();
+    return centerContent;
   }
 
   Widget commodityGridView() {
@@ -149,7 +166,7 @@ class UsedBookState extends State<UsedBook> {
             scrollDirection: Axis.vertical,
             controller: _scrollController,
             //itemCount: listData.length,
-            itemCount: tempList.length,
+            itemCount: itemLength,
             itemBuilder: (context,index){
               return Material(
                 child: itemWidget(index),
@@ -168,6 +185,14 @@ class UsedBookState extends State<UsedBook> {
     );
   }
 
+  Widget loadingText() {
+    return Center(
+      child: Text(
+        "加载中...",
+        style: TextStyle(fontSize: 20),
+      ),
+    );
+  }
 
   Widget itemWidget(int temp) {
     return InkWell(
@@ -248,6 +273,17 @@ class UsedBookState extends State<UsedBook> {
         startNum = 0;
         _getCommodityData().then((value) => {
           _transferIntoLocalList()
+        }).whenComplete(() {
+          itemLength = tempList.length;
+          if (commodityList.length == 0) {
+            setState(() {
+              centerContent = noCommodityText();
+            });
+          } else {
+            setState(() {
+              centerContent = commodityGridView();
+            });
+          }
         });
       });
     });
