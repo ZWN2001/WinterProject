@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/getUsername.dart';
 import 'package:winter/Basic/login.dart';
+import 'package:winter/DemandArea/demandPage.dart';
+import 'package:winter/Basic/home.dart';
+
 class AddNeeds extends StatelessWidget{
   TextEditingController _needsController=TextEditingController();
   @override
@@ -35,13 +38,15 @@ class AddNeeds extends StatelessWidget{
              child: FloatingActionButton(
                backgroundColor: Colors.lightBlue,
                child: Icon(Icons.assignment_turned_in_rounded, size: 28,),
-               onPressed: () {
+               onPressed: () async {
                  if(_needsController.text.isEmpty){
                    Toast.show("需求描述为空", context,
                        duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
                  }else{
                    _submit(_needsController.text, context);
-                   Navigator.of(context).pop();
+                   //Navigator.of(context).pop();
+                   DemandPage().createElement();
+                   Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => new DemandPage()), (route) => false);
                  }
                },
              ),
