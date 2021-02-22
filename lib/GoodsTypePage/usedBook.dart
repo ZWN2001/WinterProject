@@ -8,6 +8,7 @@ import 'package:winter/GoodsDetail/topNavigatorBar.dart';
 import 'package:winter/GoodsDetail/commodityClass.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:provider/provider.dart'hide BuildContext;
+import 'package:winter/AdapterAndHelper/breakWord.dart';
 
 class UsedBook extends StatefulWidget {
   @override
@@ -225,31 +226,36 @@ class UsedBookState extends State<UsedBook> {
                 ),
                 Row(
                   children: [
-                    Expanded(
-                        child:Text(
-                          tempList[temp].title,
-                          textAlign: TextAlign.start,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
-                          ),
-                        )
+                    Container(
+                      width: 160,
+                      child: Text(
+                        BreakWord.breakWord(tempList[temp].title),
+                        textAlign: TextAlign.start,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
+                        ),
+                      ),
                     )
                   ],
                 ),
                 Row(
                   children: [
                     Expanded(
+                        flex: 1,
+                        child:Text('￥',textAlign: TextAlign.start,style: TextStyle(fontSize: 9),)),
+                    Expanded(
+                        flex: 15,
                         child:Text(
                           tempList[temp].price.toString(),
-                          textAlign: TextAlign.start,
+                          //textAlign: TextAlign.start,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 12.0,
-                            color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
+                            color: Colors.red,
                           ),
                         )
                     )],
