@@ -11,7 +11,7 @@ class TopNavigatorBar extends StatefulWidget {
 
 class TopNavigatorBarState extends State<TopNavigatorBar> {
   TopNavigatorBarState({this.commodityId});
-  final int commodityId;
+  int commodityId;
   @override
   Widget build(BuildContext context) {
    return Scaffold(
