@@ -49,9 +49,9 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _title.text=' ';
-    _myPrice.text=' ';
-    _description.text=' ';
+    _title.text='';
+    _myPrice.text='';
+    _description.text='';
   }
 
   @override
