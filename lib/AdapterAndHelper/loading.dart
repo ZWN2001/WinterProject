@@ -8,19 +8,19 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 
 class DeliveryHeaderWidget extends StatefulWidget {
   // 背景颜色
-  final Color backgroundColor;
+  final Color backgroundColor = Colors.transparent;
 
-  final LinkHeaderNotifier linkNotifier;
+  final LinkHeaderNotifier linkNotifier= LinkHeaderNotifier();
 
-  const DeliveryHeaderWidget({
-    Key key,
-    this.backgroundColor,
-    this.linkNotifier,
-  }) : super(key: key);
+  //  DeliveryHeaderWidget({
+  //   Key key,
+  //   this.backgroundColor,
+  //   this.linkNotifier,
+  // }) : super(key: key);
 
   @override
-  DeliveryHeaderWidgetState createState() {
-    return DeliveryHeaderWidgetState();
+  myDeliveryHeaderWidgetState createState() {
+    return myDeliveryHeaderWidgetState();
   }
 }
 class myDeliveryHeaderWidgetState extends State<DeliveryHeaderWidget>

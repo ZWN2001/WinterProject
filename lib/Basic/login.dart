@@ -89,7 +89,7 @@ class LoginPageState extends State<LoginPage> {
       margin: EdgeInsets.fromLTRB(10, 20, 10, 10),
       child: TextFormField(
         key: accountKey,
-        // autofocus: true,
+        autofocus: account==null?true:false,
         decoration: InputDecoration(
           hintText: '请输入账号/学号',
           // border: OutlineInputBorder(borderSide: BorderSide()),
