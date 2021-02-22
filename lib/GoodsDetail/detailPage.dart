@@ -143,7 +143,7 @@ class DetailPageState extends State<DetailPage> {
                                 LoginPageState.account == thisCommodity.account
                                     ? Toast.show("你怎么能和自己聊天", context,duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM)
                                     : Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                      return new ChatPage(account: thisCommodity.account.toString());
+                                      // return new ChatPage(account: thisCommodity.account.toString());
                                     }));
                                 }//跳至聊天
                             )
