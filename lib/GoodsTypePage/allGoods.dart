@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:loading_animations/loading_animations.dart';
 import 'package:winter/Basic/login.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -325,10 +326,10 @@ class AllGoodsState extends State<AllGoods> {
 
   Widget _loadingText() {
     return  Center(
-        child: Text(
-          "加载中...",
-          style: TextStyle(fontSize: 20),
-        ),
+        child: LoadingBumpingLine.circle(
+      size: 50,
+      backgroundColor: Colors.blue,
+    ),
       );
   }
 

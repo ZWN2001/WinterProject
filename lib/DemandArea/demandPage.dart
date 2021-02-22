@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:loading_animations/loading_animations.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:provider/provider.dart'hide BuildContext;
 import 'package:winter/AdapterAndHelper/buildRoteFloatingBtn.dart';
@@ -242,9 +243,9 @@ class DemandPageState extends State<DemandPage> {
   }
   Widget _loadingText() {
     return  Center(
-      child: Text(
-        "加载中...",
-        style: TextStyle(fontSize: 20),
+      child: LoadingBumpingLine.circle(
+        size: 50,
+        backgroundColor: Colors.blue,
       ),
     );
   }

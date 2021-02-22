@@ -47,6 +47,8 @@ dependencies:
   connectivity: ^2.0.2
 #  刷新  https://pub.flutter-io.cn/packages/flutter_easyrefresh
   flutter_easyrefresh: ^2.1.8
+#加载中动画 https://pub.flutter-io.cn/packages/loading_animations
+  loading_animations: ^2.1.0
   flutter:
     sdk: flutter
 

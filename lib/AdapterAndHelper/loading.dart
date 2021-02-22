@@ -9,7 +9,6 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 class DeliveryHeaderWidget extends StatefulWidget {
   // 背景颜色
   final Color backgroundColor = Colors.transparent;
-
   final LinkHeaderNotifier linkNotifier= LinkHeaderNotifier();
 
   //  DeliveryHeaderWidget({
@@ -23,8 +22,7 @@ class DeliveryHeaderWidget extends StatefulWidget {
     return myDeliveryHeaderWidgetState();
   }
 }
-class myDeliveryHeaderWidgetState extends State<DeliveryHeaderWidget>
-    with TickerProviderStateMixin<DeliveryHeaderWidget> {
+class myDeliveryHeaderWidgetState extends State<DeliveryHeaderWidget> with TickerProviderStateMixin<DeliveryHeaderWidget> {
   RefreshMode get _refreshState => widget.linkNotifier.refreshState;
   double get _pulledExtent => widget.linkNotifier.pulledExtent;
   double get _indicatorExtent => widget.linkNotifier.refreshIndicatorExtent;
@@ -59,16 +57,11 @@ class myDeliveryHeaderWidgetState extends State<DeliveryHeaderWidget>
   double _umbrellaOffsetX = 0.0;
   double _umbrellaOffsetY = 0.0;
 
-  // 刷新
-  bool _isRefresh = false;
-  set isRefresh(bool value) {
-    if (_isRefresh != value) {
-      _isRefresh = value;
-      if (_isRefresh) {
+  //
+  void isRefresh() {
         _mergeController.forward();
-        _timerRun();
-      } else {
-        _timerStop();
+        countDown();
+        _mergeController.dispose();
         _timerValue = 0.0;
         // 初始化偏移量
         _cloud1Offset = _cloudDefaultOffset;
@@ -78,8 +71,7 @@ class myDeliveryHeaderWidgetState extends State<DeliveryHeaderWidget>
         _umbrellaOffsetX = 0.0;
         _umbrellaOffsetY = 0.0;
         _mergeController.reverse(from: 0.0);
-      }
-    }
+
   }
 
   @override
@@ -109,21 +101,10 @@ class myDeliveryHeaderWidgetState extends State<DeliveryHeaderWidget>
     super.dispose();
   }
 
-  // 计时
-  void _timerRun() {
-    _timer = Timer(Duration(milliseconds: 10), () {
-      setState(() {
-        _timerValue += 3;
-        _timerRun();
-      });
-    });
-  }
-
-  // 关闭计时
-  void _timerStop() {
-    if (_timer != null) {
-      _timer.cancel();
-    }
+  // 倒计时
+  void countDown() {
+    var _duration = new Duration(seconds: 3);
+    new Future.delayed(_duration);
   }
 
   // 计算加速值
@@ -143,13 +124,7 @@ class myDeliveryHeaderWidgetState extends State<DeliveryHeaderWidget>
 
   @override
   Widget build(BuildContext context) {
-    if (_noMore) return Container();
-    if (_refreshState == RefreshMode.armed ||
-        _refreshState == RefreshMode.refresh) {
-      isRefresh = true;
-    } else if (_refreshState == RefreshMode.inactive) {
-      isRefresh = false;
-    }
+      isRefresh();
     // 计算云朵偏移量
     _cloud1Offset = _cloudDefaultOffset +
         _timerValue % (MediaQuery.of(context).size.width - _cloudDefaultOffset);
