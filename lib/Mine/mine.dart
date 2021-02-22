@@ -381,18 +381,23 @@ class MinePageState extends State<MinePage> {
                               myContext.read<HeadImage>().refresh();
                               },
                               child: Container(
-                                margin: EdgeInsets.fromLTRB(30, 8, 8, 8),
-                                child: ClipOval(
-                                    child: _headImageUrl == null
-                                        ? Image.asset(
-                                      'images/defaultHeadImage.png',
-                                      color: Colors.white,
-                                      fit: BoxFit.cover,
-                                    )
-                                        : Image.network(
-                                      _headImageUrl,
-                                      fit: BoxFit.cover,
-                                    )),
+                                margin: EdgeInsets.fromLTRB(30, 4, 8, 15),
+                                child: SizedBox(
+                                  height: 64,
+                                  width: 64,
+                                  child:
+                                  ClipOval(
+                                      child: _headImageUrl == null
+                                          ? Image.asset(
+                                        'images/defaultHeadImage.png',
+                                        color: Colors.white,
+                                        fit: BoxFit.cover,
+                                      )
+                                          : Image.network(
+                                        _headImageUrl,
+                                        fit: BoxFit.cover,
+                                      )),
+                                )
                               )
                           );
                         },),
