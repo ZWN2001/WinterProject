@@ -296,8 +296,10 @@ class DemandPageState extends State<DemandPage> {
                       height: 60,
                       child: Row (
                         children: [
-                          Expanded(
-                            flex: 2,
+                          SizedBox(
+                            // flex: 2,
+                            height: 60,
+                            width: 60,
                             child: ClipOval(
                               child: headImageList.isEmpty || headImageList[index] == null
                                   ? Image.asset(
@@ -310,7 +312,7 @@ class DemandPageState extends State<DemandPage> {
                             ),
                           ),
                           Expanded(
-                              flex: 9,
+                              // flex: 9,
                               child: ListTile(
                                 title: Text(tempList[index].account,
                                 style: TextStyle(
