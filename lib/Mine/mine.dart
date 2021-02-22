@@ -383,8 +383,8 @@ class MinePageState extends State<MinePage> {
                               child: Container(
                                 margin: EdgeInsets.fromLTRB(30, 4, 8, 15),
                                 child: SizedBox(
-                                  height: 64,
-                                  width: 64,
+                                  height: 60,
+                                  width: 60,
                                   child:
                                   ClipOval(
                                       child: _headImageUrl == null
