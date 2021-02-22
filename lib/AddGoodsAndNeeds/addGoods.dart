@@ -8,6 +8,9 @@ import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:winter/Basic/login.dart';
+import 'package:winter/GoodsTypePage/allGoods.dart';
+import 'package:winter/tradeInfo.dart';
+import 'package:winter/Basic/home.dart';
 
 class AddGoods extends StatelessWidget {
   @override
@@ -351,7 +354,7 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
                 Icons.assignment_turned_in_rounded,
                 size: 28,
               ),
-              onPressed: () {
+              onPressed: () async {
                 if (_categoryCondition == false) {
                   Toast.show("选择分类啊喂", context,
                       duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
@@ -364,7 +367,9 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
                     });
                     _submitDetails(_title.text, double.parse(_myPrice.text),
                         _description.text, _category,_imageUrl);
-                    Navigator.of(context).pop();
+                    //Navigator.of(context).pop(1);
+                    AllGoods().createElement();
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => new MyHomePage()), (route) => false);
                   }
                 }
               },
