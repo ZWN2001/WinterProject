@@ -90,20 +90,24 @@ class MyInfoState extends State<ShowInfoPage> {
                     ),
                     Expanded(
                         child: Container(
-                          margin: EdgeInsets.only(right: 30),
+                          margin: EdgeInsets.only(right: 20),
                           alignment: Alignment.centerRight,
-                          child: ClipOval(
-                              child:
-                              _userInfo.headImage?.toString()==null ?
-                              Image.asset(
-                                'images/defaultHeadImage.png',
-                                color: Colors.black,
-                                fit: BoxFit.cover,
-                              )
-                                  : Image.network(
-                                _userInfo.headImage?.toString(),
-                                fit: BoxFit.cover,
-                              )
+                          child: SizedBox(
+                            height: 60,
+                            width: 60,
+                            child: ClipOval(
+                                child:
+                                _userInfo.headImage?.toString()==null ?
+                                Image.asset(
+                                  'images/defaultHeadImage.png',
+                                  color: Colors.black,
+                                  fit: BoxFit.cover,
+                                )
+                                    : Image.network(
+                                  _userInfo.headImage?.toString(),
+                                  fit: BoxFit.cover,
+                                )
+                            ),
                           ),
                         )
                     ),
