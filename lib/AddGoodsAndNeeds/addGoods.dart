@@ -37,7 +37,7 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
   TextEditingController _myPrice = TextEditingController();
   TextEditingController _description = TextEditingController();
 
-  GlobalKey<FormState> addGoodsKey = new GlobalKey<FormState>();
+  // GlobalKey<FormState> addGoodsKey = new GlobalKey<FormState>();
   var titleKey = GlobalKey<FormFieldState>();
   var priceKey = GlobalKey<FormFieldState>();
 

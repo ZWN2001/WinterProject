@@ -30,7 +30,7 @@ class MinePage extends StatefulWidget {
 }
 
 class MinePageState extends State<MinePage> {
-  String _headImageUrl=' ';
+  String _headImageUrl;
   String _username=' ';
   @override
   void initState() {

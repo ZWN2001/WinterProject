@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:provider/provider.dart'hide BuildContext;
 import 'package:winter/AdapterAndHelper/buildRoteFloatingBtn.dart';
@@ -32,6 +33,8 @@ class DemandPageState extends State<DemandPage> {
       "demand": "东临碣石，以观沧海。\n水何澹澹，山岛竦峙。\n树木丛生，百草丰茂。\n秋风萧瑟，洪波涌起。\n日月之行，若出其中；\n星汉灿烂，若出其里。\n幸甚至哉，歌以咏志。\n"
     }
   ];
+  Key key;
+  final LinkHeaderNotifier linkNotifier = LinkHeaderNotifier();
   
   List<Demand> demandList = new List();
   List<Demand> tempList = new List();
@@ -214,9 +217,18 @@ class DemandPageState extends State<DemandPage> {
   }
 
   Widget demandListView() {
-    return RefreshIndicator(
-        onRefresh: _onRefresh,
-        child: ListView.builder(
+    return EasyRefresh(
+        header: DeliveryHeader(),
+        firstRefresh: false,//默认加载
+        onRefresh: () async {
+          print("下拉刷新-----");
+          _onRefresh();
+        },
+        onLoad: () async {
+          print("上拉加载-----");
+          _getMore();
+        },
+        child:  ListView.builder(
           scrollDirection: Axis.vertical,
           controller: _scrollController,
           itemCount: tempList.length,
