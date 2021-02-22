@@ -432,7 +432,7 @@ class myInfoState extends State<myInfo> {
         ),
         Center(
           child: Container(
-            margin: EdgeInsets.only(top: 50),
+            margin: EdgeInsets.only(top: 50,bottom: 40),
             child: FloatingActionButton(
               backgroundColor: Colors.lightBlue,
               child: Icon(Icons.assignment_turned_in_rounded, size: 28,),
@@ -440,7 +440,12 @@ class myInfoState extends State<myInfo> {
                 HeadImage.getHeadImage(context).then((value) {
                   _headImageUrl=value;
                 });
-                _submitDetails(_headImageUrl, _age, _introduction, _sex, _name, _location, _username);
+                if(_username.length>6){
+                  Toast.show("用户名长度不能大于六", context,
+                      duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                }else{
+                  _submitDetails(_headImageUrl, _age, _introduction, _sex, _name, _location, _username);
+                }
               },
             ),
           ),
