@@ -1,5 +1,6 @@
 import 'dart:convert';
-
+import 'package:toast/toast.dart';
+import 'package:winter/ChatArea/ChatPage.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -22,13 +23,14 @@ class DetailPageState extends State<DetailPage> {
   
   DetailPageState({this.commodityId});
   final int commodityId;
-  
+  String price = " ";
+  String title = " ";
+  String description = " ";
   Commodity thisCommodity;
   List imageList;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _getDetailData().then((value) {
       _imageToList();
@@ -57,8 +59,11 @@ class DetailPageState extends State<DetailPage> {
               response.data['data']['category'],
               response.data['data']['image'],
               response.data['data']['account']);
-          print(thisCommodity);
+          print(thisCommodity.account);
         });
+        price = thisCommodity.price.toString();
+        title = thisCommodity.title;
+        description = thisCommodity.description;
       }
     }
   }
@@ -99,7 +104,7 @@ class DetailPageState extends State<DetailPage> {
           Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
              return Container(
                 padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
-                child: Text(thisCommodity.title,
+                child: Text(title,
                          maxLines: 3,
                          style: TextStyle(
                            color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
@@ -117,7 +122,7 @@ class DetailPageState extends State<DetailPage> {
                     child: Row(
                       children: [
                         Text("价格：￥"),
-                        Text(thisCommodity.price.toString(),style: TextStyle(
+                        Text(price,style: TextStyle(
                           color: Colors.red,
                           fontSize: 18
                         ),)
@@ -134,7 +139,13 @@ class DetailPageState extends State<DetailPage> {
                               text: " 联系卖家",
                               style: TextStyle(fontSize: 18, color: Colors.blue),
                               recognizer: TapGestureRecognizer()
-                                ..onTap = () {print("联系卖家");}//跳至聊天
+                                ..onTap = () {
+                                LoginPageState.account == thisCommodity.account
+                                    ? Toast.show("你怎么能和自己聊天", context,duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM)
+                                    : Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                      return new ChatPage(account: thisCommodity.account.toString());
+                                    }));
+                                }//跳至聊天
                             )
                         )
                       ],
@@ -171,7 +182,7 @@ class DetailPageState extends State<DetailPage> {
          Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
             return Container(
               padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
-              child: Text(thisCommodity.description,style: TextStyle(
+              child: Text(description,style: TextStyle(
                 color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
               ),),
           );}
