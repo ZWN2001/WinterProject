@@ -108,6 +108,7 @@ class AllGoodsState extends State<AllGoods> {
   List<Commodity> tempList = new List();
   Iterable<Commodity> reservedList = new List();
   List<String> firstImageList = new List();
+
   int startNum = 0;
   int itemLength = 0;
   int _page = 1;
@@ -136,7 +137,7 @@ class AllGoodsState extends State<AllGoods> {
       } else {
         setState(() {
           if(tempList[0].image != null || tempList[0].image.isNotEmpty) {
-            _getFirstImageList(tempList);
+            _getFirstImageList(reservedList);
           }
           centerContent = commodityGridView();
         });
@@ -239,15 +240,19 @@ class AllGoodsState extends State<AllGoods> {
     }
   }
 
-  _getFirstImageList(List<Commodity> tempList) {
-    tempList.forEach((element) {
-      if (element.image != null && element.image.isNotEmpty) {
-        List imageList = element.image as List;
+  _getFirstImageList(Iterable<Commodity> reservedList) {
+    reservedList.forEach((element) {
+      if (element.image.isNotEmpty) {
+        List imageList = new List();
+        imageList = json.decode(element.image);
         firstImageList.add(imageList[0]);
       } else {
+        firstImageList.add('null');
         print('好像没图片');
       }
     });
+    print('firstImageList,,,,,,,,,,,,,,,,....................');
+    print(firstImageList);
   }
 
   @override
@@ -367,7 +372,7 @@ class AllGoodsState extends State<AllGoods> {
                         child:SizedBox(
                           height: 130,
                           child: //Text("暂时没有图片哦", style: TextStyle(color: Colors.grey, fontSize: 10),textAlign: TextAlign.center,)
-                          firstImageList.isEmpty
+                          firstImageList[temp] == 'null'
                           ? Text("暂时没有图片哦", style: TextStyle(color: Colors.grey, fontSize: 10),textAlign: TextAlign.center)
                           : Image.network(firstImageList[temp], fit: BoxFit.cover,),
                         )
