@@ -12,6 +12,7 @@ import 'package:winter/AdapterAndHelper/picker_text.dart';
 import 'package:winter/Basic/login.dart';
 import 'package:winter/Mine/PersonalInfo/userInfo.dart';
 import 'package:winter/AdapterAndHelper/getUsername.dart';
+import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';
 
 class ChangeInfo extends StatelessWidget {
   @override
@@ -444,6 +445,7 @@ class myInfoState extends State<myInfo> {
                   Toast.show("用户名长度不能大于六", context,
                       duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
                 }else{
+                  SharedPreferenceUtil.saveUsername(_username);
                   _submitDetails(_headImageUrl, _age, _introduction, _sex, _name, _location, _username);
                 }
               },
