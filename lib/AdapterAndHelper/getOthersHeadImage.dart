@@ -6,7 +6,7 @@ import 'package:winter/Basic/login.dart';
 class getOthersHeadImages {
   static Future<String> getOthersHeadImage(BuildContext context, String targetAccount) async {
     Response response=await Dio().post(
-      'http://widealpha.top:8080/shop/user/headImage',
+      'http://widealpha.top:8080/shop/user/othersHeadImage',
       options:
       Options(headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
       queryParameters: {
