@@ -1,38 +1,66 @@
+import 'dart:async';
+import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:winter/AdapterAndHelper/getOthersUsername.dart';
+import 'package:winter/AdapterAndHelper/headImage.dart';
+import 'package:winter/AdapterAndHelper/getOthersHeadImage.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
-import 'package:provider/provider.dart'hide BuildContext;
+import 'package:provider/provider.dart'hide BuildConhtext;
 import 'package:winter/AdapterAndHelper/bubble.dart';
 import 'package:path/path.dart';
+import 'package:winter/AdapterAndHelper/getUsername.dart';
+import 'package:winter/Basic/login.dart';
+
 
 class ChatPage extends StatefulWidget {
-  ChatPage(
-      {this.messages, this.userName, this.sheName, this.headImage, this.sheHeadImage});
-  final String messages;
-  final String userName;
-  final String sheName;//对方的用户名
-  final String headImage;
-  final String sheHeadImage;
+  ChatPage({Key key, @required this.account}) : super(key: key);
+  String account;
   @override
-  State<StatefulWidget> createState() => new ChatPageState();
+  State<StatefulWidget> createState() => new ChatPageState(targetAccount: account);
 }
 
 
 class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
-  final List<ChatMessage> _messages = <ChatMessage>[];
+  ChatPageState({this.targetAccount});
+
+  //final List<ChatMessage> _messages = <ChatMessage>[];
+  List<Message> _message = <Message>[];
   final TextEditingController _textController = new TextEditingController();
   bool _isComposing = false;//用户是否输入字段
   String _dbName = 'localHistoryMessages';
   String _data = "none";
   String _createTableSQL = 'CREATE TABLE history_messages (id INTEGER PRIMARY KEY, senderName TEXT, userName TEXT, sheName TEXT, headImage TEXT, timestamp TEXT, text TEXT)';
   int _dbVersion = 1;
+  String targetAccount;
+  Timer _timer;
+  String myHeadImage;
+  String targetHeadImage;
+  String myUsername;
+  String targetUsername;
 
   @override
   void initState() {
     super.initState();
-    _createDb(_dbName, _dbVersion, _createTableSQL).then((value){
+    _getMessageFromServerPeriodically().then((value) {
+      setState(() {});
+    });
+    HeadImage.getHeadImage(this.context).then((value){
+      myHeadImage = value;
+    });
+    getOthersHeadImages.getOthersHeadImage(this.context, targetAccount).then((value) {
+      targetHeadImage = value;
+    });
+    getUserName.getUsername(this.context).then((value){
+      myUsername = value;
+    });
+    getOthersUserName.getOthersUsername(this.context, targetAccount).then((value) {
+      targetUsername = value;
+    });
+    /*_createDb(_dbName, _dbVersion, _createTableSQL).then((value){
       setState(() {
         _getHistoryMessagesFromLocal(_name, "zwn").then((value) {
           setState(() {
@@ -40,44 +68,103 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
           });
         });
       });
-    });
-    /*setState(() {
-      _getHistoryMessages();
     });*/
   }
 
   //点击发送后的处理事项
-  void _handleSubmitted(String text) {
-    //每次发送后清除输入框
-    if (text.trim() == "") return;
+  Future <void> _handleSubmitted(String text) async {
+    if (text.trim() == "") return;//每次发送后清除输入框
     _textController.clear();
     setState(() {
       _isComposing = false;
     });
-    _sendMessage(text: text, imageUrl: "https://www.itying.com/images/flutter/4.png");
-    //发送消息后，将新消息添加到消息列表中，且为从头插入（时间顺序）
-    ChatMessage message = new ChatMessage(
+    await _sendMessage(targetAccount, text).then((value) {
+      setState(() {
+
+      });
+    });
+   /* setState(() {
+      _messages.insert(0,ChatMessage()..senderName = '$_name'..headImage = "https://www.itying.com/images/flutter/4.png"..text = '$text');
+    });*/
+    /*ChatMessage message = new ChatMessage(
       text: text,
       animationController: new AnimationController(
           duration: new Duration(milliseconds: 300),
           vsync: this //此选项将当前窗口控件树保留在显示内存中，直到Flutter的渲染引擎完成刷新周期
-      ),        //被删除的动画部分
+      ),
     );
-    setState(() {
-      //_messages.insert(0, message);
-      //_getHistoryMessages();
-      _messages.insert(0,ChatMessage()..senderName = '$_name'..headImage = "https://www.itying.com/images/flutter/4.png"..text = '$text');
+    message.animationController.forward();//每当将新消息添加到聊天列表中时动画应播放*/
+  }
+
+  //send message to server
+  Future<void> _sendMessage(String targetAccount, String message) async {
+    Response response;
+    Dio dio = new Dio();
+    response = await dio.post('http://widealpha.top:8080/shop/chat/sendMessage',
+    options: Options(headers: {'Authorization': 'Bearer'+LoginPageState.token}),
+    queryParameters: {
+      'targetAccount': targetAccount,
+      'message': message
     });
-    message.animationController.forward();//每当将新消息添加到聊天列表中时动画应播放*/   //被删除的动画部分
-  }
-
-  void _sendMessage({String text, String imageUrl}) {
-    String time = new DateTime.now().toString();
+    String feedback = response.data.toString();
+    print(feedback);
+    DateTime time = DateTime.now();
+    String timestamp = time.toString();
+    if (response.data['code'] == 0) {
+      setState(() {
+       _message.insert(0,new Message(
+           response.data['data'],
+           LoginPageState.account,
+           targetAccount,
+           timestamp,
+           message,
+           0));
+       print('send successfully');
+      });
+    }
+    /*String time = new DateTime.now().toString();
     String sql = "INSERT INTO history_messages(userName,sheName,senderName,headImage,timestamp,text) VALUES('$_name','zwn','$_name','$imageUrl','$time','$text')";
-    _add(_dbName, sql);
+    _add(_dbName, sql);*/
   }
 
-  Future<void> _getHistoryMessagesFromLocal(String userName, String sheName) async {
+  Future<void> _getMessageFromServerPeriodically() async{
+    _timer = Timer.periodic(Duration(milliseconds: 2), (t) async {
+      Response response;
+      Dio dio = new Dio();
+      response = await dio.post('http://widealpha.top:8080/shop/chat/messagesWithTarget',
+          options: Options(headers: {'Authorization': 'Bearer'+LoginPageState.token}),
+          queryParameters: {
+            'targetAccount': targetAccount,
+            'limit': 100
+          }
+      );
+      String feedback = response.data.toString();
+      print(feedback);
+      if (response.data['code'] == 0) {
+        if (response.data['data'] == null) {
+          print('no info');
+          return;
+        } else {
+          if (!mounted) {
+            return;
+          }
+          setState(() {
+            List messageJson = response.data['data'];
+            print(messageJson);
+            _message = messageJson.map((e) => Message.fromJson(e)).toList();
+            print(_message);
+            if (_message.isEmpty) {
+              print("没有历史记录");
+            }
+          });
+        }
+      }
+      print("get successfully");
+    });
+
+  }
+
+  /*Future<void> _getHistoryMessagesFromLocal(String userName, String sheName) async {
     String sql = 'SELECT * FROM history_messages';
     var databasesPath = await getDatabasesPath();
     String path = join(databasesPath, _dbName);
@@ -90,26 +177,27 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     }
     int i = list.length-1;
     while (i >= 0){
-      /*print(runtimeType);
+      *//*print(runtimeType);
       _messages[i].senderName = list[i]['senderName'];
       print(runtimeType);
       _messages[i].headImage = list[i]['headImage'];
       _messages[i].text = list[i]['text'];
-      i++;*/
+      i++;*//*
       if (list[i]['userName'] == userName && list[i]['sheName'] == sheName){
         _messages.add(ChatMessage()..senderName = list[i]['senderName']..headImage = list[i]['headImage']..text = list[i]['text']);
         print(_messages.toString());
       }
       i--;
     }
-   }
+   }*/
 
   //不再需要资源时释放动画处理器的资源
   @override
   void dispose() {
-    for (ChatMessage message in _messages)
-      message.animationController.dispose();
+    /*for (ChatMessage message in _messages)
+      message.animationController.dispose();*/
     super.dispose();
+    _timer.cancel();
   }   //被删除的动画部分
 
   //总UI
@@ -117,7 +205,7 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("zwn"),//暂时
+        title: Text(targetUsername ?? " "),
         actions:<Widget> [
           new PopupMenuButton(
               itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -140,8 +228,8 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                           String sql = 'DELETE FROM history_messages where sheName = "zwn"';
                           _delete(_dbName, sql);
                           print(_data);
-                          _messages.clear();
-                          _getHistoryMessagesFromLocal(_name, "zwn");
+                          //_messages.clear();
+                          //_getHistoryMessagesFromLocal(_name, "zwn");
                         }
                       },
                     )
@@ -156,8 +244,8 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
               child: new ListView.builder(
                 padding: new EdgeInsets.all(8.0),
                 reverse: true,//使ListView从屏幕底部开始
-                itemBuilder: (_, int index) => _messages[index],
-                itemCount: _messages.length,
+                itemBuilder: (_, int index) => _message[index],
+                itemCount: _message.length,
               )
           ),
           new Divider(height: 1.0),
@@ -293,14 +381,30 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
 //表示单个聊天消息的控件
 const String _name = "Ryan";
-class ChatMessage extends StatelessWidget {
-  ChatMessage({this.text, this.animationController, this.senderName, this.userName, this.headImage, this.sheName});
-  String text;
-  final AnimationController animationController;//动画控制器
-  String senderName;
-  final String userName;
-  String headImage;
-  String sheName;
+class Message extends StatelessWidget {
+  int messageId;
+  String senderAccount;
+  String targetAccount;
+  String timestamp;
+  String message;
+  int readTimes;
+
+  Message(this.messageId, this.senderAccount, this.targetAccount,
+      this.timestamp, this.message, this.readTimes);
+
+  Message.fromJson(Map<String, dynamic> jsonMap) {
+    this.messageId = jsonMap['messageId'];
+    this.senderAccount = jsonMap['senderAccount'];
+    this.targetAccount = jsonMap['targetAccount'];
+    this.timestamp = jsonMap['timestamp'];
+    this.message = jsonMap['message'];
+    this.readTimes = jsonMap['readTimes'];
+  }
+
+  String myHeadImage = ChatPageState().myHeadImage;
+  String targetHeadImage = ChatPageState().targetHeadImage;
+  String myUsername = ChatPageState().myUsername;
+  String targetUsername = ChatPageState().targetUsername;
 
   @override
   Widget build(BuildContext context) {
@@ -311,23 +415,25 @@ class ChatMessage extends StatelessWidget {
         children: [
           Container(
             margin: const EdgeInsets.only(right: 16.0),
-            child: CircleAvatar(
+            child: targetHeadImage == null
+                ? CircleAvatar(backgroundImage: AssetImage('images/defaultHeadImage.png'),)
+                : CircleAvatar(backgroundImage: NetworkImage(targetHeadImage),)
+            /*CircleAvatar(
               backgroundImage: NetworkImage(headImage),
-            ),
+            ),*/
           ),
           Flexible(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(senderName,style: Theme.of(context).textTheme.subhead),
+                  Text(senderAccount,style: Theme.of(context).textTheme.subhead),
                   Container(
-                    //TODO
                     margin: const EdgeInsets.only(top: 5.0,right: 50),
                     child: Bubble(
                       direction: BubbleDirection.left,
                       color: Colors.blue,
                       child: Text(
-                        text,
+                        message,
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
@@ -347,14 +453,14 @@ class ChatMessage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(senderName, style: Theme.of(context).textTheme.subhead),
+                  Text(senderAccount, style: Theme.of(context).textTheme.subhead),
                   Container(
                     margin: const EdgeInsets.only(top: 5.0),
                     child: Bubble(
-                      direction: BubbleDirection.left,
+                      direction: BubbleDirection.right,
                       color: Colors.blue,
                       child: Text(
-                        text,
+                        message,
                         style: TextStyle(color: Colors.white)
                       ),
                     ),
@@ -363,9 +469,9 @@ class ChatMessage extends StatelessWidget {
               )),
           Container(
             margin: const EdgeInsets.only(left: 16.0),
-            child: CircleAvatar(
-              backgroundImage: NetworkImage(headImage),
-            ),
+            child: myHeadImage == null
+                ? CircleAvatar(backgroundImage: AssetImage('images/defaultHeadImage.png'))
+                : CircleAvatar(backgroundImage: NetworkImage(myHeadImage),)
           )
         ],
       );
@@ -380,12 +486,10 @@ class ChatMessage extends StatelessWidget {
       child: Consumer<DarkModeModel>(builder: (context, DarkModeModel, child){
         return Container(
           margin: EdgeInsets.symmetric(vertical: 10.0),
-          child:
-              //正确代码
-         // userName == senderName
-           // ? _mySessionStyle() : _sheSessionStyle(),
+          child: LoginPageState.account == senderAccount
+              ? _mySessionStyle() : _sheSessionStyle(),
           //临时代码
-          Row(
+          /*Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.end,//+
             children: [
@@ -393,16 +497,15 @@ class ChatMessage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,//start
                     children: [
-                      Text(senderName,
+                      Text(senderAccount,
                       style: Theme.of(context).textTheme.subhead),
                       Container(
-                        //TODO
                         margin: const EdgeInsets.only(top: 5.0,left: 50),
                         child: Bubble(
                           direction: BubbleDirection.right,
                           color: Colors.blue,
                           child: Text(
-                            text,
+                            message,
                             style: TextStyle(
                               color: DarkModeModel.darkMode ? Colors.white : Colors.black87
                             ),
@@ -413,10 +516,10 @@ class ChatMessage extends StatelessWidget {
                   )),
               Container(
                 margin: const EdgeInsets.only(left: 16.0),//right
-                child: CircleAvatar(backgroundImage: NetworkImage(headImage)),
+                child: CircleAvatar(backgroundImage: NetworkImage("https://www.itying.com/images/flutter/5.png")),
               ),
             ],
-          ),
+          ),*/
         );
       },),
     );
