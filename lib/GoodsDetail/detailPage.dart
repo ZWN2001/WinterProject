@@ -27,7 +27,8 @@ class DetailPageState extends State<DetailPage> {
   String title = " ";
   String description = " ";
   Commodity thisCommodity;
-  List imageList;
+  List imageList = [];
+  int imageListLength = 1;
 
   @override
   void initState() {
@@ -71,6 +72,8 @@ class DetailPageState extends State<DetailPage> {
   void _imageToList() {
     if (thisCommodity.image.isNotEmpty) {
       imageList = json.decode(thisCommodity.image);
+      imageListLength = imageList.length;
+      print('有图');
     } else {
       print("无图");
     }
@@ -87,19 +90,22 @@ class DetailPageState extends State<DetailPage> {
           Container(
             width: MediaQuery.of(context).size.width,
             height: 200.0,
-            child: Swiper(
+            child: imageList.length == 0
+                ? Center(child: Text("卖家没有上传图片"))
+            : Swiper(
               itemBuilder: swiperBuilder,
-              itemCount: 6,
+              itemCount: imageList.length,
               pagination: new SwiperPagination(
-                builder: DotSwiperPaginationBuilder(
-                  color: Colors.black54,
-                  activeColor: Colors.white,
-                )
+                  builder: DotSwiperPaginationBuilder(
+                    color: Colors.black54,
+                    activeColor: Colors.white,
+                  )
               ),
               controller: new SwiperController(),
               scrollDirection: Axis.horizontal,
               onTap: (index){},
             ),
+
           ),
           Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
              return Container(
@@ -143,7 +149,7 @@ class DetailPageState extends State<DetailPage> {
                                 LoginPageState.account == thisCommodity.account
                                     ? Toast.show("你怎么能和自己聊天", context,duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM)
                                     : Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                      // return new ChatPage(account: thisCommodity.account.toString());
+                                       return new ChatPage(account: thisCommodity.account.toString());
                                     }));
                                 }//跳至聊天
                             )
@@ -190,6 +196,28 @@ class DetailPageState extends State<DetailPage> {
       ),
     );
   }
+
+  Widget swiperBuilder(BuildContext context, int index) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          return ImageShowServerWidget(
+            initialIndex: index,
+            photoList: imageList,
+          );
+        }));
+      },
+      child: imageList.length == 0
+      ? Text("wutu")
+      :  Image.network(
+        imageList[index],
+        fit: BoxFit.contain,),
+
+    );
+    /*(Image.network(
+    piclist[index],
+    fit: BoxFit.contain,));*/
+  }
 }
 
 List<String> picList = [
@@ -202,21 +230,3 @@ List<String> picList = [
 ];
 
 
-Widget swiperBuilder(BuildContext context, int index) {
-  return GestureDetector(
-    onTap: () {
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-        return ImageShowServerWidget(
-          initialIndex: index,
-          photoList: picList,
-        );
-      }));
-    },
-    child: Image.network(
-      picList[index],
-      fit: BoxFit.contain,),
-  );
-  /*(Image.network(
-    piclist[index],
-    fit: BoxFit.contain,));*/
-}
