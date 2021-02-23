@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart' hide BuildContext ;
+import 'package:winter/AdapterAndHelper/headImage.dart';
+import 'AdapterAndHelper/searchHistory.dart';
 import 'Basic/login.dart';
 import 'dart:async';
 import 'AdapterAndHelper/DarkModeModel.dart';
@@ -8,6 +10,7 @@ import 'Basic/home.dart';
 import 'Basic/search.dart';
 import 'Mine/PersonalInfo/changeInfo.dart';
 import 'Mine/PersonalInfo/showInfo.dart';
+import 'Mine/mine.dart';
 
 void main() => runApp(Splash());
 
@@ -17,7 +20,11 @@ class Splash extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<DarkModeModel>(
-            create: (child) => DarkModeModel())
+            create: (child) => DarkModeModel()),
+        ChangeNotifierProvider<HeadImage>(
+            create: (child)=>HeadImage()),
+        ChangeNotifierProvider<SearchHistory>(
+    create: (_) => SearchHistory())
       ],
       child: Consumer<DarkModeModel>(
         builder: (context, DarkModeModel, child) {

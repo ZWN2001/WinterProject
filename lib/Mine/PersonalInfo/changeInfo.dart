@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -51,6 +52,7 @@ class myInfoState extends State<myInfo> {
   String _name;
   String _username;
   String selectSex = '男';
+  HeadImage myHeadImage=new HeadImage();
 
   Future _getInfo(BuildContext context) async {
     Response response=await  Dio().post('http://widealpha.top:8080/shop/user/userInfo',
@@ -77,7 +79,7 @@ class myInfoState extends State<myInfo> {
       if(mounted) {
         setState(() {
           _userInfo = value;
-          _headImageUrl=_userInfo.headImage;
+          // _headImageUrl=_userInfo.headImage;
           _age=_userInfo.age;
           _location=_userInfo.location;
           _introduction=_userInfo.introduction;
@@ -93,6 +95,14 @@ class myInfoState extends State<myInfo> {
               selectSex='不限';
           }
 
+        });
+      }
+    });
+    myHeadImage.getHeadImage(context).then((value) {
+      if (mounted) {
+        setState(() {
+          myHeadImage.HeadImageUrl = value;
+          print('headImageUrl:${myHeadImage.HeadImageUrl}');
         });
       }
     });
@@ -128,34 +138,48 @@ class myInfoState extends State<myInfo> {
                     Expanded(
                       child:Container(
                         child:ChangeNotifierProvider<HeadImage>(
-                          create: (_) => HeadImage(),
+                          create: (_) => myHeadImage,
                           builder: (myContext, child) {
-                            return GestureDetector(
-                                onTap:(){  HeadImage.chooseImage(context);
-                                myContext.read<HeadImage>().refresh();
-                                },
-                                child: Container(
-                                  margin: EdgeInsets.only(right: 30),
-                                  alignment: Alignment.centerRight,
-                                  child: SizedBox(
-                                    height: 60,
-                                    width: 60,
-                                    child: ClipOval(
-                                        child:
-                                        _userInfo.headImage?.toString()==null ?
-                                        Image.asset(
-                                          'images/defaultHeadImage.png',
-                                          color: Colors.black,
-                                          fit: BoxFit.cover,
-                                        )
-                                            : Image.network(
-                                          _userInfo.headImage?.toString(),
-                                          fit: BoxFit.cover,
-                                        )
-                                    ),
-                                  ),
-                                )
-                            );
+                            return Consumer<HeadImage>(
+                              builder: (_, headImage, child) {
+                                return GestureDetector(
+                                    // onTap: () async {
+                                    //   await myContext
+                                    //       .read<HeadImage>()
+                                    //       .chooseImage(context);
+                                    // },
+                                    child: Container(
+                                      margin: EdgeInsets.only(right: 30),
+                                      alignment: Alignment.centerRight,
+                                      child: SizedBox(
+                                        height: 60,
+                                        width: 60,
+                                        child: ClipOval(
+                                          child: myHeadImage.HeadImageUrl ==
+                                              null
+                                              ? Image.asset(
+                                            'images/defaultHeadImage.png',
+                                            color: Colors.white,
+                                            fit: BoxFit.cover,
+                                          )
+                                              : CachedNetworkImage(
+                                            imageUrl:
+                                            myHeadImage.HeadImageUrl,
+                                            placeholder: (context, url) =>
+                                                CircularProgressIndicator(),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                Image.asset(
+                                                  'images/defaultHeadImage.png',
+                                                  color: Colors.white,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                );
+                              },);
                           },),
                       ),
                     ),
@@ -438,7 +462,7 @@ class myInfoState extends State<myInfo> {
               backgroundColor: Colors.lightBlue,
               child: Icon(Icons.assignment_turned_in_rounded, size: 28,),
               onPressed: () {
-                HeadImage.getHeadImage(context).then((value) {
+                myHeadImage.getHeadImage(context).then((value) {
                   _headImageUrl=value;
                 });
                 if(_username.length>6){

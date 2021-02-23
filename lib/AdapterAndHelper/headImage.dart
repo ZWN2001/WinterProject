@@ -8,7 +8,8 @@ import 'package:winter/Basic/login.dart';
 import 'cropImage.dart';
 
 class HeadImage with ChangeNotifier{
-  static Future<String> getHeadImage(BuildContext context) async {
+  String HeadImageUrl;
+  Future<String> getHeadImage(BuildContext context) async {
     Response response=await Dio().post(
       'http://widealpha.top:8080/shop/user/headImage',
       options:
@@ -25,16 +26,24 @@ class HeadImage with ChangeNotifier{
           duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
     }
   }
-  static Future chooseImage(BuildContext context) async {
+   Future chooseImage(BuildContext context) async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     if (image == null) {
       return 0;
     } else {
-      Navigator.push(context,
+      await Navigator.push(context,
           MaterialPageRoute(builder: (context) => CropImageRoute(image)));;
     }
+    await refreshHeadImage(context);
+    print('notify');
+    notifyListeners();
   }
-  void refresh(){
+  Future<void> refreshHeadImage(BuildContext context) async {
+    await HeadImage().getHeadImage(context).then((value)  {
+      HeadImageUrl=value;
+      print(value);
+    });
+    print('new headImage   $HeadImageUrl');
     notifyListeners();
   }
 }

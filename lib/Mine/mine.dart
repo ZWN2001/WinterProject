@@ -5,13 +5,12 @@ import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:winter/AdapterAndHelper/getUsername.dart';
 import 'package:winter/AdapterAndHelper/headImage.dart';
+import 'package:winter/AdapterAndHelper/headImage.dart';
 import 'package:winter/Basic/login.dart';
 import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';
 import 'MyRelease/myReleaseTabBar.dart';
 import 'PersonalInfo/showInfo.dart';
 import 'SetUserInfo/setAccountInfo.dart';
-import 'package:image_picker/image_picker.dart';
-import '../AdapterAndHelper/cropImage.dart';
 
 class Mine extends StatelessWidget {
   @override
@@ -32,18 +31,21 @@ class MinePage extends StatefulWidget {
 }
 
 class MinePageState extends State<MinePage> {
-  String _headImageUrl;
-  String _username=' ';
+  // String _headImageUrl;
+  String _username='';
+  HeadImage myHeadImage=new HeadImage();
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     print('initing....');
     if(LoginPageState.logged) {
-      HeadImage.getHeadImage(context).then((value){
+      myHeadImage.getHeadImage(context).then((value){
         if(mounted){
           setState(() {
-            _headImageUrl=value;
+            myHeadImage.HeadImageUrl=value;
+            print('headImageUrl:${myHeadImage.HeadImageUrl}');
           });
         }
       });
@@ -64,14 +66,12 @@ class MinePageState extends State<MinePage> {
           }
         }
       });
-      print('headImageUrl:$_headImageUrl');
       print('username:$_username');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    print('building');
     return Column(
       children: [
         Container(
@@ -386,34 +386,41 @@ class MinePageState extends State<MinePage> {
                   children: [
                     Container(
                       child:ChangeNotifierProvider<HeadImage>(
-                        create: (_) => HeadImage(),
+                        create: (_) => myHeadImage,
                         builder: (myContext, child) {
-                          return GestureDetector(
-                              onTap:(){  HeadImage.chooseImage(context);
-                              myContext.read<HeadImage>().refresh();
+                        return   Consumer<HeadImage>(builder: (_, headImage, child) {
+                              //最后一个参数取决于父组件的child值，该值可以决定外部不用修改
+                              return   GestureDetector(
+                                  onTap:()  async {
+                                    await myContext.read<HeadImage>().chooseImage(context);
                               },
-                              child: Container(
-                                margin: EdgeInsets.fromLTRB(30, 4, 8, 15),
-                                child: SizedBox(
-                                  height: 60,
-                                  width: 60,
-                                  child: ClipOval(
-                                      child:
-                                      _headImageUrl == null
-                                          ? Image.asset(
-                                        'images/defaultHeadImage.png',
-                                        color: Colors.white,
-                                        fit: BoxFit.cover,
+                                  child:
+                                    // Consumer<HeadImage>(builder: (_, headImage, child) {  return
+                                  Container(
+                                      margin: EdgeInsets.fromLTRB(30, 4, 8, 15),
+                                      child: SizedBox(
+                                        height: 60,
+                                        width: 60,
+                                        child: ClipOval(
+                                          child:
+                                          myHeadImage.HeadImageUrl == null
+                                              ? Image.asset(
+                                            'images/defaultHeadImage.png',
+                                            color: Colors.white,
+                                            fit: BoxFit.cover,
+                                          )
+                                              :CachedNetworkImage(
+                                            imageUrl: myHeadImage.HeadImageUrl,
+                                            placeholder: (context, url) => CircularProgressIndicator(),
+                                            errorWidget: (context, url, error) => Image.asset('images/defaultHeadImage.png', color: Colors.white, fit: BoxFit.cover,),
+                                          ),
+                                        ),
                                       )
-                                         :CachedNetworkImage(
-                                        imageUrl: _headImageUrl,
-                                        placeholder: (context, url) => CircularProgressIndicator(),
-                                        errorWidget: (context, url, error) => Image.asset('images/defaultHeadImage.png', color: Colors.white, fit: BoxFit.cover,),
-                                      ),
                                   ),
-                                )
-                              )
-                          );
+                                // },),
+                              );
+                            },);
+
                         },),
                     ),
                     Expanded(

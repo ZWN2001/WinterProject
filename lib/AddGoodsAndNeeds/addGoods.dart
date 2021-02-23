@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:toast/toast.dart';
@@ -362,9 +364,7 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
                   if (titleKey.currentState.validate() &&
                       priceKey.currentState.validate()) {
                     String _imageUrl;
-                    _submitImages().then((value) {
-                      _imageUrl=value;
-                    });
+                    _imageUrl=await _submitImages();
                     _submitDetails(_title.text, double.parse(_myPrice.text),
                         _description.text, _category,_imageUrl);
                     //Navigator.of(context).pop(1);
@@ -455,7 +455,7 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
       }
     }
     print('图片列表： ${imageList.toString()}');
-    return imageList.toString();
+    return jsonEncode(imageList);
   }
 
   void _submitDetails(String title, double price, String description, String category,String imageUrl) {
@@ -471,7 +471,7 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
           'image':imageUrl
         }).then((value) {
       addGoodsResponse = value;
-      print(addGoodsResponse);
+      print('添加商品$addGoodsResponse');
       if (addGoodsResponse.data['code'] == 0) {
         Toast.show("商品发布成功", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
