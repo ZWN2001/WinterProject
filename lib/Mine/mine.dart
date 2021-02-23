@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'hide BuildContext;
 import 'package:toast/toast.dart';
@@ -5,6 +6,7 @@ import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:winter/AdapterAndHelper/getUsername.dart';
 import 'package:winter/AdapterAndHelper/headImage.dart';
 import 'package:winter/Basic/login.dart';
+import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';
 import 'MyRelease/myReleaseTabBar.dart';
 import 'PersonalInfo/showInfo.dart';
 import 'SetUserInfo/setAccountInfo.dart';
@@ -49,7 +51,17 @@ class MinePageState extends State<MinePage> {
         if(mounted){
           setState(() {
             _username=value;
+            SharedPreferenceUtil.saveUsername(value);
           });
+        }
+      });
+      SharedPreferenceUtil.getUsername().then((value) {
+        if(value.length!=0||value==null) {
+          if (mounted) {
+            setState(() {
+              _username = value;
+            });
+          }
         }
       });
       print('headImageUrl:$_headImageUrl');
@@ -385,18 +397,20 @@ class MinePageState extends State<MinePage> {
                                 child: SizedBox(
                                   height: 60,
                                   width: 60,
-                                  child:
-                                  ClipOval(
-                                      child: _headImageUrl == null
+                                  child: ClipOval(
+                                      child:
+                                      _headImageUrl == null
                                           ? Image.asset(
                                         'images/defaultHeadImage.png',
                                         color: Colors.white,
                                         fit: BoxFit.cover,
                                       )
-                                          : Image.network(
-                                        _headImageUrl,
-                                        fit: BoxFit.cover,
-                                      )),
+                                         :CachedNetworkImage(
+                                        imageUrl: _headImageUrl,
+                                        placeholder: (context, url) => CircularProgressIndicator(),
+                                        errorWidget: (context, url, error) => Image.asset('images/defaultHeadImage.png', color: Colors.white, fit: BoxFit.cover,),
+                                      ),
+                                  ),
                                 )
                               )
                           );

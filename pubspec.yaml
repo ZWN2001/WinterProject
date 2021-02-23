@@ -49,6 +49,8 @@ dependencies:
   flutter_easyrefresh: ^2.1.8
 #加载中动画 https://pub.flutter-io.cn/packages/loading_animations
   loading_animations: ^2.1.0
+#  缓存图片 https://pub.dev/packages/cached_network_image
+  cached_network_image: ^2.5.0
   flutter:
     sdk: flutter
 
