@@ -12,6 +12,7 @@ import 'package:winter/AdapterAndHelper/picker_text.dart';
 import 'package:winter/Basic/login.dart';
 import 'package:winter/Mine/PersonalInfo/userInfo.dart';
 import 'package:winter/AdapterAndHelper/getUsername.dart';
+import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';
 
 class ChangeInfo extends StatelessWidget {
   @override
@@ -134,19 +135,25 @@ class myInfoState extends State<myInfo> {
                                 myContext.read<HeadImage>().refresh();
                                 },
                                 child: Container(
-                                  margin: EdgeInsets.only(right: 40),
+                                  margin: EdgeInsets.only(right: 30),
                                   alignment: Alignment.centerRight,
-                                  child: ClipOval(
-                                      child: _headImageUrl?.toString()==null
-                                          ? Image.asset(
-                                        'images/defaultHeadImage.png',
-                                        color: Colors.black,
-                                        fit: BoxFit.cover,
-                                      )
-                                          : Image.network(
-                                        _headImageUrl,
-                                        fit: BoxFit.cover,
-                                      )),
+                                  child: SizedBox(
+                                    height: 60,
+                                    width: 60,
+                                    child: ClipOval(
+                                        child:
+                                        _userInfo.headImage?.toString()==null ?
+                                        Image.asset(
+                                          'images/defaultHeadImage.png',
+                                          color: Colors.black,
+                                          fit: BoxFit.cover,
+                                        )
+                                            : Image.network(
+                                          _userInfo.headImage?.toString(),
+                                          fit: BoxFit.cover,
+                                        )
+                                    ),
+                                  ),
                                 )
                             );
                           },),
@@ -426,7 +433,7 @@ class myInfoState extends State<myInfo> {
         ),
         Center(
           child: Container(
-            margin: EdgeInsets.only(top: 50),
+            margin: EdgeInsets.only(top: 50,bottom: 40),
             child: FloatingActionButton(
               backgroundColor: Colors.lightBlue,
               child: Icon(Icons.assignment_turned_in_rounded, size: 28,),
@@ -434,7 +441,13 @@ class myInfoState extends State<myInfo> {
                 HeadImage.getHeadImage(context).then((value) {
                   _headImageUrl=value;
                 });
-                _submitDetails(_headImageUrl, _age, _introduction, _sex, _name, _location, _username);
+                if(_username.length>6){
+                  Toast.show("用户名长度不能大于六", context,
+                      duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                }else{
+                  SharedPreferenceUtil.saveUsername(_username);
+                  _submitDetails(_headImageUrl, _age, _introduction, _sex, _name, _location, _username);
+                }
               },
             ),
           ),

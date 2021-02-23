@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:loading_animations/loading_animations.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:provider/provider.dart'hide BuildContext;
 import 'package:winter/AdapterAndHelper/buildRoteFloatingBtn.dart';
@@ -276,9 +277,9 @@ class DemandPageState extends State<DemandPage> {
   }
   Widget _loadingText() {
     return  Center(
-      child: Text(
-        "加载中...",
-        style: TextStyle(fontSize: 20),
+      child: LoadingBumpingLine.circle(
+        size: 50,
+        backgroundColor: Colors.blue,
       ),
     );
   }
@@ -329,8 +330,10 @@ class DemandPageState extends State<DemandPage> {
                       height: 60,
                       child: Row (
                         children: [
-                          Expanded(
-                            flex: 2,
+                          SizedBox(
+                            // flex: 2,
+                            height: 60,
+                            width: 60,
                             child: ClipOval(
                               child: headImageList.isEmpty || headImageList[index] == null
                                   ? Image.asset(
@@ -343,7 +346,7 @@ class DemandPageState extends State<DemandPage> {
                             ),
                           ),
                           Expanded(
-                              flex: 9,
+                              // flex: 9,
                               child: ListTile(
                                 title: Text(tempList[index].account,
                                 style: TextStyle(

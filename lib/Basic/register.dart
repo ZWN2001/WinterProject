@@ -260,6 +260,7 @@ class _RegisterPageState extends State<RegisterPage> {
           borderRadius: BorderRadius.all(Radius.circular(30.0)),
         ),
         onPressed: () async {
+          SharedPreferenceUtil.saveUsername(_userName);
           Response response;
           String feedback;
           Dio dio = Dio();

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/changeUsername.dart';
 import 'package:winter/Basic/login.dart';
+import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';
 class ChangeUserName extends StatelessWidget {
 
   TextEditingController _newUserNameController=TextEditingController();
@@ -61,6 +62,7 @@ class ChangeUserName extends StatelessWidget {
                   child: Icon(Icons.assignment_turned_in_rounded, size: 28,),
                   onPressed: () {
                     if(usernameKey.currentState.validate()){
+                      SharedPreferenceUtil.saveUsername(_newUserNameController.text);
                       changeUsername.commit(_newUserNameController.text, context);
                     }
                   },

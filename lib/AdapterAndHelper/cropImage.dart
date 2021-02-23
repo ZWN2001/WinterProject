@@ -65,6 +65,7 @@ class _CropImageRouteState extends State<CropImageRoute> {
   Future<void> _crop(File originalFile) async {
     final crop = cropKey.currentState;
     final area = crop.area;
+    print('originalFile:$originalFile');
     if (area == null) {
       //裁剪结果为空
       print('裁剪不成功');
@@ -76,24 +77,30 @@ class _CropImageRouteState extends State<CropImageRoute> {
           area: crop.area,
         ).then((value) async {
           MultipartFile myfile = await MultipartFile.fromFile(value.path,filename: 'headImage',contentType:MediaType("image", "jpg"));
-          print(myfile);
-          upload(myfile);
+          print('MultipartFile:$myfile');
+          FormData formData = FormData.fromMap({
+            "image": myfile
+          });
+          print(formData);
+          upload(formData);
         });
-      } else {
-        MultipartFile myfile = await MultipartFile.fromFile(originalFile.path, filename: 'headImage',contentType:MediaType("image", "jpg"));
-        upload(myfile);
       }
+      // else {
+      //   MultipartFile myfile = await MultipartFile.fromFile(originalFile.path, filename: 'headImage',contentType:MediaType("image", "jpg"));
+      //   upload(myfile);
+      // }
     });
   }
 
   ///上传头像
-  Future<void> upload(MultipartFile file) async {
+  Future<void> upload(FormData file) async {
     Response response;
     response=await Dio().post('http://widealpha.top:8080/shop/user/changeHeadImage',
         options: Options(headers:{'Authorization':'Bearer '+LoginPageState.token}),
-        queryParameters: {
-          'image': file
-        },
+        // queryParameters: {
+        //   'image': file
+        // },
+      data: file
     );
     print('头像上传：$response');
     if (response.data['code'] == 0) {
