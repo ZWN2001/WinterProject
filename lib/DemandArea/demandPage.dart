@@ -55,6 +55,7 @@ class DemandPageState extends State<DemandPage> {
   ScrollController _scrollController = ScrollController();
   Widget centerContent;
   Timer _timer;
+  HeadImage headImage=new HeadImage();
   
   @override
   void initState() {
@@ -189,7 +190,7 @@ class DemandPageState extends State<DemandPage> {
     print(demandList);
     demandList.forEach((element) {
       if (LoginPageState.account == element.account) {
-        HeadImage.getHeadImage(context).then((value) {
+        headImage.getHeadImage(context).then((value) {
             setState(() {
               print(value);
               print('mine');

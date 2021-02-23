@@ -3,10 +3,14 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_crop/image_crop.dart';
+import 'package:provider/provider.dart';
 import 'package:toast/toast.dart';
 import 'package:winter/Basic/login.dart';
 //MediaType用
 import 'package:http_parser/http_parser.dart';
+import 'package:winter/Mine/mine.dart';
+
+import 'headImage.dart';
 
 class CropImageRoute extends StatefulWidget {
   CropImageRoute(this.image);
@@ -29,8 +33,14 @@ class _CropImageRouteState extends State<CropImageRoute> {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery
+        .of(context)
+        .size
+        .width;
+    double height = MediaQuery
+        .of(context)
+        .size
+        .height;
     return Scaffold(
         body: Container(
           height: height,
@@ -49,13 +59,24 @@ class _CropImageRouteState extends State<CropImageRoute> {
               ),
               Container(
                 margin: EdgeInsets.only(top: 20),
-                child: FloatingActionButton(
-                  backgroundColor: Colors.lightBlue,
-                  child: Icon(Icons.assignment_turned_in_rounded, size: 28,),
-                  onPressed: () {
-                   _crop(widget.image);
-              },
-                ),
+                child:
+                ChangeNotifierProvider<HeadImage>(
+                  create: (_) => HeadImage(),
+                  builder: (myContext, child) {
+                    return
+                      Consumer<HeadImage>(
+                      builder: (_, headImage, child) {
+                        return FloatingActionButton(
+                          backgroundColor: Colors.lightBlue,
+                          child: Icon(Icons.assignment_turned_in_rounded,
+                            size: 28,),
+                          onPressed: ()  {
+                             _crop(widget.image);
+                             myContext.read<HeadImage>().refreshHeadImage(context);
+                          },
+                        );
+                      },);
+                  },),
               ),
             ],
           ),
@@ -107,6 +128,7 @@ class _CropImageRouteState extends State<CropImageRoute> {
       Toast.show("头像上传成功", context,
           duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
       Navigator.of(context).pop();
+      // myContext.read<HeadImage>().refresh();
     }  else {
       Toast.show("图片上传失败，请重试", context,
           duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
