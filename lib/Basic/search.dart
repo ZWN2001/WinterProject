@@ -13,6 +13,7 @@ import 'package:winter/AdapterAndHelper/searchHistory.dart';
 import 'package:winter/DemandArea/demandClass.dart';
 import 'package:winter/GoodsDetail/commodityClass.dart';
 import 'package:winter/GoodsDetail/detailPage.dart';
+import 'package:winter/GoodsDetail/imageShowServer.dart';
 import 'package:winter/GoodsDetail/topNavigatorBar.dart';
 import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';
 import 'login.dart';
@@ -522,9 +523,11 @@ class SearchPageState extends State<SearchPageWidget> {
             Container(
               width: MediaQuery.of(context).size.width,
               height: 200.0,
-              child: Swiper(
+              child: imageList.length == 0
+                  ? Center(child: Text("卖家没有上传图片"))
+                  : Swiper(
                 itemBuilder: swiperBuilder,
-                itemCount: 6,
+                itemCount: imageList.length,
                 pagination: new SwiperPagination(
                     builder: DotSwiperPaginationBuilder(
                       color: Colors.black54,
@@ -622,6 +625,25 @@ class SearchPageState extends State<SearchPageWidget> {
   ],
         ),
     );
+  }
+
+  Widget swiperBuilder(BuildContext context, int index) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          return ImageShowServerWidget(
+            initialIndex: index,
+            photoList: imageList,
+          );
+        }));
+      },
+      child: Image.network(
+        imageList[index],
+        fit: BoxFit.contain,),
+    );
+    /*(Image.network(
+    piclist[index],
+    fit: BoxFit.contain,));*/
   }
 //按关键词搜索商品
   Widget _commodityKeywordResult(List goodsData) {
