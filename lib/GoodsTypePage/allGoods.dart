@@ -106,6 +106,7 @@ class AllGoodsState extends State<AllGoods> {
   List<Commodity> commodityList = new List();
   List<Commodity> tempList = new List();
   Iterable<Commodity> reservedList = new List();
+  List<String> firstImageList = new List();
   int startNum = 0;
   int itemLength = 0;
   int _page = 1;
@@ -133,6 +134,9 @@ class AllGoodsState extends State<AllGoods> {
         });
       } else {
         setState(() {
+          if(tempList[0].image != null || tempList[0].image.isNotEmpty) {
+            _getFirstImageList(tempList);
+          }
           centerContent = commodityGridView();
         });
       }
@@ -227,11 +231,22 @@ class AllGoodsState extends State<AllGoods> {
           }
           //tempList[i] = reservedList.elementAt(i);
           tempList.insert(i, reservedList.elementAt(i));
+          print('picture');
           print(tempList[i].image);
         }
       }
     }
+  }
 
+  _getFirstImageList(List<Commodity> tempList) {
+    tempList.forEach((element) {
+      if (element.image != null && element.image.isNotEmpty) {
+        List imageList = element.image as List;
+        firstImageList.add(imageList[0]);
+      } else {
+        print('好像没图片');
+      }
+    });
   }
 
   @override
@@ -351,9 +366,9 @@ class AllGoodsState extends State<AllGoods> {
                         child:SizedBox(
                           height: 130,
                           child: //Text("暂时没有图片哦", style: TextStyle(color: Colors.grey, fontSize: 10),textAlign: TextAlign.center,)
-                          tempList[temp].image.isEmpty
+                          firstImageList.isEmpty
                           ? Text("暂时没有图片哦", style: TextStyle(color: Colors.grey, fontSize: 10),textAlign: TextAlign.center)
-                          : Image.network(_imageToList(temp), fit: BoxFit.cover,),
+                          : Image.network(firstImageList[temp], fit: BoxFit.cover,),
                         )
                         /*Image.network(
                           tempList[temp].image,
@@ -411,6 +426,8 @@ class AllGoodsState extends State<AllGoods> {
   //将所有图片放入一个list，默认加载第一张
   String _imageToList(int temp) {
     List imageList = json.decode(tempList[temp].image);
+    print('第一张');
+    print(imageList[0]);
     return imageList[0];
   }
 
