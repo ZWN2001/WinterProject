@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
@@ -33,8 +36,10 @@ class DemandPageState extends State<DemandPage> {
       "demand": "东临碣石，以观沧海。\n水何澹澹，山岛竦峙。\n树木丛生，百草丰茂。\n秋风萧瑟，洪波涌起。\n日月之行，若出其中；\n星汉灿烂，若出其里。\n幸甚至哉，歌以咏志。\n"
     }
   ];
-  Key key;
-  final LinkHeaderNotifier linkNotifier = LinkHeaderNotifier();
+
+  //好看的加载动画
+  /*Key key;
+  final LinkHeaderNotifier linkNotifier = LinkHeaderNotifier();*/
   
   List<Demand> demandList = new List();
   List<Demand> tempList = new List();
@@ -48,6 +53,7 @@ class DemandPageState extends State<DemandPage> {
   bool isLoading = false;
   ScrollController _scrollController = ScrollController();
   Widget centerContent;
+  Timer _timer;
   
   @override
   void initState() {
@@ -57,26 +63,37 @@ class DemandPageState extends State<DemandPage> {
       print(value);
       userName = value;
     });*/
-    _getDemandData().then((value) {
+    _getDemandData().then((value) async {
       _transferIntoLocalList();
-    }).whenComplete(() {
       itemLength = tempList.length;
-      _getHeadImageList(demandList);
-      if (demandList.isEmpty) {
-        setState(() {
-          centerContent = noDemandText();
-        });
-      } else {
-        setState(() {
-          centerContent = demandListView();
-        });
-      }
+      await _getHeadImageList(tempList).then((value) {
+        print('headImageList.........................');
+        print(headImageList.toString());
+        if (demandList.isEmpty) {
+          setState(() {
+            centerContent = noDemandText();
+          });
+        } else {
+          setState(() {
+            centerContent = demandListView();
+          });
+        }
+      });
+    }).then((value) async {
+
+        //sleep(Duration(seconds: 1));
     });
     _scrollController.addListener(() {
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
         print("滑到了最底部");
         _getMore();
       }
+    });
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) async {
+      setState(() {
+        print('setState');
+        print(headImageList);
+      });
     });
   }
   
@@ -156,8 +173,9 @@ class DemandPageState extends State<DemandPage> {
           print(_page);
         });
       }).whenComplete(() {
+        itemLength = tempList.length;
+        _getHeadImageList(tempList);
         setState(() {
-          itemLength = tempList.length;
           centerContent = demandListView();
           print('change');
         });
@@ -166,18 +184,33 @@ class DemandPageState extends State<DemandPage> {
   }
 
   Future<void> _getHeadImageList(List<Demand> demandList) async {
+    print('demandList准备');
+    print(demandList);
     demandList.forEach((element) {
       if (LoginPageState.account == element.account) {
         HeadImage.getHeadImage(context).then((value) {
-          headImageList.add(value);
+            setState(() {
+              print(value);
+              print('mine');
+              headImageList.add(value);
+              setState(() {
+              });
+            });
         });
       } else {
-        getOthersHeadImages.getOthersHeadImage(context, element.account).then((value) {
-          headImageList.add(value);
+         getOthersHeadImages.getOthersHeadImage(context, element.account).then((value)  {
+          setState(() {
+            print('not mine');
+            print(value);
+            headImageList.add(value);
+            setState(() {
+            });
+          });
         });
       }
     });
     print('获取头像成功');
+    print(headImageList);
   }
 
 
@@ -187,6 +220,7 @@ class DemandPageState extends State<DemandPage> {
     // TODO: implement dispose
     super.dispose();
     _scrollController.dispose();
+    _timer.cancel();
   }
 
   @override
@@ -261,7 +295,7 @@ class DemandPageState extends State<DemandPage> {
           _transferIntoLocalList();
         }).whenComplete(() {
           itemLength = tempList.length;
-          _getHeadImageList(demandList);
+          _getHeadImageList(tempList);
           if (demandList.isEmpty) {
             setState(() {
               centerContent = noDemandText();
