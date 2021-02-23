@@ -45,9 +45,9 @@ class SearchPageState extends State<SearchPageWidget> {
   bool isLoading = false;//是否正在加载数据
   ScrollController _scrollController = ScrollController();
   ///实时搜索url
-  String realTimeSearchUrl;
-  String _headImageUrl;
-  List imageList;
+  String realTimeSearchUrl='';
+  // String _headImageUrl;
+  List imageList=new List();
   //单个商品
   Commodity _commodity=Commodity(0, '', '', 0, '', '', '');
   //单个需求
@@ -376,12 +376,11 @@ class SearchPageState extends State<SearchPageWidget> {
           }
           if (i == reservedList.length - 1){
             print("没有更多数据");
-            //startNum = i;
             return;
           }
           //tempList[i] = reservedList.elementAt(i);
           tempList.insert(i, reservedList.elementAt(i));
-          print(tempList[i].image);
+          // print(tempList[i].image);
         }
       }
   }
@@ -652,7 +651,7 @@ class SearchPageState extends State<SearchPageWidget> {
   Widget _needsIDresult(var needsData) {
     _demand=Demand.fromJson(needsData);
     return InkWell(
-        onTap: (){},
+        onTap: (){},//TODO
         child:
         // Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
         //   return
@@ -666,24 +665,27 @@ class SearchPageState extends State<SearchPageWidget> {
                   children: [
                     Expanded(
                       child: Container(
+                        margin: EdgeInsets.only(left: 30),
                         height: 60,
                         child: Row (
                           children: [
+                            // SizedBox(
+                            //   // flex: 2,
+                            //   height: 60,
+                            //   width: 60,
+                            //   child: ClipOval(
+                            //       child:  _headImageUrl == null
+                            //           ? Image.asset(
+                            //         'images/defaultHeadImage.png',
+                            //         color: Colors.grey,
+                            //         fit: BoxFit.scaleDown,)
+                            //           : Image.network(
+                            //         _headImageUrl,
+                            //         fit: BoxFit.cover,)
+                            //   ),
+                            // ),
                             Expanded(
-                              flex: 2,
-                              child: ClipOval(
-                                  child: _headImageUrl == null
-                                      ? Image.asset(
-                                    'images/defaultHeadImage.png',
-                                    color: Colors.grey,
-                                    fit: BoxFit.scaleDown,)
-                                      : Image.network(
-                                    _headImageUrl,
-                                    fit: BoxFit.cover,)
-                              ),
-                            ),
-                            Expanded(
-                                flex: 9,
+                                // flex: 9,
                                 child: ListTile(
                                   title: Text(_demand.account,
                                     style: TextStyle(
@@ -702,7 +704,7 @@ class SearchPageState extends State<SearchPageWidget> {
                   children: [
                     Expanded(
                         child: Container(
-                            padding: EdgeInsets.fromLTRB(55, 5, 5, 0),
+                            padding: EdgeInsets.fromLTRB(45, 5, 5, 0),
                             child: ExpandbaleText(
                               text: _demand.description,
                               maxLines: 3,
@@ -726,7 +728,7 @@ class SearchPageState extends State<SearchPageWidget> {
   Widget _needsKeywordresult(List needsData) {
     demandList = needsData.map((e) => Demand.fromJson(e)).toList();
     _transferIntoLocalList(demandList);
-    return Container(
+    return Expanded(
           child: ListView.builder(
               scrollDirection: Axis.vertical,
               controller: _scrollController,
@@ -865,24 +867,25 @@ class SearchPageState extends State<SearchPageWidget> {
                 children: [
                   Expanded(
                     child: Container(
+                      margin: EdgeInsets.only(left: 30),
                       height: 60,
                       child: Row (
                         children: [
+                          // Expanded(
+                          //   flex: 2,
+                          //   child: ClipOval(
+                          //       child: _headImageUrl == null
+                          //           ? Image.asset(
+                          //         'images/defaultHeadImage.png',
+                          //         color: Colors.grey,
+                          //         fit: BoxFit.scaleDown,)
+                          //           : Image.network(
+                          //         _headImageUrl,
+                          //         fit: BoxFit.cover,)
+                          //   ),
+                          // ),
                           Expanded(
-                            flex: 2,
-                            child: ClipOval(
-                                child: _headImageUrl == null
-                                    ? Image.asset(
-                                  'images/defaultHeadImage.png',
-                                  color: Colors.grey,
-                                  fit: BoxFit.scaleDown,)
-                                    : Image.network(
-                                  _headImageUrl,
-                                  fit: BoxFit.cover,)
-                            ),
-                          ),
-                          Expanded(
-                              flex: 9,
+                              // flex: 9,
                               child: ListTile(
                                 title: Text(tempList[index].account,
                                   style: TextStyle(
@@ -901,7 +904,7 @@ class SearchPageState extends State<SearchPageWidget> {
                 children: [
                   Expanded(
                       child: Container(
-                          padding: EdgeInsets.fromLTRB(55, 5, 5, 0),
+                          padding: EdgeInsets.fromLTRB(45, 5, 5, 0),
                           child: ExpandbaleText(
                             text: tempList[index].description,
                             maxLines: 3,
