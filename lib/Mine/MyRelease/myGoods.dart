@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:winter/AdapterAndHelper/darkModeModel.dart';
-import 'package:provider/provider.dart'hide BuildContext;
+import 'package:provider/provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

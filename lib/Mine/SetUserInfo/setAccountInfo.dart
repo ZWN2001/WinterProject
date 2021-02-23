@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart'hide BuildContext;
+import 'package:provider/provider.dart';
 import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/darkModeModel.dart';
 import 'package:winter/AdapterAndHelper/user.dart';

@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart'hide BuildContext;
+import 'package:provider/provider.dart';
 import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:winter/AdapterAndHelper/getUsername.dart';
