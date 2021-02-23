@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
@@ -49,7 +50,7 @@ class DemandPageState extends State<DemandPage> {
   bool isLoading = false;
   ScrollController _scrollController = ScrollController();
   Widget centerContent;
-  
+
   @override
   void initState() {
     super.initState();
@@ -58,11 +59,21 @@ class DemandPageState extends State<DemandPage> {
       print(value);
       userName = value;
     });*/
-    _getDemandData().then((value) {
+    _getDemandData().whenComplete(() {
       _transferIntoLocalList();
+      headImageList=_getHeadImageList(tempList);
+      print('1 $headImageList');
+      setState(() {
+
+      });
+      // whenComplete(() {
+      //   setState(() {
+      //   });
+      //   print('1 $headImageList');
+      // });
     }).whenComplete(() {
       itemLength = tempList.length;
-      _getHeadImageList(demandList);
+
       if (demandList.isEmpty) {
         setState(() {
           centerContent = noDemandText();
@@ -166,8 +177,9 @@ class DemandPageState extends State<DemandPage> {
     }
   }
 
-  Future<void> _getHeadImageList(List<Demand> demandList) async {
+ List<String> _getHeadImageList(List<Demand> demandList)  {
     demandList.forEach((element) {
+      print('foreach');
       if (LoginPageState.account == element.account) {
         HeadImage.getHeadImage(context).then((value) {
           headImageList.add(value);
@@ -179,6 +191,7 @@ class DemandPageState extends State<DemandPage> {
       }
     });
     print('获取头像成功');
+    return headImageList;
   }
 
 
@@ -224,6 +237,9 @@ class DemandPageState extends State<DemandPage> {
         onRefresh: () async {
           print("下拉刷新-----");
           _onRefresh();
+          setState(() {
+
+          });
         },
         onLoad: () async {
           print("上拉加载-----");
@@ -306,9 +322,13 @@ class DemandPageState extends State<DemandPage> {
                                 'images/defaultHeadImage.png',
                                 color: Colors.grey,
                                 fit: BoxFit.scaleDown,)
-                                  : Image.network(
-                                headImageList[index],
-                                fit: BoxFit.cover,)
+                                  : CachedNetworkImage(
+                                imageUrl:  headImageList[index],
+                                placeholder: (context, url) => CircularProgressIndicator(),
+                                errorWidget: (context, url, error) =>Image.asset('images/defaultHeadImage.png', color: Colors.grey, fit: BoxFit.scaleDown,),),
+                              // Image.network(
+                              //   headImageList[index],
+                              //   fit: BoxFit.cover,)
                             ),
                           ),
                           Expanded(

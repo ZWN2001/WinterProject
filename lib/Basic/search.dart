@@ -38,7 +38,7 @@ class SearchPageState extends State<SearchPageWidget> {
 
   List<Demand> demandList = new List();
   List<Commodity> commodityList = new List();
-  List tempList = new List();
+  // List tempList = new List();
   Iterable reservedList = new List();
   int startNum = 0;
   int _page = 1;
@@ -361,29 +361,29 @@ class SearchPageState extends State<SearchPageWidget> {
     }).toList();
   }
 
-  _transferIntoLocalList(List list) {
-      if (list != null) {
-        reservedList = list.reversed;//确保时间顺序展示
-        print(reservedList);
-        print(reservedList.length);
-        //每次加载10条商品信息
-        for (int i = 0; i < 10; i++) {
-          startNum = i+1;
-          if (reservedList.length == 1){
-            tempList.insert(0, reservedList.elementAt(0));
-            startNum = 1;
-            return;
-          }
-          if (i == reservedList.length - 1){
-            print("没有更多数据");
-            return;
-          }
-          //tempList[i] = reservedList.elementAt(i);
-          tempList.insert(i, reservedList.elementAt(i));
-          // print(tempList[i].image);
-        }
-      }
-  }
+  // _transferIntoLocalList(List list) {
+  //     if (list != null) {
+  //       reservedList = list.reversed;//确保时间顺序展示
+  //       print(reservedList);
+  //       print(reservedList.length);
+  //       //每次加载10条商品信息
+  //       for (int i = 0; i < 10; i++) {
+  //         startNum = i+1;
+  //         if (reservedList.length == 1){
+  //           tempList.insert(0, reservedList.elementAt(0));
+  //           startNum = 1;
+  //           return;
+  //         }
+  //         if (i == reservedList.length - 1){
+  //           print("没有更多数据");
+  //           return;
+  //         }
+  //         //tempList[i] = reservedList.elementAt(i);
+  //         tempList.insert(i, reservedList.elementAt(i));
+  //         // print(tempList[i].image);
+  //       }
+  //     }
+  // }
 
   ///实时搜索列表
   Widget realTimeSearch(String key) {
@@ -625,26 +625,30 @@ class SearchPageState extends State<SearchPageWidget> {
   }
 //按关键词搜索商品
   Widget _commodityKeywordResult(List goodsData) {
+    print('_commodityKeywordResult');
     commodityList = goodsData.map((e) => Commodity.fromJson(e)).toList();
-    _transferIntoLocalList(commodityList);
-    return Container(
-          margin: EdgeInsets.only(top: 20),
-          child:GridView.builder(
-              shrinkWrap: true,
-              padding: EdgeInsets.symmetric(horizontal: 5),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 5,
-                mainAxisSpacing: 5,
-              ),
-              scrollDirection: Axis.vertical,
-              controller: _scrollController,
-              itemCount: tempList.length,
-              itemBuilder: (context,index){
-                return Material(
-                  child: commodityItemWidget(index),
-                );
-              }),
+    // _transferIntoLocalList(commodityList);
+    return Expanded(
+      child: Container(
+     margin: EdgeInsets.only(top: 20),
+      child:GridView.builder(
+          shrinkWrap: true,
+          padding: EdgeInsets.symmetric(horizontal: 5),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 5,
+            mainAxisSpacing: 5,
+          ),
+          scrollDirection: Axis.vertical,
+          controller: _scrollController,
+          itemCount: commodityList.length,
+          itemBuilder: (context,index){
+            return Material(
+              child: commodityItemWidget(index),
+            );
+          }),
+      ),
+
     );
   }
   //按ID搜索需求
@@ -727,12 +731,12 @@ class SearchPageState extends State<SearchPageWidget> {
   //按关键词搜索需求
   Widget _needsKeywordresult(List needsData) {
     demandList = needsData.map((e) => Demand.fromJson(e)).toList();
-    _transferIntoLocalList(demandList);
+    // _transferIntoLocalList(demandList);
     return Expanded(
           child: ListView.builder(
               scrollDirection: Axis.vertical,
               controller: _scrollController,
-              itemCount: tempList.length,
+              itemCount: demandList.length,
               itemBuilder: (context, index){
                 return Material(
                   child: demandItemWidget(index),
@@ -750,7 +754,7 @@ class SearchPageState extends State<SearchPageWidget> {
   }
   //将所有图片放入一个list，默认加载第一张
   String _keywordImageToList(int temp) {
-    List imageList = json.decode(tempList[temp].image);
+    List imageList = json.decode(commodityList[temp].image);
     return imageList[0];
   }
 
@@ -769,7 +773,7 @@ class SearchPageState extends State<SearchPageWidget> {
               isLoading = false;
               return;
             }
-            tempList.insert(i, reservedList.elementAt(i));
+            demandList.insert(i, reservedList.elementAt(i));
           }
           _page++;
           isLoading = false;
@@ -783,7 +787,7 @@ class SearchPageState extends State<SearchPageWidget> {
     return InkWell(
         onTap: (){
           Navigator.push(context,new MaterialPageRoute(builder: (context){
-            return new TopNavigatorBar(commodityId: tempList[index].commodityId);
+            return new TopNavigatorBar(commodityId: commodityList[index].commodityId);
           }));
         },//点击后进入详细页面
         child:MultiProvider(
@@ -801,7 +805,7 @@ class SearchPageState extends State<SearchPageWidget> {
                           child:SizedBox(
                             height: 130,
                             child: //Text("暂时没有图片哦", style: TextStyle(color: Colors.grey, fontSize: 10),textAlign: TextAlign.center,)
-                            tempList[index].image.isEmpty
+                            commodityList[index].image.isEmpty
                                 ? Text("暂时没有图片哦", style: TextStyle(color: Colors.grey, fontSize: 10),textAlign: TextAlign.center)
                                 : Image.network(_keywordImageToList(index), fit: BoxFit.cover,),
                           )
@@ -812,7 +816,7 @@ class SearchPageState extends State<SearchPageWidget> {
                     children: [
                       Expanded(
                           child:Text(
-                            tempList[index].title,
+                            commodityList[index].title,
                             textAlign: TextAlign.start,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -828,7 +832,7 @@ class SearchPageState extends State<SearchPageWidget> {
                     children: [
                       Expanded(
                           child:Text(
-                            tempList[index].price.toString(),
+                            commodityList[index].price.toString(),
                             textAlign: TextAlign.start,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -887,11 +891,11 @@ class SearchPageState extends State<SearchPageWidget> {
                           Expanded(
                               // flex: 9,
                               child: ListTile(
-                                title: Text(tempList[index].account,
+                                title: Text(demandList[index].account,
                                   style: TextStyle(
                                     // color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
                                   ),),
-                                subtitle: Text("id."+tempList[index].wantId.toString()),
+                                subtitle: Text("id."+demandList[index].wantId.toString()),
                               )
                            )
                         ],
@@ -906,7 +910,7 @@ class SearchPageState extends State<SearchPageWidget> {
                       child: Container(
                           padding: EdgeInsets.fromLTRB(45, 5, 5, 0),
                           child: ExpandbaleText(
-                            text: tempList[index].description,
+                            text: demandList[index].description,
                             maxLines: 3,
                             // style: TextStyle(fontSize: 15, color: DarkModeModel.darkMode ? Colors.white : Colors.black87),
                           )
