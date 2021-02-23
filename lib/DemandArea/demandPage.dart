@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
-import 'package:provider/provider.dart';
+import 'package:provider/provider.dart'hide BuildContext;
 import 'package:winter/AdapterAndHelper/buildRoteFloatingBtn.dart';
 import 'package:winter/AdapterAndHelper/expandableText.dart';
 import 'package:winter/AdapterAndHelper/getUsername.dart';
@@ -16,6 +16,7 @@ import 'package:winter/Basic/login.dart';
 import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/headImage.dart';
 import 'package:winter/AdapterAndHelper/getOthersHeadImage.dart';
+import 'package:winter/ChatArea/ChatPage.dart';
 
 
 class DemandPage extends StatefulWidget {
@@ -42,11 +43,12 @@ class DemandPageState extends State<DemandPage> {
   /*Key key;
   final LinkHeaderNotifier linkNotifier = LinkHeaderNotifier();*/
   
-  List<Demand> demandList = new List();
+  List<Demand> demandList = <Demand>[];
   List<Demand> tempList = new List();
   Iterable<Demand> reservedList = new List();
   String _headImageUrl;
   List<String> headImageList = new List();
+  List<String> usernameList = new List();
   //String userName;
   int startNum = 0;
   int _page = 1;
@@ -67,7 +69,7 @@ class DemandPageState extends State<DemandPage> {
     _getDemandData().then((value) async {
       _transferIntoLocalList();
       itemLength = tempList.length;
-      await _getHeadImageList(tempList).then((value) {
+      _getHeadImageAndUsernameList(reservedList).then((value) {
         print('headImageList.........................');
         print(headImageList.toString());
         if (demandList.isEmpty) {
@@ -80,21 +82,12 @@ class DemandPageState extends State<DemandPage> {
           });
         }
       });
-    }).then((value) async {
-
-        //sleep(Duration(seconds: 1));
     });
     _scrollController.addListener(() {
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
         print("滑到了最底部");
         _getMore();
       }
-    });
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) async {
-      setState(() {
-        print('setState');
-        print(headImageList);
-      });
     });
   }
   
@@ -173,46 +166,33 @@ class DemandPageState extends State<DemandPage> {
           isLoading = false;
           print(_page);
         });
-      }).whenComplete(() {
+      }).then((value) {
         itemLength = tempList.length;
-        _getHeadImageList(tempList);
-        setState(() {
-          centerContent = demandListView();
-          print('change');
-        });
+        centerContent = demandListView();
+        print('change');
       });
     }
   }
 
-  Future<void> _getHeadImageList(List<Demand> demandList) async {
+  Future<void> _getHeadImageAndUsernameList(Iterable<Demand> demandList) async {
     print('demandList准备');
     print(demandList);
-    demandList.forEach((element) {
-      if (LoginPageState.account == element.account) {
-        HeadImage.getHeadImage(context).then((value) {
-            setState(() {
-              print(value);
-              print('mine');
-              headImageList.add(value);
-              setState(() {
-              });
-            });
-        });
+    for(int i = 0; i < demandList.length; i++){
+      if (LoginPageState.account == demandList.elementAt(i).account) {
+        String image = await HeadImage.getHeadImage(context);
+        String username = await getUserName.getUsername(context);
+        usernameList.add(username);
+        headImageList.add(image);
       } else {
-         getOthersHeadImages.getOthersHeadImage(context, element.account).then((value)  {
-          setState(() {
-            print('not mine');
-            print(value);
-            headImageList.add(value);
-            setState(() {
-            });
-          });
-        });
+        String image = await getOthersHeadImages.getOthersHeadImage(context, demandList.elementAt(i).account);
+        String username = await getOthersUserName.getOthersUsername(context, demandList.elementAt(i).account);
+        usernameList.add(username);
+        headImageList.add(image);
       }
-    });
-    print('获取头像成功');
-    print(headImageList);
+    }
   }
+
+
 
 
 
@@ -292,20 +272,22 @@ class DemandPageState extends State<DemandPage> {
         tempList.clear();
         headImageList.clear();
         startNum = 0;
-        _getDemandData().then((value) {
+        _getDemandData().then((value) async {
           _transferIntoLocalList();
-        }).whenComplete(() {
           itemLength = tempList.length;
-          _getHeadImageList(tempList);
-          if (demandList.isEmpty) {
-            setState(() {
-              centerContent = noDemandText();
-            });
-          } else {
-            setState(() {
-              centerContent = demandListView();
-            });
-          }
+          _getHeadImageAndUsernameList(reservedList).then((value) {
+            print('headImageList.........................');
+            print(headImageList.toString());
+            if (demandList.isEmpty) {
+              setState(() {
+                centerContent = noDemandText();
+              });
+            } else {
+              setState(() {
+                centerContent = demandListView();
+              });
+            }
+          });
         });
       });
     });
@@ -315,7 +297,13 @@ class DemandPageState extends State<DemandPage> {
 
   Widget itemWidget(int index) {
     return InkWell(
-      onTap: (){},
+      onTap: (){
+        LoginPageState.account == tempList[index].account
+            ? Toast.show("你怎么能和自己聊天", context,duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM)
+            : Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return new ChatPage(account: tempList[index].account.toString());
+        }));
+      },
       child: Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
         return Container(
           padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
@@ -348,7 +336,7 @@ class DemandPageState extends State<DemandPage> {
                           Expanded(
                               // flex: 9,
                               child: ListTile(
-                                title: Text(tempList[index].account,
+                                title: Text(usernameList[index],
                                 style: TextStyle(
                                   color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
                                 ),),
