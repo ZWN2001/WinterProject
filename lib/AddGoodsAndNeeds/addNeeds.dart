@@ -46,7 +46,7 @@ class AddNeeds extends StatelessWidget{
                    _submit(_needsController.text, context);
                    //Navigator.of(context).pop();
                    DemandPage().createElement();
-                   Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => new DemandPage()), (route) => false);
+                   Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => new MyHomePage()), (route) => false);
                  }
                },
              ),
