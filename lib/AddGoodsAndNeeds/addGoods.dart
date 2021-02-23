@@ -369,6 +369,7 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
                         _description.text, _category,_imageUrl);
                     //Navigator.of(context).pop(1);
                     AllGoods().createElement();
+                    AllGoodsState().initState();
                     Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => new MyHomePage()), (route) => false);
                   }
                 }
