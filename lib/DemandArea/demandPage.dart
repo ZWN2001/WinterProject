@@ -57,6 +57,7 @@ class DemandPageState extends State<DemandPage> {
   ScrollController _scrollController = ScrollController();
   Widget centerContent;
   Timer _timer;
+  HeadImage myHeadImage=new HeadImage();
   
   @override
   void initState() {
@@ -179,7 +180,7 @@ class DemandPageState extends State<DemandPage> {
     print(demandList);
     for(int i = 0; i < demandList.length; i++){
       if (LoginPageState.account == demandList.elementAt(i).account) {
-        String image = await HeadImage.getHeadImage(context);
+        String image = await myHeadImage.getHeadImage(context);
         String username = await getUserName.getUsername(context);
         usernameList.add(username);
         headImageList.add(image);
@@ -301,7 +302,7 @@ class DemandPageState extends State<DemandPage> {
         LoginPageState.account == tempList[index].account
             ? Toast.show("你怎么能和自己聊天", context,duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM)
             : Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return new ChatPage(account: tempList[index].account.toString());
+          // return new ChatPage(account: tempList[index].account.toString());
         }));
       },
       child: Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {

@@ -41,6 +41,7 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   String targetHeadImage;
   String myUsername;
   String targetUsername;
+  HeadImage headImage=new HeadImage();
 
   @override
   void initState() {
@@ -48,7 +49,7 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     _getMessageFromServerPeriodically().then((value) {
       setState(() {});
     });
-    HeadImage.getHeadImage(this.context).then((value){
+    headImage.getHeadImage(this.context).then((value){
       myHeadImage = value;
     });
     getOthersHeadImages.getOthersHeadImage(this.context, targetAccount).then((value) {
