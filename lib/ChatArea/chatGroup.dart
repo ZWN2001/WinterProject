@@ -1,4 +1,6 @@
 import 'dart:ffi';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:loading_animations/loading_animations.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:dio/dio.dart';
 import 'package:path/path.dart';
@@ -19,14 +21,14 @@ class ChatGroup extends StatefulWidget {
 
 class ChatGroupState extends State<ChatGroup> {
 
-  List ListData = [
-    {
-      "headImage": "https://www.itying.com/images/flutter/7.png",
-      "userName": "zwn",
-      "lastMessage": "吃了吗？",
-      "timeStamp": "2021-01-27 9:16:11.65"
-    }
-  ];
+  // List ListData = [
+  //   {
+  //     "headImage": "https://www.itying.com/images/flutter/7.png",
+  //     "userName": "zwn",
+  //     "lastMessage": "吃了吗？",
+  //     "timeStamp": "2021-01-27 9:16:11.65"
+  //   }
+  // ];
 
   List<dynamic> chatAccountList = new List();
   List<dynamic> tempList1 = new List();
@@ -337,11 +339,21 @@ class ChatGroupState extends State<ChatGroup> {
 
   Widget noChatListText() {
     return Center(
-      child: Text("暂时没有聊天记录",
-        style: TextStyle(
-          color: Colors.grey,
-          fontSize: 20,
-        ),),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+           Text("暂时还没有聊天记录",
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: 20,
+            ),),
+          LoadingBumpingLine.circle(
+            size: 40,
+            backgroundColor: Colors.blue,
+          ),
+        ],
+      ),
+
     );
   }
 
