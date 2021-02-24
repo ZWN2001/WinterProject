@@ -179,7 +179,7 @@ class DemandPageState extends State<DemandPage> {
     print(demandList);
     for(int i = 0; i < demandList.length; i++){
       if (LoginPageState.account == demandList.elementAt(i).account) {
-        String image = await HeadImage.getHeadImage(context);
+        String image = await HeadImage().getHeadImage(context);
         String username = await getUserName.getUsername(context);
         usernameList.add(username);
         headImageList.add(image);
