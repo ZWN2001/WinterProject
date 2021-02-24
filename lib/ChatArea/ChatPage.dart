@@ -45,21 +45,28 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _getMessageFromServerPeriodically().then((value) {
+    _getMessageFromServerPeriodically().then((value) async {
+      await HeadImage().getHeadImage(this.context).then((value){
+        myHeadImage = value;
+        Message.myHeadImage = value;
+        print(myHeadImage);
+      });
+      await getOthersHeadImages.getOthersHeadImage(this.context, targetAccount).then((value) {
+        targetHeadImage = value;
+        Message.targetHeadImage = value;
+        print(targetHeadImage);
+      });
+      await getUserName.getUsername(this.context).then((value){
+        myUsername = value;
+        Message.myUsername = value;
+      });
+      await getOthersUserName.getOthersUsername(this.context, targetAccount).then((value) {
+        targetUsername = value;
+        Message.targetUsername = value;
+      });
       setState(() {});
     });
-    HeadImage.getHeadImage(this.context).then((value){
-      myHeadImage = value;
-    });
-    getOthersHeadImages.getOthersHeadImage(this.context, targetAccount).then((value) {
-      targetHeadImage = value;
-    });
-    getUserName.getUsername(this.context).then((value){
-      myUsername = value;
-    });
-    getOthersUserName.getOthersUsername(this.context, targetAccount).then((value) {
-      targetUsername = value;
-    });
+
     /*_createDb(_dbName, _dbVersion, _createTableSQL).then((value){
       setState(() {
         _getHistoryMessagesFromLocal(_name, "zwn").then((value) {
@@ -401,10 +408,11 @@ class Message extends StatelessWidget {
     this.readTimes = jsonMap['readTimes'];
   }
 
-  String myHeadImage = ChatPageState().myHeadImage;
-  String targetHeadImage = ChatPageState().targetHeadImage;
-  String myUsername = ChatPageState().myUsername;
-  String targetUsername = ChatPageState().targetUsername;
+
+  static String myHeadImage;
+  static String targetHeadImage;
+  static String myUsername;
+  static String targetUsername;
 
   @override
   Widget build(BuildContext context) {
@@ -426,12 +434,12 @@ class Message extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(senderAccount,style: Theme.of(context).textTheme.subhead),
+                  Text(targetUsername ?? " ",style: Theme.of(context).textTheme.subhead),
                   Container(
                     margin: const EdgeInsets.only(top: 5.0,right: 50),
                     child: Bubble(
                       direction: BubbleDirection.left,
-                      color: Colors.blue,
+                      color: Colors.grey,
                       child: Text(
                         message,
                         style: TextStyle(color: Colors.white),
@@ -453,7 +461,7 @@ class Message extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(senderAccount, style: Theme.of(context).textTheme.subhead),
+                  Text(myUsername ?? " ", style: Theme.of(context).textTheme.subhead),
                   Container(
                     margin: const EdgeInsets.only(top: 5.0),
                     child: Bubble(
