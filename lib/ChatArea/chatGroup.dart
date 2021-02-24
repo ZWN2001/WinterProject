@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:dio/dio.dart';

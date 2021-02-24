@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:winter/Basic/login.dart';
 import 'package:dio/dio.dart';
@@ -286,8 +287,17 @@ class AllGoodsState extends State<AllGoods> {
 
   //有商品时的页面
   Widget commodityGridView() {
-    return RefreshIndicator(
-        onRefresh: _onRefresh,
+    return EasyRefresh(
+        header: DeliveryHeader(),
+        firstRefresh: false,//默认加载
+        onRefresh: () async {
+          print("下拉刷新-----");
+          _onRefresh();
+        },
+        onLoad: () async {
+          print("上拉加载-----");
+          _getMore();
+        },
         child: GridView.builder(
             padding: EdgeInsets.symmetric(horizontal: 5),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
