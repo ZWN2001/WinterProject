@@ -135,7 +135,7 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   }
 
   Future<void> _getMessageFromServerPeriodically() async{
-    _timer = Timer.periodic(Duration(milliseconds: 2), (t) async {
+    _timer = Timer.periodic(Duration(seconds: 1), (t) async {
       Response response;
       Dio dio = new Dio();
       response = await dio.post('http://widealpha.top:8080/shop/chat/messagesWithTarget',
