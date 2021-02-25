@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:winter/Basic/tradeInfo.dart';
 import 'package:winter/ChatArea/chatGroup.dart';
 import 'package:winter/DemandArea/demandPage.dart';
-import 'package:winter/tradeInfo.dart';
 import '../Mine/mine.dart';
-import 'package:shake_animation_widget/shake_animation_widget.dart';
 
 class Home extends StatelessWidget {
   @override

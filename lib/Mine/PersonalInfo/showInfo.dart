@@ -48,6 +48,7 @@ Future _getInfo(BuildContext context) async {
       return null;
     }
 }
+
 class MyInfoState extends State<ShowInfoPage> {
   String _username;
   UserInfo _userInfo=UserInfo(LoginPageState.account, '', 0, '', '', 0, '');

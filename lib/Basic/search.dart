@@ -10,6 +10,7 @@ import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/darkModeModel.dart';
 import 'package:winter/AdapterAndHelper/expandableText.dart';
 import 'package:winter/AdapterAndHelper/searchHistory.dart';
+import 'package:winter/ChatArea/ChatPage.dart';
 import 'package:winter/DemandArea/demandClass.dart';
 import 'package:winter/GoodsDetail/commodityClass.dart';
 import 'package:winter/GoodsDetail/detailPage.dart';
@@ -64,23 +65,10 @@ class SearchPageState extends State<SearchPageWidget> {
         centerContent = defaultDisplay();
       // });
     });
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-        print("滑到了最底部");
-        _getMore();
-      }
-    });
     print('init...搜索界面历史记录');
     controller.text='';
   }
 
-  //判定是否为数字
-  bool isNumeric(String s) {
-    if (s == null) {
-      return false;
-    }
-    return double.tryParse(s) != null;
-  }
 
   SearchPageState() {
     ///监听搜索页form
@@ -177,12 +165,9 @@ class SearchPageState extends State<SearchPageWidget> {
                         }),
                     ],
                   ),
-                  // Expanded(
-                  //     child:
                       Container(
                         child: centerContent,
                       ),
-                  // ),
                 ],
               )
       ),
@@ -362,30 +347,6 @@ class SearchPageState extends State<SearchPageWidget> {
     }).toList();
   }
 
-  // _transferIntoLocalList(List list) {
-  //     if (list != null) {
-  //       reservedList = list.reversed;//确保时间顺序展示
-  //       print(reservedList);
-  //       print(reservedList.length);
-  //       //每次加载10条商品信息
-  //       for (int i = 0; i < 10; i++) {
-  //         startNum = i+1;
-  //         if (reservedList.length == 1){
-  //           tempList.insert(0, reservedList.elementAt(0));
-  //           startNum = 1;
-  //           return;
-  //         }
-  //         if (i == reservedList.length - 1){
-  //           print("没有更多数据");
-  //           return;
-  //         }
-  //         //tempList[i] = reservedList.elementAt(i);
-  //         tempList.insert(i, reservedList.elementAt(i));
-  //         // print(tempList[i].image);
-  //       }
-  //     }
-  // }
-
   ///实时搜索列表
   Widget realTimeSearch(String key) {
     Widget widget = Expanded(
@@ -423,6 +384,14 @@ class SearchPageState extends State<SearchPageWidget> {
         realTimeSearchUrl = "http://widealpha.top:8080/shop/commodity/searchCommodity";
         _getKeywordResult(widget, key, realTimeSearchUrl, isCommodity);
     }
+  }
+
+  //判定是否为数字
+  bool isNumeric(String s) {
+    if (s == null) {
+      return false;
+    }
+    return double.tryParse(s) != null;
   }
 
   void _getCommodityIDResult(Widget widget,String key,String realTimeSearchUrl){
@@ -578,7 +547,13 @@ class SearchPageState extends State<SearchPageWidget> {
                                   text: " 联系卖家",
                                   style: TextStyle(fontSize: 18, color: Colors.blue),
                                   recognizer: TapGestureRecognizer()
-                                    ..onTap = () {print("联系卖家");}//跳至聊天
+                                    ..onTap = () {
+                                      LoginPageState.account == _commodity.account
+                                          ? Toast.show("你怎么能和自己聊天", context,duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM)
+                                          : Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                        return new ChatPage(account: _commodity.account.toString());
+                                      }));
+                                    }//跳至聊天
                               )
                           )
                         ],
@@ -625,6 +600,14 @@ class SearchPageState extends State<SearchPageWidget> {
   ],
         ),
     );
+  }
+
+  void _IdImageToList() {
+    if (_commodity.image.isNotEmpty) {
+      imageList = json.decode(_commodity.image);
+    } else {
+      print("无图");
+    }
   }
 
   Widget swiperBuilder(BuildContext context, int index) {
@@ -677,7 +660,13 @@ class SearchPageState extends State<SearchPageWidget> {
   Widget _needsIDresult(var needsData) {
     _demand=Demand.fromJson(needsData);
     return InkWell(
-        onTap: (){},//TODO
+        onTap: (){
+          LoginPageState.account == _demand.account
+              ? Toast.show("你怎么能和自己聊天", context,duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM)
+              : Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return new ChatPage(account: _demand.account.toString());
+          }));
+        },//TODO
         child:
         // Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
         //   return
@@ -767,41 +756,12 @@ class SearchPageState extends State<SearchPageWidget> {
               })
     );
   }
-  void _IdImageToList() {
-    if (_commodity.image.isNotEmpty) {
-       imageList = json.decode(_commodity.image);
-    } else {
-      print("无图");
-    }
-  }
+
+
   //将所有图片放入一个list，默认加载第一张
   String _keywordImageToList(int temp) {
     List imageList = json.decode(commodityList[temp].image);
     return imageList[0];
-  }
-
-  Future _getMore() async {
-    if (!isLoading) {
-      setState(() {
-        isLoading = true;
-      });
-      await Future.delayed(Duration(seconds: 1), () {
-        print("加载更多");
-        setState(() {
-          for (int i = startNum; i <= startNum + 10; i++) {
-            startNum = i;
-            if (i == commodityList.length || i == startNum+10) {
-              print("没有更多数据了");
-              isLoading = false;
-              return;
-            }
-            demandList.insert(i, reservedList.elementAt(i));
-          }
-          _page++;
-          isLoading = false;
-        });
-      });
-    }
   }
 
   //每个商品的窗口
@@ -879,7 +839,13 @@ class SearchPageState extends State<SearchPageWidget> {
   //每个需求的窗口
   Widget demandItemWidget(int index) {
     return InkWell(
-      onTap: (){},
+      onTap: (){
+    LoginPageState.account == demandList[index].account
+    ? Toast.show("你怎么能和自己聊天", context,duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM)
+        : Navigator.push(context, MaterialPageRoute(builder: (context) {
+    return new ChatPage(account: demandList[index].account.toString());
+    }));
+    },
       child:
       // Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
       //   return

@@ -11,7 +11,6 @@ import 'package:http_parser/http_parser.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:winter/Basic/login.dart';
 import 'package:winter/GoodsTypePage/allGoods.dart';
-import 'package:winter/tradeInfo.dart';
 import 'package:winter/Basic/home.dart';
 
 class AddGoods extends StatelessWidget {
@@ -443,9 +442,6 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
         'http://widealpha.top:8080/treehole/article/uploadImage',
         options: Options(
             headers: {'Authorization': 'Bearer ' + LoginPageState.token}),
-        // queryParameters: {
-        //   "image": multipartFile
-        // },
         data: formData
       );
       print('商品图片:$addImagesResponse');

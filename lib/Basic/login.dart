@@ -24,7 +24,7 @@ class LoginPageState extends State<LoginPage> {
   bool pwdShow = true; //默认不展示密码
   bool _expand = false; //是否展示历史账号
   List<User> _users = List(); //历史账号
-  static String token; //TODO
+  static String token;
 
   static bool logged = false; //登录状态
 

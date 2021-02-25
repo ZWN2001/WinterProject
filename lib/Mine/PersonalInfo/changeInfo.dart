@@ -479,6 +479,7 @@ class myInfoState extends State<myInfo> {
       ],
     );
   }
+
   void _submitDetails(String headImageUrl, int age, String introduction, int sex,String name,String location,String username) {
     Response addGoodsResponse;
     // try {
