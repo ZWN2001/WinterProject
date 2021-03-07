@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:winter/AdapterAndHelper/getOthersUsername.dart';
 import 'package:winter/AdapterAndHelper/headImage.dart';
 import 'package:winter/AdapterAndHelper/getOthersHeadImage.dart';

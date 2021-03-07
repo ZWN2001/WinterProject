@@ -5,7 +5,6 @@ import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
 import 'package:winter/AdapterAndHelper/getUsername.dart';
 import 'package:winter/AdapterAndHelper/headImage.dart';
-import 'package:winter/AdapterAndHelper/headImage.dart';
 import 'package:winter/Basic/login.dart';
 import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';
 import 'MyRelease/myReleaseTabBar.dart';

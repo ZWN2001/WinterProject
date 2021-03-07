@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:winter/GoodsTypePage/allGoods.dart';
 import 'package:winter/addGoodsAndNeeds/addGoods.dart';
 import 'package:winter/addGoodsAndNeeds/addNeeds.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart' hide BuildContext ;
+import 'package:provider/provider.dart' ;
 import 'package:winter/AdapterAndHelper/headImage.dart';
 import 'AdapterAndHelper/searchHistory.dart';
 import 'Basic/login.dart';
@@ -10,7 +10,6 @@ import 'Basic/home.dart';
 import 'Basic/search.dart';
 import 'Mine/PersonalInfo/changeInfo.dart';
 import 'Mine/PersonalInfo/showInfo.dart';
-import 'Mine/mine.dart';
 
 void main() => runApp(Splash());
 

@@ -5,7 +5,6 @@ import 'package:toast/toast.dart';
 import 'package:winter/AdapterAndHelper/getUsername.dart';
 import 'package:winter/Basic/login.dart';
 import 'package:winter/Mine/PersonalInfo/userInfo.dart';
-import 'changeInfo.dart';
 
 class ShowInfo extends StatelessWidget {
   @override

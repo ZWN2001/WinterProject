@@ -1,12 +1,10 @@
-import 'dart:ffi';
-import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:dio/dio.dart';
 import 'package:path/path.dart';
 import 'package:flutter/material.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
-import 'package:provider/provider.dart'hide BuildContext;
+import 'package:provider/provider.dart';
 import 'package:winter/ChatArea/ChatPage.dart';
 import 'package:winter/Basic/login.dart';
 import 'package:winter/ChatArea/chatTargetClass.dart';

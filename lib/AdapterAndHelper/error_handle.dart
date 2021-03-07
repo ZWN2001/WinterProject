@@ -10,7 +10,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:toast/toast.dart';
-
 import 'log_utils.dart';
 
 typedef Fail = Function(int code, String msg);

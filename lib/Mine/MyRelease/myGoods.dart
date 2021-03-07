@@ -1,12 +1,10 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:winter/AdapterAndHelper/darkModeModel.dart';
 import 'package:provider/provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:winter/GoodsDetail/topNavigatorBar.dart';
 import 'package:winter/GoodsDetail/commodityClass.dart';
 import 'package:winter/Basic/login.dart';
 import 'package:toast/toast.dart';

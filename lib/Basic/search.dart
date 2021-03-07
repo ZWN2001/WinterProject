@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -13,7 +12,6 @@ import 'package:winter/AdapterAndHelper/searchHistory.dart';
 import 'package:winter/ChatArea/ChatPage.dart';
 import 'package:winter/DemandArea/demandClass.dart';
 import 'package:winter/GoodsDetail/commodityClass.dart';
-import 'package:winter/GoodsDetail/detailPage.dart';
 import 'package:winter/GoodsDetail/imageShowServer.dart';
 import 'package:winter/GoodsDetail/topNavigatorBar.dart';
 import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';

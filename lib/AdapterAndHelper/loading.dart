@@ -11,12 +11,6 @@ class DeliveryHeaderWidget extends StatefulWidget {
   final Color backgroundColor = Colors.transparent;
   final LinkHeaderNotifier linkNotifier= LinkHeaderNotifier();
 
-  //  DeliveryHeaderWidget({
-  //   Key key,
-  //   this.backgroundColor,
-  //   this.linkNotifier,
-  // }) : super(key: key);
-
   @override
   myDeliveryHeaderWidgetState createState() {
     return myDeliveryHeaderWidgetState();

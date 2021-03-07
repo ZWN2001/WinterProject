@@ -7,7 +7,7 @@ import 'package:toast/toast.dart';
 import 'package:winter/GoodsDetail/topNavigatorBar.dart';
 import 'package:winter/GoodsDetail/commodityClass.dart';
 import 'package:winter/AdapterAndHelper/DarkModeModel.dart';
-import 'package:provider/provider.dart'hide BuildContext;
+import 'package:provider/provider.dart';
 import 'package:winter/AdapterAndHelper/breakWord.dart';
 
 class UsedBook extends StatefulWidget {
