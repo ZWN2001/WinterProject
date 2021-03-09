@@ -8,6 +8,7 @@ import 'package:flutter_pickers/style/default_style.dart';
 import 'package:flutter_pickers/style/picker_style.dart';
 import 'package:provider/provider.dart';
 import 'package:toast/toast.dart';
+import 'package:winter/AdapterAndHelper/darkModeModel.dart';
 import 'package:winter/AdapterAndHelper/headImage.dart';
 import 'package:winter/AdapterAndHelper/picker_text.dart';
 import 'package:winter/Basic/login.dart';
@@ -28,21 +29,19 @@ class ChangeInfo extends StatelessWidget {
         ),
         title: Text('修改个人资料'),
       ),
-      body: myInfo(),
+      body: MyInfo(),
     );
   }
 }
 
-class myInfo extends StatefulWidget{
+class MyInfo extends StatefulWidget{
   @override
-  myInfoState createState() => myInfoState();
+  MyInfoState createState() => MyInfoState();
 }
-class myInfoState extends State<myInfo> {
-  TextEditingController _ageController = TextEditingController();
-  TextEditingController _locationController = TextEditingController();
-  // TextEditingController _introduction = TextEditingController();
-  TextEditingController _sexController = TextEditingController();
-  // TextEditingController _name = TextEditingController();
+class MyInfoState extends State<MyInfo> {
+  // TextEditingController _ageController = TextEditingController();
+  // TextEditingController _locationController = TextEditingController();
+  // TextEditingController _sexController = TextEditingController();
   UserInfo _userInfo=UserInfo(LoginPageState.account, '', 0, '', '', 0, '');
   String _headImageUrl;
   int _age;
@@ -116,223 +115,199 @@ class myInfoState extends State<myInfo> {
   }
   @override
   Widget build(BuildContext context) {
-    print('building.........');
-    return ListView(
-      children: [
-        Card(
-          margin: EdgeInsets.only(top: 10),
-          child: Column(
-            children: [
-              //头像
-              Container(
-                margin: EdgeInsets.fromLTRB(20, 10, 0, 10),
-                child: Row(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(right: 15),
-                      child: Text(
-                        '头像',
-                        style: TextStyle(fontSize: 20),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<DarkModeModel>(
+            create: (child) => DarkModeModel()),
+      ],
+      child:  Consumer<DarkModeModel>(builder: (context, darkModeModel, child) {
+      return ListView(
+        children: [
+          Card(
+            margin: EdgeInsets.only(top: 10),
+            child: Column(
+              children: [
+                //头像
+                Container(
+                  margin: EdgeInsets.fromLTRB(20, 10, 0, 10),
+                  child: Row(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(right: 15),
+                        child: Text(
+                          '头像',
+                          style: TextStyle(fontSize: 20),
+                        ),
                       ),
-                    ),
-                    Expanded(
-                      child:Container(
-                        child:ChangeNotifierProvider<HeadImage>(
-                          create: (_) => myHeadImage,
-                          builder: (myContext, child) {
-                            return Consumer<HeadImage>(
-                              builder: (_, headImage, child) {
-                                return GestureDetector(
-                                    // onTap: () async {
-                                    //   await myContext
-                                    //       .read<HeadImage>()
-                                    //       .chooseImage(context);
-                                    // },
-                                    child: Container(
-                                      margin: EdgeInsets.only(right: 30),
-                                      alignment: Alignment.centerRight,
-                                      child: SizedBox(
-                                        height: 60,
-                                        width: 60,
-                                        child: ClipOval(
-                                          child: myHeadImage.HeadImageUrl ==
-                                              null
-                                              ? Image.asset(
-                                            'images/defaultHeadImage.png',
-                                            color: Colors.white,
-                                            fit: BoxFit.cover,
-                                          )
-                                              : CachedNetworkImage(
-                                            imageUrl:
-                                            myHeadImage.HeadImageUrl,
-                                            placeholder: (context, url) =>
-                                                CircularProgressIndicator(),
-                                            errorWidget:
-                                                (context, url, error) =>
-                                                Image.asset(
-                                                  'images/defaultHeadImage.png',
-                                                  color: Colors.white,
-                                                  fit: BoxFit.cover,
-                                                ),
-                                          ),
+                      Expanded(
+                        child:Container(
+                          child:ChangeNotifierProvider<HeadImage>(
+                            create: (_) => myHeadImage,
+                            builder: (myContext, child) {
+                              return Consumer<HeadImage>(
+                                builder: (_, headImage, child) {
+                                  return  Container(
+                                    margin: EdgeInsets.only(right: 30),
+                                    alignment: Alignment.centerRight,
+                                    child: SizedBox(
+                                      height: 60,
+                                      width: 60,
+                                      child: ClipOval(
+                                        child: myHeadImage.HeadImageUrl ==
+                                            null
+                                            ? Image.asset(
+                                          'images/defaultHeadImage.png',
+                                          color: darkModeModel.darkMode?Colors.white:Colors.black,
+                                          fit: BoxFit.cover,
+                                        )
+                                            : CachedNetworkImage(
+                                          imageUrl:
+                                          myHeadImage.HeadImageUrl,
+                                          placeholder: (context, url) =>
+                                              CircularProgressIndicator(),
+                                          errorWidget:
+                                              (context, url, error) =>
+                                              Image.asset(
+                                                'images/defaultHeadImage.png',
+                                                color: Colors.white,
+                                                fit: BoxFit.cover,
+                                              ),
                                         ),
                                       ),
-                                    )
-                                );
-                              },);
-                          },),
+                                    ),
+                                  );
+                                },);
+                            },),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              //用户名
-              Container(
-                margin: EdgeInsets.fromLTRB(20, 10, 0, 10),
-                child: Row(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(right: 15),
-                      child: Text(
-                        '用户名:',
-                        style: TextStyle(fontSize: 20),
+                //用户名
+                Container(
+                  margin: EdgeInsets.fromLTRB(20, 10, 0, 10),
+                  child: Row(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(right: 15),
+                        child: Text(
+                          '用户名:',
+                          style: TextStyle(fontSize: 20),
+                        ),
                       ),
-                    ),
-                    Expanded(
-                        child: Container(
-                          margin: EdgeInsets.only(right: 40,left: 25),
-                          child: TextFormField(
-                            textAlign: TextAlign.right,
-                            controller: TextEditingController.fromValue(
-                              TextEditingValue(
-                                text: _username??' ',
-                                selection: TextSelection.fromPosition(
-                                  TextPosition(
-                                    affinity: TextAffinity.downstream,
-                                    offset:  _username== null ? 0 : _username.length,
+                      Expanded(
+                          child: Container(
+                            margin: EdgeInsets.only(right: 40,left: 25),
+                            child: TextFormField(
+                              textAlign: TextAlign.right,
+                              controller: TextEditingController.fromValue(
+                                TextEditingValue(
+                                  text: _username??' ',
+                                  selection: TextSelection.fromPosition(
+                                    TextPosition(
+                                      affinity: TextAffinity.downstream,
+                                      offset:  _username== null ? 0 : _username.length,
+                                    ),
                                   ),
                                 ),
                               ),
+                              onChanged: (value) {
+                                _username= value;
+                              },
+                              style: TextStyle(
+                                  fontSize: 20
+                              ),
                             ),
-                            onChanged: (value) {
-                              _username= value;
-                            },
-                            style: TextStyle(
-                                fontSize: 20
-                            ),
-                          ),
-                        )
-                    ),
-                  ],
-                ),
-              ),
-              //姓名
-              Container(
-                margin: EdgeInsets.fromLTRB(20, 10, 0, 10),
-                child: Row(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(right: 15),
-                      child: Text(
-                        '姓名:',
-                        style: TextStyle(fontSize: 20),
+                          )
                       ),
-                    ),
-                    Expanded(
-                        child: Container(
-                          margin: EdgeInsets.only(right: 40,left: 45),
-                          child: TextFormField(
-                            textAlign: TextAlign.right,
-                            scrollPadding: EdgeInsets.all(0),
-                            decoration: InputDecoration(
-                                helperText: '您的真实姓名'
-                            ),
-                            controller: TextEditingController.fromValue(
-                              TextEditingValue(
-                                text: _name??'无',
-                                selection: TextSelection.fromPosition(
-                                  TextPosition(
-                                    affinity: TextAffinity.downstream,
-                                    offset: _name == null ? 0 : _name.length,
+                    ],
+                  ),
+                ),
+                //姓名
+                Container(
+                  margin: EdgeInsets.fromLTRB(20, 10, 0, 10),
+                  child: Row(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(right: 15),
+                        child: Text(
+                          '姓名:',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                      Expanded(
+                          child: Container(
+                            margin: EdgeInsets.only(right: 40,left: 45),
+                            child: TextFormField(
+                              textAlign: TextAlign.right,
+                              scrollPadding: EdgeInsets.all(0),
+                              decoration: InputDecoration(
+                                  helperText: '您的真实姓名'
+                              ),
+                              controller: TextEditingController.fromValue(
+                                TextEditingValue(
+                                  text: _name??'无',
+                                  selection: TextSelection.fromPosition(
+                                    TextPosition(
+                                      affinity: TextAffinity.downstream,
+                                      offset: _name == null ? 0 : _name.length,
+                                    ),
                                   ),
                                 ),
                               ),
+                              onChanged: (value) {
+                                _name = value;
+                              },
+                              style: TextStyle(
+                                  fontSize: 20
+                              ),
                             ),
-                            onChanged: (value) {
-                              _name = value;
-                            },
-                            style: TextStyle(
-                                fontSize: 20
-                            ),
-                          ),
-                        )
-                    ),
-                  ],
-                ),
-              ),
-              //性别
-              Container(
-                margin: EdgeInsets.fromLTRB(20, 10, 0, 10),
-                child: Row(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(right: 15),
-                      child: Text(
-                        '性别:',
-                        style: TextStyle(fontSize: 20),
+                          )
                       ),
-                    ),
-                    Expanded(
-                        child: Container(
-                          margin: EdgeInsets.only(right: 30,left: 45),
-                          alignment: Alignment.center,
-                          child: _item( PickerDataType.sex, selectSex),
-                          // child: TextFormField(
-                          //   scrollPadding: EdgeInsets.all(0),
-                            // controller: _sex,
-                            // controller: TextEditingController.fromValue(
-                            //   TextEditingValue(
-                            //     text: '$_sex',
-                            //     selection: TextSelection.fromPosition(
-                            //       TextPosition(
-                            //         affinity: TextAffinity.downstream,
-                            //         offset: _sex == null ? 0 : _sex.toString().length,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
-                            // onChanged: (value) {
-                            //   _sex = int.parse(value);
-                            // },
-
-                          //   style: TextStyle(
-                          //       fontSize: 20
-                          //   ),
-                          // ),
-                        )
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              //年龄
-              Container(
-                margin: EdgeInsets.fromLTRB(20, 10, 0, 10),
-                child: Row(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(right: 15),
-                      child: Text(
-                        '年龄:',
-                        style: TextStyle(fontSize: 20),
+                //性别
+                Container(
+                  margin: EdgeInsets.fromLTRB(20, 10, 0, 10),
+                  child: Row(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(right: 15),
+                        child: Text(
+                          '性别:',
+                          style: TextStyle(fontSize: 20),
+                        ),
                       ),
-                    ),
-                    Expanded(
-                        child: Container(
-                          margin: EdgeInsets.only(right: 30,left: 45),
-                          alignment: Alignment.centerRight,
-                          child: _item( List.generate(200, (index) => (0 + index).toString()), _age??0, label: '岁'),
-                          // child: TextFormField(
-                          //   scrollPadding: EdgeInsets.all(0),
+                      Expanded(
+                          child: Container(
+                            margin: EdgeInsets.only(right: 30,left: 45),
+                            alignment: Alignment.center,
+                            child: _item( PickerDataType.sex, selectSex),
+                          )
+                      ),
+                    ],
+                  ),
+                ),
+                //年龄
+                Container(
+                  margin: EdgeInsets.fromLTRB(20, 10, 0, 10),
+                  child: Row(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(right: 15),
+                        child: Text(
+                          '年龄:',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                      Expanded(
+                          child: Container(
+                            margin: EdgeInsets.only(right: 30,left: 45),
+                            alignment: Alignment.centerRight,
+                            child: _item( List.generate(200, (index) => (0 + index).toString()), _age??0, label: '岁'),
+                            // child: TextFormField(
+                            //   scrollPadding: EdgeInsets.all(0),
                             // controller: _age,
                             // controller: TextEditingController.fromValue(
                             //   TextEditingValue(
@@ -348,39 +323,39 @@ class myInfoState extends State<myInfo> {
                             // onChanged: (value) {
                             //   _age = int.parse(value);
                             // },
-                          //   style: TextStyle(
-                          //       fontSize: 20
-                          //   ),
-                          // ),
-                        )
-                    ),
-                  ],
-                ),
-              ),
-              //现居
-              Container(
-                margin: EdgeInsets.fromLTRB(20, 10, 0, 10),
-                child: Row(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(right: 15),
-                      child: Text(
-                        '现居:',
-                        style: TextStyle(fontSize: 20),
+                            //   style: TextStyle(
+                            //       fontSize: 20
+                            //   ),
+                            // ),
+                          )
                       ),
-                    ),
-                    Expanded(
-                        child: Container(
-                          margin: EdgeInsets.only(right: 30,left: 45,top: 10,bottom: 10),
-                          alignment: Alignment.center,
-                          child: _checkLocation(),
-                          // child: TextFormField(
-                          //   scrollPadding: EdgeInsets.all(0),
-                          //   decoration: InputDecoration(
-                          //       hintText: '选择现居地'
-                          //   ),
-                          //   initialValue: _userInfo.location,
-                          //   // controller: _location,
+                    ],
+                  ),
+                ),
+                //现居
+                Container(
+                  margin: EdgeInsets.fromLTRB(20, 10, 0, 10),
+                  child: Row(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(right: 15),
+                        child: Text(
+                          '现居:',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                      Expanded(
+                          child: Container(
+                            margin: EdgeInsets.only(right: 30,left: 45,top: 10,bottom: 10),
+                            alignment: Alignment.center,
+                            child: _checkLocation(),
+                            // child: TextFormField(
+                            //   scrollPadding: EdgeInsets.all(0),
+                            //   decoration: InputDecoration(
+                            //       hintText: '选择现居地'
+                            //   ),
+                            //   initialValue: _userInfo.location,
+                            //   // controller: _location,
 
                             // controller: TextEditingController.fromValue(
                             //   TextEditingValue(
@@ -397,86 +372,89 @@ class myInfoState extends State<myInfo> {
                             //   _location = value;
                             // },
 
-                          //   style: TextStyle(
-                          //       fontSize: 20
-                          //   ),
-                          // ),
-                        )
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        //自我介绍
-        Card(
-          child: Container(
-            margin: EdgeInsets.fromLTRB(20, 10, 0, 10),
-            child: Row(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(right: 15),
-                  alignment: AlignmentDirectional.topStart,
-                  child: Text(
-                    '自我介绍:',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                ),
-                Expanded(
-                    child: Container(
-                      margin: EdgeInsets.only(right: 30),
-                      child: TextFormField(
-                        scrollPadding: EdgeInsets.all(0),
-                        decoration: InputDecoration(
-                          helperText: '可添加自我介绍'
-                        ),
-                        controller: TextEditingController.fromValue(
-                          TextEditingValue(
-                            text: _introduction??' ',
-                            selection: TextSelection.fromPosition(
-                              TextPosition(
-                                affinity: TextAffinity.downstream,
-                                offset: _introduction == null ? 0 : _introduction.length,
-                              ),
-                            ),
-                          ),
-                        ),
-                        onChanged: (value) {
-                          _introduction = value;
-                        },
-                        style: TextStyle(
-                            fontSize: 20
-                        ),
+                            //   style: TextStyle(
+                            //       fontSize: 20
+                            //   ),
+                            // ),
+                          )
                       ),
-                    )
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
-        ),
-        Center(
-          child: Container(
-            margin: EdgeInsets.only(top: 50,bottom: 40),
-            child: FloatingActionButton(
-              backgroundColor: Colors.lightBlue,
-              child: Icon(Icons.assignment_turned_in_rounded, size: 28,),
-              onPressed: () {
-                myHeadImage.getHeadImage(context).then((value) {
-                  _headImageUrl=value;
-                });
-                if(_username.length>6){
-                  Toast.show("用户名长度不能大于六", context,
-                      duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-                }else{
-                  SharedPreferenceUtil.saveUsername(_username);
-                  _submitDetails(_headImageUrl, _age, _introduction, _sex, _name, _location, _username);
-                }
-              },
+          //自我介绍
+          Card(
+            child: Container(
+              margin: EdgeInsets.fromLTRB(20, 10, 0, 10),
+              child: Row(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(right: 15),
+                    alignment: AlignmentDirectional.topStart,
+                    child: Text(
+                      '自我介绍:',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                  Expanded(
+                      child: Container(
+                        margin: EdgeInsets.only(right: 30),
+                        child: TextFormField(
+                          scrollPadding: EdgeInsets.all(0),
+                          maxLines: null,
+                          decoration: InputDecoration(
+                              helperText: '可添加自我介绍'
+                          ),
+                          controller: TextEditingController.fromValue(
+                            TextEditingValue(
+                              text: _introduction??' ',
+                              selection: TextSelection.fromPosition(
+                                TextPosition(
+                                  affinity: TextAffinity.downstream,
+                                  offset: _introduction == null ? 0 : _introduction.length,
+                                ),
+                              ),
+                            ),
+                          ),
+                          onChanged: (value) {
+                            _introduction = value;
+                          },
+                          style: TextStyle(
+                              fontSize: 20
+                          ),
+                        ),
+                      )
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+          Center(
+            child: Container(
+              margin: EdgeInsets.only(top: 50,bottom: 40),
+              child: FloatingActionButton(
+                backgroundColor: Colors.lightBlue,
+                child: Icon(Icons.assignment_turned_in_rounded, size: 28,),
+                onPressed: () {
+                  myHeadImage.getHeadImage(context).then((value) {
+                    _headImageUrl=value;
+                  });
+                  if(_username.length>6){
+                    Toast.show("用户名长度不能大于六", context,
+                        duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                  }else{
+                    SharedPreferenceUtil.saveUsername(_username);
+                    _submitDetails(_headImageUrl, _age, _introduction, _sex, _name, _location, _username);
+                  }
+                },
+              ),
+            ),
+          ),
+        ],
+      );
+    })
     );
   }
 
@@ -534,35 +512,32 @@ class myInfoState extends State<myInfo> {
      locations = ['山东省', '济南市', '历下区'];
     double menuHeight = 36.0;
     Widget _headMenuView = Container(
-        color: Colors.grey[700],
+        color: Colors.white,
         height: menuHeight,
         child: Row(children: [
-          Expanded(child: Center(child: MyText('省', color: Colors.white))),
-          Expanded(child: Center(child: MyText('市', color: Colors.white))),
-          Expanded(child: Center(child: MyText('区', color: Colors.white))),
+          Expanded(child: Center(child: MyText('省', color: Colors.black))),
+          Expanded(child: Center(child: MyText('市', color: Colors.black))),
+          Expanded(child: Center(child: MyText('区', color: Colors.black))),
         ]));
 
     Widget _cancelButton = Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       margin: const EdgeInsets.only(left: 22),
-      decoration:
-      BoxDecoration(border: Border.all(color: Colors.white, width: 1), borderRadius: BorderRadius.circular(4)),
-      child: MyText('取消', color: Colors.white, size: 14),
+      child: MyText('取消', color: Colors.black, size: 14),
     );
 
     Widget _commitButton = Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       margin: const EdgeInsets.only(right: 22),
-      decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.circular(4)),
-      child: MyText('确认', color: Colors.white, size: 14),
+      child: MyText('确认', color: Colors.black, size: 14),
     );
 
     // 头部样式
     Decoration addressHeadDecoration = BoxDecoration(
-        color: Colors.grey[800],
+        color: Colors.white,
         borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)));
 
-    Widget addressTitle = Center(child: MyText('请选择地址', color: Colors.white, size: 14));
+    Widget addressTitle = Center(child: MyText('请选择地址', color: Colors.black, size: 14));
 
     var pickerStyle = PickerStyle(
       menu: _headMenuView,
@@ -571,8 +546,8 @@ class myInfoState extends State<myInfo> {
       commitButton: _commitButton,
       headDecoration: addressHeadDecoration,
       title: addressTitle,
-      textColor: Colors.white,
-      backgroundColor: Colors.grey[800],
+      textColor: Colors.black,
+      backgroundColor: Colors.white,
     );
 
     return InkWell(
@@ -621,20 +596,22 @@ class myInfoState extends State<myInfo> {
   }
 
   Widget _item( var data, var selectData, {String label}) {
+    return Consumer<DarkModeModel>(builder: (context, darkModeModel, child) {
     return Column(
       children: [
         Container(
           alignment: Alignment.center,
-          color: Colors.white,
+          color: darkModeModel.darkMode?Colors.white:Color(100),
           child: ListTile(
             onTap: () => _onClickItem(data, selectData, label: label),
             trailing: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-              MyText(selectData.toString() ?? '暂无', color: Colors.black, rightpadding: 0,size: 20,),
+              MyText(selectData.toString() ?? '暂无', color: darkModeModel.darkMode?Colors.white:Colors.black, rightpadding: 0,size: 20,),
             ]),
           ),
         ),
       ],
     );
+  });
   }
 
   void _onClickItem(var data, var selectData, {String label}) {

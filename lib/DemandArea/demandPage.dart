@@ -54,7 +54,6 @@ class DemandPageState extends State<DemandPage> {
   bool isLoading = false;
   ScrollController _scrollController = ScrollController();
   Widget centerContent;
-  Timer _timer;
   
   @override
   void initState() {
@@ -199,7 +198,6 @@ class DemandPageState extends State<DemandPage> {
     // TODO: implement dispose
     super.dispose();
     _scrollController.dispose();
-    _timer.cancel();
   }
 
   @override

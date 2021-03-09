@@ -32,7 +32,6 @@ class AddGoodsPage extends StatefulWidget {
 class _AddGoodsPageState extends State<AddGoodsPage> {
   bool _categoryCondition = false; //是否传入分类
   String _category;
-  double _price;
   TextEditingController _title = TextEditingController();
   TextEditingController _myPrice = TextEditingController();
   TextEditingController _description = TextEditingController();
@@ -95,7 +94,7 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
               ),
               //价格
               Container(
-                margin: EdgeInsets.fromLTRB(10, 5, 20, 5),
+                margin: EdgeInsets.fromLTRB(10, 5, 20, 10),
                 child: Row(
                   children: [
                     Container(
@@ -126,39 +125,38 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
                   ],
                 ),
               ),
+              //商品简介(自动换行):
+              Container(
+                margin: EdgeInsets.only(top: 10),
+                child: Column(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                      child: Align(
+                        alignment: AlignmentDirectional.topStart,
+                        child: Text(
+                          '商品简介（可为空嗷）:',
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.fromLTRB(10, 0, 20, 10),
+                      child: TextField(
+                        controller: _description,
+                        maxLines: null,
+                        style: TextStyle(fontSize: 20),
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.all(8),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
             ],
           ),
         ),
-        //商品简介(自动换行):
-        Card(
-          margin: EdgeInsets.only(top: 10),
-          child: Column(
-            children: [
-              Container(
-                margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                child: Align(
-                  alignment: AlignmentDirectional.topStart,
-                  child: Text(
-                    '商品简介（可为空嗷）:',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(10, 0, 20, 10),
-                child: TextField(
-                  controller: _description,
-                  maxLines: null,
-                  style: TextStyle(fontSize: 20),
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.all(8),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-
         //分类
         Card(
           margin: EdgeInsets.only(top: 10),
@@ -275,7 +273,7 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
 
         //添加图片
         Card(
-          margin: EdgeInsets.only(top: 10),
+          margin: EdgeInsets.only(top: 0),
           child: Padding(
               padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
               child: Column(
@@ -290,6 +288,7 @@ class _AddGoodsPageState extends State<AddGoodsPage> {
                           : Expanded(
                               flex: 1,
                               child: Container(
+                                margin: EdgeInsets.only(left: 10),
                                 width: double.infinity,
                                 height: 50,
                                 child: ListView.builder(

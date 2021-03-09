@@ -7,9 +7,10 @@ import 'package:winter/AdapterAndHelper/getUsername.dart';
 import 'package:winter/AdapterAndHelper/headImage.dart';
 import 'package:winter/Basic/login.dart';
 import 'package:winter/SharedPreference/sharedPreferenceUtil.dart';
+import 'AccountSettings/setAccountInfo.dart';
 import 'MyRelease/myReleaseTabBar.dart';
 import 'PersonalInfo/showInfo.dart';
-import 'SetUserInfo/setAccountInfo.dart';
+
 
 class Mine extends StatelessWidget {
   @override
