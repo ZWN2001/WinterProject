@@ -212,7 +212,7 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         title: Text(targetUsername ?? " "),
-        actions:<Widget> [
+        /*actions:<Widget> [
           new PopupMenuButton(
               itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
                 PopupMenuItem(
@@ -241,7 +241,7 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                     )
                 )
               ])
-        ],
+        ],*/
         //title: Text(widget.sheName),
       ),
       body: Column(
@@ -462,7 +462,7 @@ class Message extends StatelessWidget {
                 children: [
                   Text(myUsername ?? " ", style: Theme.of(context).textTheme.subhead),
                   Container(
-                    margin: const EdgeInsets.only(top: 5.0),
+                    margin: const EdgeInsets.only(top: 5.0,left: 50),
                     child: Bubble(
                       direction: BubbleDirection.right,
                       color: Colors.blue,
