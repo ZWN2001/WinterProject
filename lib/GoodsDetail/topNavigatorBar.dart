@@ -16,7 +16,6 @@ class TopNavigatorBarState extends State<TopNavigatorBar> {
   Widget build(BuildContext context) {
    return Scaffold(
          appBar: AppBar(
-           title: Text("id."+commodityId.toString()),
          ),
          body: DetailPage(commodityId: commodityId,),
          );
