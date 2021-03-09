@@ -216,7 +216,7 @@ class DailyNecessityState extends State<DailyNecessity> {
                           height: 130,
                           child: //Text("暂时没有图片哦", style: TextStyle(color: Colors.grey, fontSize: 10),textAlign: TextAlign.center,)
                           tempList[temp].image.isEmpty
-                              ? Text("暂时没有图片哦", style: TextStyle(color: Colors.grey, fontSize: 10),textAlign: TextAlign.center)
+                              ? Center(child: Text("暂时没有图片哦", style: TextStyle(color: Colors.grey, fontSize: 10),textAlign: TextAlign.center),)
                               : Image.network(_imageToList(temp), fit: BoxFit.cover,),
                         )
                       /*Image.network(
@@ -229,6 +229,7 @@ class DailyNecessityState extends State<DailyNecessity> {
                 Row(
                   children: [
                     Container(
+                      padding: EdgeInsets.fromLTRB(5, 5, 0, 0),
                       width: 160,
                       child: Text(
                         BreakWord.breakWord(tempList[temp].title),
@@ -245,9 +246,12 @@ class DailyNecessityState extends State<DailyNecessity> {
                 ),
                 Row(
                   children: [
-                    Expanded(
-                        flex: 1,
-                        child:Text('￥',textAlign: TextAlign.start,style: TextStyle(fontSize: 9),)),
+                    Container(
+                      padding: EdgeInsets.only(left: 5),
+                      child: Expanded(
+                          flex: 1,
+                          child:Text('￥',textAlign: TextAlign.start,style: TextStyle(fontSize: 9, color: Colors.red),)),
+                    ),
                     Expanded(
                         flex: 15,
                         child:Text(

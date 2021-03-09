@@ -383,7 +383,7 @@ class AllGoodsState extends State<AllGoods> {
                           height: 130,
                           child: //Text("暂时没有图片哦", style: TextStyle(color: Colors.grey, fontSize: 10),textAlign: TextAlign.center,)
                           firstImageList[temp] == 'null'
-                          ? Text("暂时没有图片哦", style: TextStyle(color: Colors.grey, fontSize: 10),textAlign: TextAlign.center)
+                          ? Center(child: Text("暂时没有图片哦", style: TextStyle(color: Colors.grey, fontSize: 10),textAlign: TextAlign.center),)
                           : Image.network(firstImageList[temp], fit: BoxFit.cover,),
                         )
                         /*Image.network(
@@ -396,14 +396,15 @@ class AllGoodsState extends State<AllGoods> {
                 Row(
                   children: [
                     Container(
+                      padding: EdgeInsets.fromLTRB(5, 5, 0, 0),
                       width: 160,
                       child: Text(
                         BreakWord.breakWord(tempList[temp].title),
-                        textAlign: TextAlign.start,
+                        textAlign: TextAlign.center,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 16.0,
+                          fontSize: 11.0,
                           color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
                         ),
                       ),
@@ -412,9 +413,12 @@ class AllGoodsState extends State<AllGoods> {
                 ),
                 Row(
                   children: [
-                    Expanded(
-                      flex: 1,
-                        child:Text('￥',textAlign: TextAlign.start,style: TextStyle(fontSize: 9),)),
+                    Container(
+                      padding: EdgeInsets.only(left: 5),
+                      child: Expanded(
+                          flex: 1,
+                          child:Text('￥',textAlign: TextAlign.start,style: TextStyle(fontSize: 9, color: Colors.red),)),
+                    ),
                     Expanded(
                       flex: 15,
                         child:Text(
