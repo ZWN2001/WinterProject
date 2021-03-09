@@ -288,23 +288,26 @@ class MyNeedsState extends State<MyNeeds> {
             }
           },
           child: Container(
-            child: Card(
-                  color: Colors.blue,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10),),
-                  ),
-                  shadowColor: Colors.grey,
-                  elevation: 5,
-                  clipBehavior: Clip.none,
-                  margin: EdgeInsets.all(5),
-                  child: ListTile(
-                      title: Text(userName ?? " "),
-                      subtitle: ExpandbaleText(
-                        text: tempList[temp].description,
-                        maxLines: 5,
-                      )
-                  ),
-                )
+            child: Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
+              return Card(
+                color: DarkModeModel.darkMode ? Colors.black : Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10),),
+                ),
+                shadowColor: Colors.grey,
+                elevation: 5,
+                clipBehavior: Clip.none,
+                margin: EdgeInsets.all(5),
+                child: ListTile(
+                    title: Text(userName ?? " "),
+                    subtitle: ExpandbaleText(
+                      text: tempList[temp].description,
+                      maxLines: 5,
+                    )
+                ),
+              );
+            },)
+
 
           )
       )
