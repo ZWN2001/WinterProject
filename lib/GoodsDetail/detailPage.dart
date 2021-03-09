@@ -159,6 +159,10 @@ class DetailPageState extends State<DetailPage> {
               ],
             ),
           ),
+          Container(
+            padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
+            child: Text("id."+"$commodityId"),
+          ),
           Consumer<DarkModeModel>(builder: (context, DarkModeModel, child) {
             return Container(
               padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
