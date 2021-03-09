@@ -218,7 +218,7 @@ class MyGoodsState extends State<MyGoods> {
             itemCount: tempList.length,
             scrollDirection: Axis.vertical,
             controller: _scrollController,
-            padding: EdgeInsets.symmetric(horizontal: 5),
+            padding: EdgeInsets.only(left: 5),
             //separatorBuilder: (BuildContext context, int index) => new Divider(),
             itemBuilder: (context, index) {
               return Slidable(
