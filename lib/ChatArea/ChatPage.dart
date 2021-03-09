@@ -275,6 +275,7 @@ class ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
             children: <Widget> [
               new Flexible(
                   child: new TextField(
+                    maxLines: null,
                     controller: _textController,
                     onChanged: (String text) {
                       setState(() {

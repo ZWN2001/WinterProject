@@ -236,7 +236,7 @@ class CosmeticsState extends State<Cosmetics> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 16.0,
+                          fontSize: 11.0,
                           color: DarkModeModel.darkMode ? Colors.white : Colors.black87,
                         ),
                       ),
@@ -247,9 +247,7 @@ class CosmeticsState extends State<Cosmetics> {
                   children: [
                     Container(
                       padding: EdgeInsets.only(left: 5),
-                      child: Expanded(
-                          flex: 1,
-                          child:Text('￥',textAlign: TextAlign.start,style: TextStyle(fontSize: 9, color: Colors.red),)),
+                      child: Text('￥',textAlign: TextAlign.start,style: TextStyle(fontSize: 9, color: Colors.red),),
                     ),
                     Expanded(
                         flex: 15,
